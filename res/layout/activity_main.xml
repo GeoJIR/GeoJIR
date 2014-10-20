@@ -21,6 +21,6 @@
         android:layout_alignLeft="@+id/textView2"
         android:layout_below="@+id/textView2"
         android:text="@string/description"
-        android:textSize="12sp" />
+        android:textSize="8sp" />
 
 </RelativeLayout>
