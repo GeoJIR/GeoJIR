@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,21 +6,113 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.geojir.MainActivity" >
+    tools:context="com.geojir.MainActivity"
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:orientation="horizontal" >
+        
+	    <ImageView
+	        android:id="@+id/imagePhotos"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:contentDescription="@string/ic_photo_description"
+	        android:src="@drawable/ic_photo" />
+		
+	    <!-- 
+	    <ImageView
+	        android:id="@+id/imageCamera"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="@string/ic_camera_description"
+	        android:src="@drawable/ic_camera" />
+	
+	    <ImageView
+	        android:id="@+id/imageMicro"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="@string/ic_micro_description"
+	        android:src="@drawable/ic_micro" />
+	
+	    <ImageView
+	        android:id="@+id/imageMedias"
+	        android:layout_width="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="@string/ic_medias_description"
+	        android:src="@drawable/ic_medias" />
+	    -->
 
-    <TextView
-        android:id="@+id/textView1"
+    </LinearLayout>
+		
+    <!-- 
+    <MediaController
+        android:id="@+id/mediaController1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
-        android:text="@string/description"
-        android:textSize="8sp" />
+        android:layout_height="wrap_content" >
+    </MediaController>
+    -->
+    
+    <!-- 
+    <LinearLayout
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:orientation="horizontal" >
 
-</RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp" >
+            
+            <ImageButton
+                android:id="@+id/record_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_record_photo" />
+			
+            <ImageButton
+                android:id="@+id/record_camera"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_record_camera" />
+
+            <ImageButton
+                android:id="@+id/record_micro"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_record_micro" />
+
+        </RelativeLayout>
+        
+       	<ImageButton
+	        android:id="@+id/stop_medias"
+	        android:layout_width="16dp"
+	        android:layout_height="16dp"
+              android:layout_margin="4dp"
+	        android:src="@drawable/ic_stop" />
+	    
+    </LinearLayout>
+    -->
+
+    <ImageView
+        android:id="@+id/imageApercu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="40dp"
+        android:contentDescription="@string/ic_medias_description"
+        android:src="@drawable/ic_medias" />
+    
+</LinearLayout>
