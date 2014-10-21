@@ -36,11 +36,26 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 
 	    // Nous récupérons notre surface pour le preview
 	    surfaceCamera = (SurfaceView) findViewById(R.id.surfaceViewCamera);
-
+/*
+	    Camera.Parameters parameters = camera.getParameters();
+        List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
+        Camera.Size previewSize = previewSizes.get(0);
+*/        
 	    // Méthode d'initialisation de la caméra
 	    InitializeCamera();
+        
 	}
 	
+	  public static Camera isCameraAvailiable(){
+	      Camera object = null;
+	      try {
+	         object = Camera.open(); 
+	      }
+	      catch (Exception e){
+	      }
+	      return object; 
+	   }
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -83,6 +98,7 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 	public void InitializeCamera() 
 	{
 		// Nous attachons nos retours du holder à notre activité
+	    camera = isCameraAvailiable();
 		surfaceCamera.getHolder().addCallback(this);
 		
 		// Nous spécifiions le type du holder en mode SURFACE_TYPE_PUSH_BUFFERS
