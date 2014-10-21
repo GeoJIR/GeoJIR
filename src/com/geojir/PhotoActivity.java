@@ -1,8 +1,10 @@
 package com.geojir;
 
+import java.util.List;
+
 import android.app.Activity;
-import android.graphics.Camera;
 import android.graphics.PixelFormat;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,18 +62,20 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 
 	@Override
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
-	    // Nous prenons le contrôle de la camera
-//	    if (camera == null)
-//	        camera = Camera.open();
+        
+        // Nous prenons le contrôle de la camera
+	    if (camera == null)
+	        camera = Camera.open();
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder arg0) {
 	    // Nous arrêtons la camera et nous rendons la main
 	    if (camera != null) {
-//	        camera.stopPreview();
+	        camera.stopPreview();
+	        
 	        isPreview = false;
-//	        camera.release();
+	        camera.release();
 	    }
 	}
 
@@ -91,9 +95,9 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 	public void surfaceDestroyed(SurfaceHolder holder) {
 	    // Nous arrêtons la camera et nous rendons la main
 	    if (camera != null) {
-//	        camera.stopPreview();
+	        camera.stopPreview();
 	        isPreview = false;
-//	        camera.release();
+	        camera.release();
 	    }
 	}
 	
@@ -101,7 +105,7 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 	@Override
 	public void onResume() {
 	    super.onResume();
-//	    camera = Camera.open();
+	    camera = Camera.open();
 	}
 
 	// Mise en pause de l'application
@@ -110,7 +114,7 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 	    super.onPause();
 
 	    if (camera != null) {
-//	        camera.release();
+	        camera.release();
 	        camera = null;
 	    }
 	}
