@@ -58,52 +58,20 @@
     </MediaController>
     -->
     
-    <!-- 
     <LinearLayout
-     android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
-     android:orientation="horizontal" >
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp" >
-            
-            <ImageButton
-                android:id="@+id/record_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_record_photo" />
-			
-            <ImageButton
-                android:id="@+id/record_camera"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_record_camera" />
-
-            <ImageButton
-                android:id="@+id/record_micro"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_record_micro" />
-
-        </RelativeLayout>
-        
-       	<ImageButton
-	        android:id="@+id/stop_medias"
-	        android:layout_width="16dp"
-	        android:layout_height="16dp"
-              android:layout_margin="4dp"
-	        android:src="@drawable/ic_stop" />
-	    
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/ic_photo_label" />
+    
     </LinearLayout>
-    -->
 
     <ImageView
         android:id="@+id/imageApercu"
