@@ -1,6 +1,7 @@
 package com.geojir;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,12 @@ public class MainActivity extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
+		else if (id == R.id.action_photo) {
+			Intent intent = new Intent(this, PhotoActivity.class);
+			startActivity(intent);
+			return true;
+		}
+        
         return super.onOptionsItemSelected(item);
     }
 }

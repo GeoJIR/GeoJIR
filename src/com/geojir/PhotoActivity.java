@@ -20,7 +20,6 @@ public class PhotoActivity extends Activity implements SurfaceHolder.Callback
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_photo);
 
 	    // Nous mettons l'application en plein écran et sans barre de titre
 	    getWindow().setFormat(PixelFormat.TRANSLUCENT);
