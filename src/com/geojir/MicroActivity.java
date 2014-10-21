@@ -15,10 +15,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
 import android.util.Log;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MicroActivity extends Activity {
 	
@@ -88,7 +91,19 @@ public class MicroActivity extends Activity {
         mPlayer.setDataSource(mFileName);
 	    mPlayer.prepare();
 	    mPlayer.start();
-
+	   
+	    //on met un listenner pour savoir quand le player a finis de jouer le son
+	    mPlayer.setOnCompletionListener(new
+	    	    OnCompletionListener() {        
+	    	        @Override
+	    	        public void onCompletion(MediaPlayer arg0) {
+	    	        	//on realise le click du bouton stop a la fin du son
+	    	    	    mPlayButton.callOnClick();
+	    	        	
+	    	    }
+	    	});
+	    
+	    
 	    //message pour dire que lon joue le son audio
 	    Toast.makeText(getApplicationContext(), "Playing audio", Toast.LENGTH_LONG).show();
     }
@@ -188,7 +203,9 @@ public class MicroActivity extends Activity {
     public void AudioRecordTest() {
     	//on enregistre le son sur le storage exterieur (carte SD)
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
+        //on genere un nom avec la date pour ne pas ecraser les ancien sons
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        mFileName += "/"+timeStamp+"audiorecord.3gp";
     }
 
     @Override
