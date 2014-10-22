@@ -5,5 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="description">Modification de Jérôme</string>
+    <string name="ic_photo_description">Appareil photo</string>
+    <string name="ic_camera_description">Caméra</string>
+    <string name="ic_micro_description">Magnétophone</string>
+    <string name="ic_medias_description">Bibliothèque de médias</string>
+    <string name="ic_photo_label">Prendre une photo</string>
 
 </resources>
