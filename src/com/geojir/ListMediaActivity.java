@@ -19,7 +19,7 @@ public class ListMediaActivity extends Activity {
 		setContentView(R.layout.activity_list_media);
 		
 		File file = getFilesDir();
-		//File file2 = initConstants();
+		File file2 = Constants.initConstants();
 		
 		Log.i("Test", "test variable : " + PATH_GEOJIR);
 		

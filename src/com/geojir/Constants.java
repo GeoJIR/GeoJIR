@@ -1,6 +1,7 @@
 package com.geojir;
 
 import java.io.File;
+import java.lang.reflect.Array;
 
 import android.content.Context;
 import android.os.Environment;
@@ -9,11 +10,11 @@ import android.util.Log;
 public class Constants {
 	
 	//Directories URL
-    public static final String PATH_GEOJIR = "";
-    public static final String PATH_VIDEO = PATH_GEOJIR + "/" + Environment.DIRECTORY_MOVIES;
-    public static final String PATH_AUDIO = PATH_GEOJIR + "/" + Environment.DIRECTORY_MUSIC;
-    public static final String PATH_IMAGE = PATH_GEOJIR + "/" + Environment.DIRECTORY_PICTURES;
-    public static final String PATH_DOCUMENT = PATH_GEOJIR + "/" + "Documents";
+    public static String PATH_GEOJIR = "GeoJIR";
+    public static String PATH_VIDEO = PATH_GEOJIR + "/" + Environment.DIRECTORY_MOVIES;
+    public static String PATH_AUDIO = PATH_GEOJIR + "/" + Environment.DIRECTORY_MUSIC;
+    public static String PATH_IMAGE = PATH_GEOJIR + "/" + Environment.DIRECTORY_PICTURES;
+    public static String PATH_DOCUMENT = PATH_GEOJIR + "/" + "Documents";
  
 	//Types of medias
     public static final String TYPE_VIDEO = Environment.DIRECTORY_MOVIES;
@@ -34,7 +35,7 @@ public class Constants {
 	
 	//Methods
 	// Checks if external storage is available for read and write
-	private boolean isExternalStorageWritable() {
+	private static boolean isExternalStorageWritable() {
 	    String state = Environment.getExternalStorageState();
 	    if (Environment.MEDIA_MOUNTED.equals(state)) {
 	        return true;
@@ -44,43 +45,47 @@ public class Constants {
 
 
 	
-	private boolean extStorage()
+	private static boolean extStorage()
 	{
-		if(this.isExtStorageWritable)
+		if(isExternalStorageWritable())
 		{
 			return true;
 		}
 		return false;
 	}
 	
-	public File initConstants()
+	public static File initConstants()
 	{
+		// Get the directory for the user's public pictures directory. 
+//		File file = Environment.getRootDirectory();
+		
+		String filename = PATH_GEOJIR + ".";
+		
+		Array listPath String[] = {PATH_GEOJIR, PATH_VIDEO, PATH_AUDIO, PATH_IMAGE, PATH_DOCUMENT};
+		
+		
+		//vérification d'existence des sous rép de stockage (video, audio, image et documents) 
 		if(extStorage())
 		{
-		    // Get the directory for the user's public pictures directory. 
-		    File file = Environment.getRootDirectory();
+		    File filer = new File(Environment.getExternalStoragePublicDirectory(
+		    		PATH_GEOJIR), "" );
 		    
-		    if (!file.mkdirs()) {
-		        Log.e("initConstants", "Directory not created");
+		    if (!filer.mkdirs()) {
+		        Log.e(PATH_GEOJIR, "Directory not created");
 		    }
-		    return file;
+			return filer;
 		}
 		else
 		{
+		    File filer = new File(Environment.getExternalStoragePublicDirectory(
+		            Environment.DIRECTORY_MOVIES), filename );
+		    
+		    if (!filer.mkdirs()) {
+		        Log.e(PATH_GEOJIR, "Directory not created");
+		    }
+		    return filer;
 			
 		}
-	}
-
-	/*	
-	public File getAppStorageDir(Context context) {
-	    // Get the directory for the app's private pictures directory. 
-	    File file = context.getExternalFilesDir();
-	    if (!file.mkdirs()) {
-	        Log.e(LOG_TAG, "Directory not created");
-	    }
-	    return file;
-	}
-*/	
-	
+	}	
 }
 
