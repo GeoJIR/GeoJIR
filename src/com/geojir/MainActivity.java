@@ -1,5 +1,6 @@
 package com.geojir;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,8 +15,10 @@ import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +34,8 @@ public class MainActivity extends Activity {
 	
 	//Ajout pour le microphone
 	private static final String LOG_TAG = "AudioRecordTest";
-    private static String mFileName = null;
+    //chemin du fichier son
+	private static String mFileName = null;
 
     private Button mRecordButton = null;
     private MediaRecorder mRecorder = null;
@@ -42,22 +46,50 @@ public class MainActivity extends Activity {
     boolean mStartPlaying = true;
     //fin ajout microphone
     
+    //photo
+    //chemin du fichier photo
+    String mPhotoName;
+    
+    static final int REQUEST_TAKE_PHOTO = 1;
+    //
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        //photo
         ImageView photoButton = (ImageView) this.findViewById(R.id.imagePhotos);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
-                startActivityForResult(cameraIntent, 1888); 
+                startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO); 
+                
+                /*
+              //enregistrement de la photo
+                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        // Error occurred while creating the File
+                    	ex.printStackTrace();
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                    	cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                        startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO);
+                    }
+                }*/
+              
             }
         });
+        //fin photo
         
-        //ajout bouton pour le microphone
+        //ajout bouton et listener pour le microphone
         mRecordButton = (Button) findViewById(R.id.recordbutton);
         OnClickListener recordclicker = new OnClickListener() {
             public void onClick(View v) {
@@ -96,9 +128,10 @@ public class MainActivity extends Activity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
-        if (requestCode == 1888 && resultCode == RESULT_OK) {  
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            
+        if (requestCode == 1) {  
+
+        	Bundle extras = data.getExtras();
+        	Bitmap photo = (Bitmap) extras.get("data");
             ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
             view.setImageBitmap(photo);
         }
@@ -238,5 +271,26 @@ public class MainActivity extends Activity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         mFileName += "/"+timeStamp+"audiorecord.3gp";
     }
+    
+    
     //fin microphone
+    
+    //photo enregistrement
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+            imageFileName,  /* prefix */
+            ".jpg",         /* suffix */
+            storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mPhotoName = "file:" + image.getAbsolutePath();
+        return image;
+    }
+    
 }
