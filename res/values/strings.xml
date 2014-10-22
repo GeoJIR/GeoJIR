@@ -8,5 +8,7 @@
     <string name="action_photo">Photo</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_photo">Photo</string>
-
+    <string name="title_activity_camera">Camera</string>
+    <string name="action_camera">Camera</string>
+    
 </resources>

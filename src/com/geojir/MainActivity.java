@@ -38,6 +38,11 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			return true;
 		}
+		else if (id == R.id.action_camera) {
+			Intent intent = new Intent(this, CameraActivity.class);
+			startActivity(intent);
+			return true;
+		}
         
         return super.onOptionsItemSelected(item);
     }
