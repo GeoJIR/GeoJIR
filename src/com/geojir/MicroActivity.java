@@ -71,23 +71,6 @@ public class MicroActivity extends Activity {
         //on desactive le boutton d'enregistrement
         mRecordButton.setEnabled(false);
         
-        /*try {
-        	if(mFileName != null)
-        	{
-        		 mPlayer.setDataSource(mFileName);
-                 mPlayer.prepare();
-                 mPlayer.start();
-        	}
-        	else 
-        	{
-        		System.out.println("MicroActivity Set data source probleme.");
-        	}
-           
-        } catch (IOException e) {
-            //Log.e(LOG_TAG, "prepare() failed");
-            Log.e("MicroActivity", "startplaying failed.",e);
-        }*/
-        
         mPlayer.setDataSource(mFileName);
 	    mPlayer.prepare();
 	    mPlayer.start();
@@ -119,6 +102,8 @@ public class MicroActivity extends Activity {
     }
 
     private void startRecording() {
+    	createFileAudioRecord();
+    	
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -132,7 +117,7 @@ public class MicroActivity extends Activity {
         	//on desactive le boutton pour jouer le son audio
         	mPlayButton.setEnabled(false);
         	
-        	Toast.makeText(getApplicationContext(), "Début de l'énregistrement", Toast.LENGTH_LONG).show();
+        	Toast.makeText(getApplicationContext(), "Dï¿½but de l'ï¿½nregistrement", Toast.LENGTH_LONG).show();
 
          } catch (IllegalStateException e) {
             // TODO Auto-generated catch block
@@ -152,7 +137,7 @@ public class MicroActivity extends Activity {
         //on reactive le boutton pour jouer le son audio
         mPlayButton.setEnabled(true);
         
-        Toast.makeText(getApplicationContext(), "Audio. L'enregistrement s'est bien passé.",
+        Toast.makeText(getApplicationContext(), "Audio. L'enregistrement s'est bien passï¿½.",
         Toast.LENGTH_LONG).show();
     }
 
@@ -200,7 +185,7 @@ public class MicroActivity extends Activity {
         }
     }
 
-    public void AudioRecordTest() {
+    public void createFileAudioRecord() {
     	//on enregistre le son sur le storage exterieur (carte SD)
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         //on genere un nom avec la date pour ne pas ecraser les ancien sons
@@ -212,7 +197,7 @@ public class MicroActivity extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        AudioRecordTest();
+        //AudioRecordTest();
         
         LinearLayout ll = new LinearLayout(this);
         mRecordButton = new RecordButton(this);
