@@ -8,7 +8,8 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
     
-    <uses-feature android:name="android.hardware.camera"></uses-feature>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +24,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ListMediaActivity"
+            android:label="@string/title_activity_list_media"
+            android:parentActivityName="com.hb.myfirstapp.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hb.myfirstapp.MainActivity" />
         </activity>
     </application>
 

@@ -10,5 +10,6 @@
     <string name="ic_micro_description">Magnétophone</string>
     <string name="ic_medias_description">Bibliothèque de médias</string>
     <string name="ic_photo_label">Prendre une photo</string>
+    <string name="title_activity_list_media">ListMediaActivity</string>
 
 </resources>

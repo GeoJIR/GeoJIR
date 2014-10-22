@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import static com.geojir.Constants.*;
 
 
 public class MainActivity extends Activity {
@@ -17,20 +18,24 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+ 
+        //IM : pour lancer l'activity ListMedia
+		Intent intent = new Intent(this, ListMediaActivity.class);
+		startActivity(intent);
+
         ImageView photoButton = (ImageView) this.findViewById(R.id.imagePhotos);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
-                startActivityForResult(cameraIntent, 1888); 
+                startActivityForResult(cameraIntent, REQUEST_CODE); 
             }
         });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
-        if (requestCode == 1888 && resultCode == RESULT_OK) {  
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {  
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             
             ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
