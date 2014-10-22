@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 	
 	//Ajout pour le microphone
 	private static final String LOG_TAG = "AudioRecordTest";
-    //chemin du fichier son
+	//chemin du fichier son
 	private static String mFileName = null;
 
     private Button mRecordButton = null;
@@ -212,7 +212,7 @@ public class MainActivity extends Activity {
 	    //message pour dire que lon joue le son audio
 	    Toast.makeText(getApplicationContext(), "Playing audio", Toast.LENGTH_SHORT).show();
     }
-    
+     
     private void stopPlaying() {
         mPlayer.release();
         mPlayer = null;
