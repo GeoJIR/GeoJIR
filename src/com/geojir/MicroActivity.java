@@ -86,7 +86,6 @@ public class MicroActivity extends Activity {
 	    	    }
 	    	});
 	    
-	    
 	    //message pour dire que lon joue le son audio
 	    Toast.makeText(getApplicationContext(), "Playing audio", Toast.LENGTH_LONG).show();
     }
@@ -105,6 +104,7 @@ public class MicroActivity extends Activity {
     	createFileAudioRecord();
     	
         mRecorder = new MediaRecorder();
+        
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName);
@@ -117,7 +117,7 @@ public class MicroActivity extends Activity {
         	//on desactive le boutton pour jouer le son audio
         	mPlayButton.setEnabled(false);
         	
-        	Toast.makeText(getApplicationContext(), "D�but de l'�nregistrement", Toast.LENGTH_LONG).show();
+        	Toast.makeText(getApplicationContext(), "Début de l'enregistrement", Toast.LENGTH_LONG).show();
 
          } catch (IllegalStateException e) {
             // TODO Auto-generated catch block
