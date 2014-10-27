@@ -1,6 +1,7 @@
 package com.geojir;
 
 //import java.io.File;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,11 +9,14 @@ import java.util.Locale;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +42,7 @@ public class CaptureActivity extends ParentMenuActivity {
     
     //photo
     //chemin du fichier photo
-    String mPhotoName;
+    public String mPhotoName;
     
     static final int REQUEST_TAKE_PHOTO = 436547;
     //
@@ -47,6 +51,9 @@ public class CaptureActivity extends ParentMenuActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture);
+        if(savedInstanceState != null) {
+        	mPhotoName = savedInstanceState.getString("maphoto");
+        }
         
         //photo
  
@@ -56,9 +63,9 @@ public class CaptureActivity extends ParentMenuActivity {
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
-                startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO); 
+                //startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO); 
                 
-                /*
+                
               //enregistrement de la photo
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     // Create the File where the photo should go
@@ -74,7 +81,7 @@ public class CaptureActivity extends ParentMenuActivity {
                     	cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                         startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO);
                     }
-                }*/
+                }
               
                 startActivityForResult(cameraIntent, REQUEST_CODE); 
             }
@@ -119,13 +126,74 @@ public class CaptureActivity extends ParentMenuActivity {
         
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+    	// TODO Auto-generated method stub
+    	super.onWindowFocusChanged(hasFocus);
+    	
+    	//on teste si il y a une photo deja présente
+        if(mPhotoName !=null) {
+    		if(!mPhotoName.isEmpty()) {
+    			//si cest le cas on la charge et on laffiche
+            	File maphoto = new File(mPhotoName);
+         		boolean p = maphoto.exists();
+         		if(p) setPic();
+            }
+    	}
+        //fin test si photo deja présente ou non
+    	
+    }
+    
+    
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {  
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            
-            ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
-            view.setImageBitmap(photo);
+        if (requestCode == REQUEST_TAKE_PHOTO) {  
+
+        	ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
+        	if(data != null && data.getExtras() != null)
+        	{
+        		Bundle extras = data.getExtras();
+        		Bitmap photo = (Bitmap) extras.get("data");
+                view.setImageBitmap(photo);
+
+        	}
+        	else {
+	
+        		if( (!mPhotoName.isEmpty()) && (mPhotoName !=null) ) {
+        			File maphoto = new File(mPhotoName);
+            		boolean p = maphoto.exists();
+            		if(p) setPic();
+        		}
+        	}
         }
+    }
+    
+    
+    //Cette léthode permet dafficher la photo dans l'endroit prévu
+    private void setPic() {
+    	ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
+
+    	// Get the dimensions of the View
+        int targetW = view.getWidth();
+        int targetH = view.getHeight();
+        if(targetW < 1) targetW = 1;
+        if(targetH < 1) targetH = 1;
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mPhotoName, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW*3, photoH/targetH*3);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+    	
+        Bitmap bitmap = BitmapFactory.decodeFile(mPhotoName, bmOptions);
+        view.setImageBitmap(bitmap);
     }
 
     @Override
@@ -264,10 +332,9 @@ public class CaptureActivity extends ParentMenuActivity {
     //fin microphone
     
     //photo enregistrement
-    /*
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
@@ -278,8 +345,26 @@ public class CaptureActivity extends ParentMenuActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mPhotoName = "file:" + image.getAbsolutePath();
+        mPhotoName = image.getAbsolutePath();
         return image;
     }
-    */
-}    
+    
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+    	// Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+        
+        // Save the user's current game state
+        savedInstanceState.putString("maphoto", mPhotoName);
+    }
+    
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    	super.onRestoreInstanceState(savedInstanceState);
+        
+    	//mPhotoName = savedInstanceState.getString("maphoto");
+        
+    }
+
+    
+}
