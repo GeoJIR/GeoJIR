@@ -3,10 +3,10 @@ package com.geojir;
 import static com.geojir.Constants.*;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.content.Context;
 import android.os.Environment;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +18,13 @@ public class ListMediaActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
 		
-		File file = getFilesDir();
-		File file2 = Constants.initConstants();
+//		File file = getFilesDir();
+		try {
+			Constants.initConstants();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Log.i("Test", "test variable : " + PATH_GEOJIR);
 		
