@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import static com.geojir.Constants.*;
 
 
 public class MainActivity extends Activity {
@@ -59,6 +60,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         //photo
+ 
         ImageView photoButton = (ImageView) this.findViewById(R.id.imagePhotos);
         photoButton.setOnClickListener(new View.OnClickListener() {
 
@@ -85,6 +87,7 @@ public class MainActivity extends Activity {
                     }
                 }*/
               
+                startActivityForResult(cameraIntent, REQUEST_CODE); 
             }
         });
         //fin photo
@@ -128,10 +131,10 @@ public class MainActivity extends Activity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
-        if (requestCode == 1) {  
-
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {  
         	Bundle extras = data.getExtras();
-        	Bitmap photo = (Bitmap) extras.get("data");
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            
             ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
             view.setImageBitmap(photo);
         }
@@ -151,9 +154,7 @@ public class MainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
     
