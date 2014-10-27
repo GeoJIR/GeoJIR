@@ -2,11 +2,8 @@ package com.geojir;
 
 import static com.geojir.Constants.*;
 
-import java.io.File;
 import java.io.IOException;
 
-import android.content.Context;
-import android.os.Environment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,12 +28,12 @@ public class ListMediaActivity extends Activity {
 		//lecture du fichier de liste des medias
 		
 		
-		//si fichier inexistant, on le crée
+		//si fichier inexistant, on le cree
 		
 		//on met le contenu dans un array
 		
-		// on récupère les 10 dernières entrées 
+		// on rï¿½cupï¿½re les 10 dernieres entrees 
 		
-		//on affiche les 10 dernières entrées dans un label.
+		//on affiche les 10 dernieres entrees dans un label.
 	}
 }

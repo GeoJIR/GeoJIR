@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.geojir"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -18,7 +18,6 @@
     	android:installLocation="preferExternal" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:allowBackup="true"
@@ -47,27 +46,15 @@
             
         <activity
             android:name=".AroundActivity"
-            android:label="@string/title_activity_around"
-            android:parentActivityName=".ParentMenuActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="ParentMenuActivity" />
+            android:label="@string/title_activity_around" >
         </activity>
         <activity
             android:name=".FollowActivity"
-            android:label="@string/title_activity_follow"
-            android:parentActivityName=".ParentMenuActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.geojir.ParentMenuActivity" />
+            android:label="@string/title_activity_follow" >
         </activity>
         <activity
             android:name=".AccountActivity"
-            android:label="@string/title_activity_account"
-            android:parentActivityName=".ParentMenuActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.geojir.ParentMenuActivity" />
+            android:label="@string/title_activity_account" >
         </activity>
         
     </application>

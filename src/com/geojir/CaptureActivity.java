@@ -1,39 +1,29 @@
 package com.geojir;
 
-import java.io.File;
+//import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
-import com.geojir.MicroActivity.PlayButton;
-import com.geojir.MicroActivity.RecordButton;
-
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import static com.geojir.Constants.*;
 
 public class CaptureActivity extends ParentMenuActivity {
 	
-	//Ajout pour le microphone
-	private static final String LOG_TAG = "AudioRecordTest";
 	//chemin du fichier son
 	private static String mFileName = null;
 
@@ -50,13 +40,13 @@ public class CaptureActivity extends ParentMenuActivity {
     //chemin du fichier photo
     String mPhotoName;
     
-    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_TAKE_PHOTO = 436547;
     //
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_capture);
         
         //photo
  
@@ -131,7 +121,6 @@ public class CaptureActivity extends ParentMenuActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {  
-        	Bundle extras = data.getExtras();
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             
             ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
@@ -152,7 +141,6 @@ public class CaptureActivity extends ParentMenuActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
     }
@@ -268,7 +256,7 @@ public class CaptureActivity extends ParentMenuActivity {
     	//on enregistre le son sur le storage exterieur (carte SD)
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         //on genere un nom avec la date pour ne pas ecraser les ancien sons
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         mFileName += "/"+timeStamp+"audiorecord.3gp";
     }
     
@@ -276,6 +264,7 @@ public class CaptureActivity extends ParentMenuActivity {
     //fin microphone
     
     //photo enregistrement
+    /*
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -283,13 +272,14 @@ public class CaptureActivity extends ParentMenuActivity {
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-            imageFileName,  /* prefix */
-            ".jpg",         /* suffix */
-            storageDir      /* directory */
+            imageFileName,  // prefix
+            ".jpg",         // suffix
+            storageDir      // directory
         );
 
         // Save a file: path for use with ACTION_VIEW intents
         mPhotoName = "file:" + image.getAbsolutePath();
         return image;
     }
+    */
 }    

@@ -1,12 +1,8 @@
 package com.geojir;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import android.os.Environment;
 import android.util.Log;
@@ -51,7 +47,7 @@ public class Constants {
 	"Music/music002.3gp;Bon morceau\n"+
 	"Video/video001.mp4;Super film\n"+
 	"Music/music004.3gp;Morceau extraordinaire\n"+
-	"Video/video002.3gp;Video intéressante\n"+
+	"Video/video002.3gp;Video intï¿½ressante\n"+
 	"Video/video003.3gp;Super morceau";
 
 	//Methods
@@ -82,7 +78,7 @@ public class Constants {
 		
 		
 		
-		//vérification d'existence des sous rép de stockage (video, audio, image et documents) 
+		//vï¿½rification d'existence des sous rï¿½p de stockage (video, audio, image et documents) 
 		if(extStorage())
 		{
 		    //look for main directory
