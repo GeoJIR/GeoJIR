@@ -1,7 +1,8 @@
 <android.support.v4.widget.DrawerLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:id="@+id/drawer_layout" >
     
     <!-- The main content view -->
     <FrameLayout
@@ -19,36 +20,36 @@
         android:dividerHeight="0dp"
         android:background="#ccc"
         android:id="@+id/lateral_menu_left"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
         
-        <TextView
+        <Button
             android:id="@+id/drawable_capture"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/drawable_capture" />
     
-        <TextView
+        <Button
             android:id="@+id/drawable_around"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/drawable_around" />
     
-		<TextView
+		<Button
             android:id="@+id/drawable_follow"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/drawable_follow" />
     
-		<TextView
+		<Button
             android:id="@+id/drawable_account"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/drawable_account" />
-    
+
         </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

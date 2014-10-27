@@ -14,5 +14,8 @@
     <string name="drawable_around">Les médias autour de moi</string>
     <string name="drawable_follow">Les médias de ceux que je suis</string>
     <string name="drawable_account">Mon compte</string>
+    <string name="title_activity_around">AroundActivity</string>
+    <string name="title_activity_follow">FollowActivity</string>
+    <string name="title_activity_account">AccountActivity</string>
 
 </resources>
