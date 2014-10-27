@@ -16,7 +16,7 @@
 
         <ImageView
             android:id="@+id/imagePhotos"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/ic_photo_description"
@@ -25,7 +25,7 @@
         <!--
 	    <ImageView
 	        android:id="@+id/imageCamera"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dp"
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:contentDescription="@string/ic_camera_description"
@@ -33,7 +33,7 @@
 	
 	    <ImageView
 	        android:id="@+id/imageMicro"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dp"
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:contentDescription="@string/ic_micro_description"
@@ -41,7 +41,7 @@
 	
 	    <ImageView
 	        android:id="@+id/imageMedias"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dp"
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:contentDescription="@string/ic_medias_description"
@@ -65,7 +65,7 @@
 
         <TextView
             android:id="@+id/textView1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"

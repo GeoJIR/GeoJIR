@@ -30,8 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import static com.geojir.Constants.*;
 
-
-public class MainActivity extends Activity {
+public class CaptureActivity extends ParentMenuActivity {
 	
 	//Ajout pour le microphone
 	private static final String LOG_TAG = "AudioRecordTest";
@@ -293,5 +292,4 @@ public class MainActivity extends Activity {
         mPhotoName = "file:" + image.getAbsolutePath();
         return image;
     }
-    
-}
+}    

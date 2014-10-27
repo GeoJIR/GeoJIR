@@ -1,0 +1,55 @@
+<android.support.v4.widget.DrawerLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drawer_layout" >
+    
+    <!-- The main content view -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    
+    <!-- The left navigation drawer -->
+    <LinearLayout
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#ccc"
+        android:id="@+id/lateral_menu_left"
+        android:orientation="vertical" >
+        
+        <Button
+            android:id="@+id/drawable_capture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/drawable_capture" />
+    
+        <Button
+            android:id="@+id/drawable_around"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/drawable_around" />
+    
+		<Button
+            android:id="@+id/drawable_follow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/drawable_follow" />
+    
+		<Button
+            android:id="@+id/drawable_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/drawable_account" />
+
+        </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>
