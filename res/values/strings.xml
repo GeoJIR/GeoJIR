@@ -12,6 +12,6 @@
     <string name="ic_photo_label">Prendre une photo</string>
     <string name="save_song">Enregistrer un son</string>
     <string name="play_song">Jouer le son enregistré</string>
-    <string name="title_activity_list_media">ListMediaActivity</string>
+    <string name="title_activity_list_media">Liste des derniers medias</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.geojir;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +57,8 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	 * @param db
 	 * @return
 	 */
-	public String getAllMedias() {
+	public String[][] getAllMedias() {
 //		   List<String> mediaList = new ArrayList<String>();
-		String mediaList = "";
 		SQLiteDatabase db = this.getWritableDatabase();
 
 	    //pour les tests
@@ -70,16 +70,18 @@ public class ListMediaDb extends SQLiteOpenHelper {
 		
 	    Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
 	 
-	    // looping through all rows and adding to list
-        String media = "";
+	    String[][] mediaList = new String[10][2];
+	    
+		int i = 0;
 	    if (cursor.moveToFirst()) {
 	        do {
-	        	mediaList += cursor.getString(1) + " - ";
-	        	mediaList += cursor.getString(2) + "\n";
+	        	mediaList[i][0] = cursor.getString(1);
+	        	mediaList[i][1] = cursor.getString(2);
+	        	i++;
 	        } while (cursor.moveToNext());
 	    }
 	    
-	    db.close();
+ 	    db.close();
 	    
 	    // return contact list
 	    return mediaList;
@@ -97,7 +99,7 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	    {
 	    	//pour les tests
 	    	int lastentry = lastEntry(db);
-	    	lastentry = lastentry + 1;
+	    	lastentry += 1;
 	    	addMedia(lastentry, "NomFichier"+lastentry, "Remarque"+lastentry, db);
 	    }
 	    else if(nbEntries > NB_LIST_LAST_MEDIA )
@@ -119,7 +121,7 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	 * @param Remark
 	 * @param db
 	 */
-	public void addMedia(int key, String fileName, String Remark, SQLiteDatabase db)
+	private void addMedia(int key, String fileName, String Remark, SQLiteDatabase db)
 	{
 	    //on récupère le nombre d'entrées dans la base
 	    int nbEntries = countEntries(db);
@@ -160,7 +162,9 @@ public class ListMediaDb extends SQLiteOpenHelper {
         	String value2 = cursor.getString(2);
         	
 			int toto = 2;
+//			db.delete(LISTMEDIA_TABLE_NAME, KEY_ID+"="+key+" AND "+KEY_FILE_NAME+"="+value1+" AND "+KEY_REMARK+"="+value2, null);
 			db.delete(LISTMEDIA_TABLE_NAME, KEY_ID+"="+key, null);
+			int titi = 3;
 		}
 		cursor.close();
 	}
