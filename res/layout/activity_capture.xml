@@ -82,6 +82,12 @@
         android:contentDescription="@string/ic_medias_description"
         android:src="@drawable/ic_medias" />
 
+    <CheckBox
+        android:id="@+id/filterMonochrome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Noir &amp; Blanc" />
+
     <Button
         android:id="@+id/recordbutton"
         android:layout_width="wrap_content"
