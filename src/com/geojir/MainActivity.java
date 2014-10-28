@@ -59,6 +59,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+    	//Init des variables / constantes
+    	Constants.initConstants(getApplicationContext());
+
         //photo
  
         ImageView photoButton = (ImageView) this.findViewById(R.id.imagePhotos);
@@ -127,6 +130,11 @@ public class MainActivity extends Activity {
         }
         else mPlayButton.setEnabled(false);
         //fin ajout microphone
+        
+        //BOF : appel ListMedia activity
+		 Intent intent = new Intent(this, ListMediaActivity.class);
+		 startActivity(intent);
+		 //EOF : appel ListMedia activity
         
     }
 

@@ -1,15 +1,9 @@
 package com.geojir;
-
-import static com.geojir.Constants.*;
-
-import java.io.File;
-import java.io.IOException;
-
-import android.content.Context;
-import android.os.Environment;
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.TextView;
+
 
 public class ListMediaActivity extends Activity {
 
@@ -17,26 +11,18 @@ public class ListMediaActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
+
+		// on charge 10 entrÃ©es
+		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
 		
-//		File file = getFilesDir();
-		try {
-			Constants.initConstants();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// on rÃ©cupÃ¨re les 10 derniÃ¨res entrÃ©es
+		String liste;
+		liste = listeMedia.getAllMedias();
 		
-		Log.i("Test", "test variable : " + PATH_GEOJIR);
-		
-		//lecture du fichier de liste des medias
-		
-		
-		//si fichier inexistant, on le crée
-		
-		//on met le contenu dans un array
-		
-		// on récupère les 10 dernières entrées 
-		
-		//on affiche les 10 dernières entrées dans un label.
+		//on affiche les 10 derniÃ¨res entrÃ©es dans un label.
+        TextView tm = (TextView) findViewById(R.id.textViewListMedia);
+        tm.setText(liste);
 	}
 }
+
+
