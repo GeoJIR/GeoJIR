@@ -45,7 +45,9 @@ public class CaptureActivity extends ParentMenuActivity {
 
 	// checkbox qui represente le filtre noir et blanc
 	private CheckBox filterMonochrome;
-
+	//boutton pour sauvegarder le filtre N&B
+	private Button savefilterbutton;
+	
 	// photo
 	// chemin du fichier photo
 	public String mPhotoName;
@@ -64,7 +66,7 @@ public class CaptureActivity extends ParentMenuActivity {
 			mPhotoName = savedInstanceState.getString("maphoto");
 		}
 
-		
+		//on recupere la checkbox et on lui applique un listenner qui executera le filtre N&B
 		filterMonochrome = (CheckBox) findViewById(R.id.filterMonochrome);
 		OnClickListener filterclicker = new OnClickListener() {
 			public void onClick(View v) {
@@ -73,10 +75,21 @@ public class CaptureActivity extends ParentMenuActivity {
 		};
 		filterMonochrome.setOnClickListener(filterclicker);
 		
+		//boutton de sauvegarde du filtre en BDD
+		savefilterbutton = (Button) findViewById(R.id.savefilterbutton);
+		OnClickListener filterSaveClicker = new OnClickListener() {
+			public void onClick(View v) {
+				saveMonochromPic();
+			}
+		};
+		savefilterbutton.setOnClickListener(filterSaveClicker);
+		
 		if(mPhotoName == null || mPhotoName.isEmpty()) {
 			filterMonochrome.setVisibility(android.view.View.INVISIBLE);
+			savefilterbutton.setVisibility(android.view.View.INVISIBLE);
 		} else {
 			filterMonochrome.setVisibility(android.view.View.VISIBLE);
+			savefilterbutton.setVisibility(android.view.View.VISIBLE);
 		}
 
 		// photo
@@ -154,7 +167,6 @@ public class CaptureActivity extends ParentMenuActivity {
 	// n'est pas le cas dans le onCreate et le onRestore)
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-		// TODO Auto-generated method stub
 		super.onWindowFocusChanged(hasFocus);
 
 		// on teste si il y a une photo deja présente
@@ -163,8 +175,10 @@ public class CaptureActivity extends ParentMenuActivity {
 				// si cest le cas on la charge et on laffiche
 				File maphoto = new File(mPhotoName);
 				boolean p = maphoto.exists();
-				if (p)
-					setPic();
+				if (p) {
+					monochromPic();
+				}
+					
 			}
 		}
 		// fin test si photo deja présente ou non
@@ -223,6 +237,7 @@ public class CaptureActivity extends ParentMenuActivity {
 		if(filterMonochrome != null)
 		{
 			filterMonochrome.setVisibility(android.view.View.VISIBLE);
+			savefilterbutton.setVisibility(android.view.View.VISIBLE);
 		}
 	}
 
@@ -232,13 +247,11 @@ public class CaptureActivity extends ParentMenuActivity {
 		{
 			ImageView view = (ImageView) this.findViewById(R.id.imageApercu);
 			
-			// Get the dimensions of the View
+			// On recupere les dimensions de l'image view
 			int targetW = view.getWidth();
 			int targetH = view.getHeight();
-			if (targetW < 1)
-				targetW = 1;
-			if (targetH < 1)
-				targetH = 1;
+			if (targetW < 1) targetW = 1;
+			if (targetH < 1) targetH = 1;
 
 			// Get the dimensions of the bitmap
 			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -247,7 +260,7 @@ public class CaptureActivity extends ParentMenuActivity {
 			int photoW = bmOptions.outWidth;
 			int photoH = bmOptions.outHeight;
 
-			// Determine how much to scale down the image
+			// On determine le redimensionnement
 			int scaleFactor = Math.min(photoW / targetW * 3, photoH / targetH * 3);
 
 			// Decode the image file into a Bitmap sized to fill the View
@@ -256,6 +269,7 @@ public class CaptureActivity extends ParentMenuActivity {
 
 			Bitmap bitmap = BitmapFactory.decodeFile(mPhotoName, bmOptions);   
 
+			//Passage au N&B
 		    Bitmap bmpGrayscale = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 		    Canvas c = new Canvas(bmpGrayscale);
 		    ColorMatrix cm = new ColorMatrix();
@@ -264,7 +278,6 @@ public class CaptureActivity extends ParentMenuActivity {
 		    Paint paint = new Paint();
 		    paint.setColorFilter(f);
 		    c.drawBitmap(bmpGrayscale, 0, 0, paint);
-		    
 		    
 		    //sauvegarde du nouveau bitmap N&B
 		    /*FileOutputStream out = null;
@@ -277,7 +290,6 @@ public class CaptureActivity extends ParentMenuActivity {
 		        e.printStackTrace();
 		    }*/
 		    
-	        
 			// return final image
 			view.setImageBitmap(bmpGrayscale);
 		}
@@ -285,6 +297,11 @@ public class CaptureActivity extends ParentMenuActivity {
 		{
 			setPic();
 		}
+	}
+	
+	//Sauvegarde en base de donnée du filtre
+	public void saveMonochromPic() {
+		
 	}
 
 	// Microphone
@@ -378,10 +395,8 @@ public class CaptureActivity extends ParentMenuActivity {
 					"Début de l'enregistrement", Toast.LENGTH_SHORT).show();
 
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
