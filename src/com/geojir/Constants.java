@@ -1,21 +1,16 @@
 package com.geojir;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-import android.content.ContentValues;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.text.GetChars;
 import android.util.Log;
 
-public class Constants {
+public class Constants extends Activity {
 	
 	//Directories URL
     public static String PATH_GEOJIR = "GeoJIR";

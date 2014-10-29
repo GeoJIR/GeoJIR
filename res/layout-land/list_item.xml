@@ -21,7 +21,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/icon"
         android:text="Path fichier"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/remark"
@@ -32,6 +32,6 @@
         android:layout_toRightOf="@+id/pathFileName"
         android:paddingLeft="16dp"
         android:text="Remarque"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
 </RelativeLayout>

@@ -2,7 +2,9 @@ package com.geojir;
 
 import java.sql.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,13 +25,16 @@ public class ListMediaDb extends SQLiteOpenHelper {
   
   private static final String LISTMEDIA_TABLE_CREATE =
           "CREATE TABLE " + LISTMEDIA_TABLE_NAME + " (" +
-          "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//          "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
           KEY_ID + " INTEGER, " +
           KEY_FILE_NAME + " TEXT, " +
           KEY_REMARK + " TEXT);";
 
-   private static final String SQL_SELECT_ENTRIES =
+  private static final String SQL_SELECT_ENTRIES =
           "SELECT * FROM " + LISTMEDIA_TABLE_NAME;
+
+  private static final String SQL_DELETE_ENTRIES =
+          "DELETE FROM " + LISTMEDIA_TABLE_NAME;
 
   private static final String SQL_DELETE_TABLE =
 	  		"DROP TABLE IF EXISTS " + LISTMEDIA_TABLE_NAME;
@@ -48,7 +53,6 @@ public class ListMediaDb extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 	       db.delete(LISTMEDIA_TABLE_NAME, null, null);
 	       onCreate(db);
 	}
@@ -57,33 +61,19 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	 * @param db
 	 * @return
 	 */
-	public String[][] getAllMedias() {
-//		   List<String> mediaList = new ArrayList<String>();
+	public ArrayList<Map<String, String>> getAllMedias() {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 	    //pour les tests
 //		Cursor cursorDrop = db.rawQuery(SQL_DELETE_TABLE, null);
+//		Cursor cursorDrop = db.rawQuery(SQL_DELETE_ENTRIES, null);
 //	    cursorDrop.close();
 	    
-		//on regarde s'il n'y a pas plus d'entrées que prévu
+		//Test nb entries
 		testNbEntries(db);
 		
-	    Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
-	 
-	    String[][] mediaList = new String[10][2];
-	    
-		int i = 0;
-	    if (cursor.moveToFirst()) {
-	        do {
-	        	mediaList[i][0] = cursor.getString(1);
-	        	mediaList[i][1] = cursor.getString(2);
-	        	i++;
-	        } while (cursor.moveToNext());
-	    }
-	    
- 	    db.close();
-	    
-	    // return contact list
+		ArrayList<Map<String, String>> mediaList = buildData(db);
+		
 	    return mediaList;
 	}
 	
@@ -97,52 +87,58 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	    
 	    if(nbEntries == NB_LIST_LAST_MEDIA )
 	    {
-	    	//pour les tests
+	    	//BOF : pour les tests
 	    	int lastentry = lastEntry(db);
 	    	lastentry += 1;
 	    	addMedia(lastentry, "NomFichier"+lastentry, "Remarque"+lastentry, db);
+	    	//EOF : pour les tests
 	    }
-	    else if(nbEntries > NB_LIST_LAST_MEDIA )
+	    else 
 	    {
-	    	//on a plus de X entrées, on les supprime toutes
-		    db.delete(LISTMEDIA_TABLE_NAME, null, null);
-	    	
-			//puis on en rajoute X pour les test
-	    	for(int i=0; i<10; i++)
-			{
-	    		addMedia(i, "NomFichier"+i, "Remarque"+i, db);
-			}
+	    	if(nbEntries > NB_LIST_LAST_MEDIA )
+	    	{
+		    	//on a plus de X entrées, on les supprime toutes
+			    db.delete(LISTMEDIA_TABLE_NAME, null, null);
+	    	}
+	    	if(!(nbEntries < NB_LIST_LAST_MEDIA && nbEntries > 0))
+	    	{
+				//puis on en rajoute X pour les test
+		    	for(int i=0; i<10; i++)
+				{
+		    		addMedia(i, "NomFichier"+i, "Remarque"+i, db);
+//		    		addMedia(i, Constants.PATH_IMAGE+"/picture01.jpg", "Remarque"+i, db);
+				}
+	    	}
 	    }
 	}
 
-	// Gets the data repository in write mode
 	/**
+	 * @param key
 	 * @param fileName
 	 * @param Remark
 	 * @param db
 	 */
 	private void addMedia(int key, String fileName, String Remark, SQLiteDatabase db)
 	{
-	    //on récupère le nombre d'entrées dans la base
+	    //return datebase's count entries 
 	    int nbEntries = countEntries(db);
 	    
 	    if(nbEntries == NB_LIST_LAST_MEDIA || nbEntries < NB_LIST_LAST_MEDIA)
 	    {
-		    //on a le nombre d'entrée, on va supprimer la première
+		    //add a new entry then delete the first entry of the database
+		    addEntry(key, fileName, Remark, db);
 	    	if(nbEntries == NB_LIST_LAST_MEDIA)
 		    {
 		    	deleteFirstEntry(db);
 		    }
-	    	
-	    	//on ajoute la nouvelle entrée
-		    addEntry(key, fileName, Remark, db);
 	    }
 	    else
 	    {
-	    	//on a plus de X entrées, on les supprime toutes
+	    	//Error : more than NB_LIST_LAST_MEDIA entries
+	    	//deleting all entries
 		    db.delete(LISTMEDIA_TABLE_NAME, null, null);
 	    	
-			//puis on en rajoute X pour les tests
+			//then add tests entries
 	    	for(int i=0; i<10; i++)
 			{
 				addEntry(i, "NomFichier"+i, "Remarque"+i, db);
@@ -156,14 +152,20 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	private void deleteFirstEntry(SQLiteDatabase db) {
 		Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
 		if (cursor.moveToFirst()) {
-			int key = cursor.getPosition();
+//			int key = cursor.getPosition();
+			int key = cursor.getInt(0);
+			
         	int value0 = cursor.getInt(0);
         	String value1 = cursor.getString(1);
         	String value2 = cursor.getString(2);
         	
 			int toto = 2;
-//			db.delete(LISTMEDIA_TABLE_NAME, KEY_ID+"="+key+" AND "+KEY_FILE_NAME+"="+value1+" AND "+KEY_REMARK+"="+value2, null);
-			db.delete(LISTMEDIA_TABLE_NAME, KEY_ID+"="+key, null);
+			
+//			db.beginTransaction();
+			db.delete(LISTMEDIA_TABLE_NAME, KEY_ID+" = "+key, null);
+//			db.setTransactionSuccessful();
+//			db.endTransaction();
+			
 			int titi = 3;
 		}
 		cursor.close();
@@ -201,8 +203,32 @@ public class ListMediaDb extends SQLiteOpenHelper {
 	private int lastEntry(SQLiteDatabase db) {
 		Cursor cursorLast = db.rawQuery(SQL_SELECT_ENTRIES, null);
 		cursorLast.moveToLast();
-	    int lastEntry = cursorLast.getPosition();
+	    int lastEntry = cursorLast.getInt(0);
 	    cursorLast.close();
 		return lastEntry;
 	}
+
+   private ArrayList<Map<String, String>> buildData(SQLiteDatabase db) {
+        
+	   ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
+	   
+	    Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
+		 
+	    if (cursor.moveToFirst()) {
+	        do {
+	        	list.add(putData(cursor.getString(1), cursor.getString(2)));
+	        } while (cursor.moveToNext());
+	    }
+	    
+ 	    db.close();
+
+        return list;
+    }
+
+    private HashMap<String, String> putData(String pathFileName, String remark) {
+        HashMap<String, String> item = new HashMap<String, String>();
+        item.put("pathFileName", pathFileName);
+        item.put("remark", remark);
+        return item;
+    }
 }

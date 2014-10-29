@@ -29,14 +29,15 @@ public final class R {
         public static final int ic_photo=0x7f020004;
     }
     public static final class id {
-        public static final int action_settings=0x7f080008;
+        public static final int action_settings=0x7f080009;
         public static final int icon=0x7f080006;
         public static final int imageApercu=0x7f080003;
         public static final int imagePhotos=0x7f080001;
         public static final int listViewMedias=0x7f080000;
+        public static final int pathFileName=0x7f080007;
         public static final int playbutton=0x7f080005;
         public static final int recordbutton=0x7f080004;
-        public static final int remark=0x7f080007;
+        public static final int remark=0x7f080008;
         public static final int textViewListMedia=0x7f080002;
     }
     public static final class layout {
@@ -58,6 +59,8 @@ public final class R {
         public static final int ic_micro_description=0x7f050006;
         public static final int ic_photo_description=0x7f050004;
         public static final int ic_photo_label=0x7f050008;
+        public static final int it_your_email=0x7f05000d;
+        public static final int it_your_name=0x7f05000c;
         public static final int play_song=0x7f05000a;
         public static final int save_song=0x7f050009;
         public static final int title_activity_list_media=0x7f05000b;
