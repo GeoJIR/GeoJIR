@@ -33,11 +33,10 @@ public class ListMediaActivity extends Activity {
                  values,
                  R.layout.list_item,
                  new String[] {"pathFileName", "remark"},
-                 new int[] {R.id.pathFileName, R.id.remark}
+                 //new int[] {R.id.pathFileName, R.id.remark}
+                 new int[] {R.id.icon, R.id.remark}
         );
 	    
 	    vue.setAdapter(adapterSimple);
 	}
 }
-
-
