@@ -12,7 +12,7 @@
     <string name="ic_photo_label">Prendre une photo</string>
     <string name="save_song">Enregistrer un son</string>
     <string name="play_song">Jouer le son enregistré</string>
-    <string name="title_activity_list_media">ListMediaActivity</string>
+
     <string name="drawable_capture">Capturer un média</string>
     <string name="drawable_around">Les médias autour de moi</string>
     <string name="drawable_follow">Les médias de ceux que je suis</string>
@@ -24,4 +24,6 @@
     <string name="username">"Nom d'utilisateur"</string>
     <string name="email">Adresse email</string>
     <string name="infoAccount">Enregistrer les infos</string>
+
+    <string name="title_activity_list_media">Liste des derniers medias</string>
 </resources>

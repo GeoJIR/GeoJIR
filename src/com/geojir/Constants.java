@@ -1,17 +1,15 @@
 package com.geojir;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.util.Log;
 
-public class Constants {
+public class Constants extends Activity {
 	
-    //Document file
-    public static final String FILE_MEDIA_LIST_NAME = "geojir_media_list.csv";
-
 	//Directories URL
     public static String PATH_GEOJIR = "GeoJIR";
     public static String PATH_VIDEO = PATH_GEOJIR + "/" + Environment.DIRECTORY_MOVIES;
@@ -38,19 +36,82 @@ public class Constants {
 	public static final int REQUEST_CODE = 1888;
 	
 	//Divers
-	public static final int NB_LIST_LAST_MEDIA = 10;
 	public static final int NB_CAR_COMMENT = 140;
 	
-	//Tests
-	private static final String TEXT_CSV = ""+
-	"Music/music001.3gp;Super morceau\n"+
-	"Music/music002.3gp;Bon morceau\n"+
-	"Video/video001.mp4;Super film\n"+
-	"Music/music004.3gp;Morceau extraordinaire\n"+
-	"Video/video002.3gp;Video int�ressante\n"+
-	"Video/video003.3gp;Super morceau";
+	//Preferences
+	public static final String PREF_ACCOUNT = "pref_account";
+	public static final String PREF_ACCOUNT_NAME = "pref_account_name";
+	public static final String PREF_DEFAULT_ACCOUNT_NAME = "Votre nom";
+	public static final String PREF_ACCOUNT_EMAIL = "pref_account_email";
+	public static final String PREF_DEFAULT_ACCOUNT_EMAIL = "Votre email";
+	public static final String PREF_ACCOUNT_FOLLOWED = "";
+	public static final String PREF_DEFAULT_ACCOUNT_FOLLOWED = "";
+	public static final String PREF_ACCOUNT_FOLLOWERS = "";
+	public static final String PREF_DEFAULT_ACCOUNT_FOLLOWERS = "";
 
-	//Methods
+	
+	/************************ METHODS ******************/
+	/*
+	Name [can edit]
+	email address [can edit]
+	Name and/or email address of people "followed" [can edit]
+	Name and/or email address of "followers" [can NOT edit]	
+	 */
+	
+	//SET preferences element
+	public void setAccountName(SharedPreferences preferences, String value) {
+		
+		((SharedPreferences) preferences).edit();
+		((Editor) preferences).putString(PREF_ACCOUNT_NAME, value);
+		((Editor) preferences).commit();
+	}
+
+	public void setAccountEmail(SharedPreferences preferences, String value) {
+		
+		((SharedPreferences) preferences).edit();
+		((Editor) preferences).putString(PREF_ACCOUNT_EMAIL, value);
+		((Editor) preferences).commit();
+	}
+
+	public void setAccountFollowed(SharedPreferences preferences, String value) {
+		
+		((SharedPreferences) preferences).edit();
+		((Editor) preferences).putString(PREF_ACCOUNT_FOLLOWED, value);
+		((Editor) preferences).commit();
+	}
+
+	public void setAccountFollowers(SharedPreferences preferences, String value) {
+		
+		((SharedPreferences) preferences).edit();
+		((Editor) preferences).putString(PREF_ACCOUNT_FOLLOWERS, value);
+		((Editor) preferences).commit();
+	}
+
+	//GET preferences element
+	public String getAccountName(SharedPreferences preferences) {
+		
+		return preferences.getString(PREF_ACCOUNT_NAME, PREF_DEFAULT_ACCOUNT_NAME);
+		
+	}
+
+	public String getAccountEmail(SharedPreferences preferences) {
+		
+		return preferences.getString(PREF_ACCOUNT_EMAIL, PREF_DEFAULT_ACCOUNT_EMAIL);
+		
+	}
+
+	public String getAccountFollowed(SharedPreferences preferences) {
+		
+		return preferences.getString(PREF_ACCOUNT_FOLLOWED, PREF_DEFAULT_ACCOUNT_FOLLOWED);
+		
+	}
+
+	public String getAccountFollowers(SharedPreferences preferences) {
+		
+		return preferences.getString(PREF_ACCOUNT_FOLLOWERS, PREF_DEFAULT_ACCOUNT_FOLLOWERS);
+		
+	}
+
 	// Checks if external storage is available for read and write
 	private static boolean isExternalStorageWritable() 
 	{
@@ -61,75 +122,30 @@ public class Constants {
 	    return false;
 	}
 	
-	private static boolean extStorage()
-	{
-		if(isExternalStorageWritable())
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public static void initConstants() throws IOException
+	public static void initConstants(Context context)
 	{
 		// Get the directory for the user's public pictures directory. 
-//		File file = Environment.getRootDirectory();
-//		toto = getExternalFilesDir("");
-		
-		
-		
-		//v�rification d'existence des sous r�p de stockage (video, audio, image et documents) 
-		if(extStorage())
+		if(isExternalStorageWritable())
 		{
-		    //look for main directory
-			File file = new File(Environment.getExternalStoragePublicDirectory(PATH_GEOJIR), "" );
-		    
-		    if(!file.exists()) 
-		    {
-			    //Main directory not created, we'll create  all directories
-		    	for(int i=0; i<listPath.length; i++) 
-		    	{
-		    		file = new File(Environment.getExternalStoragePublicDirectory(listPath[i]), "" );
+		    //we'll create all directories if anyone are not created
+	    	for(int i=0; i<listPath.length; i++) 
+	    	{
+	    		File file = new File(Environment.getExternalStoragePublicDirectory(listPath[i]), "" );
+	    		if(!file.exists()) 
+			    {
 		    	    if(!file.mkdirs())
 		    	        Log.e("ExternalStorage "+listPath[i], "Directory not created ");
-		    	}
-		    }
-		    
-	    	// TODO : if file listmedia not exists, we'll create it
-		    file = new File(Environment.getExternalStoragePublicDirectory(PATH_GEOJIR), FILE_MEDIA_LIST_NAME );
-		    
-		    if(!file.exists()) 
-		    {
-    	        Log.i(FILE_MEDIA_LIST_NAME, "File not exists ");
-		    	try {
-					if(!file.createNewFile())
-					    Log.e(FILE_MEDIA_LIST_NAME, "File not created ");
-					else
-					{
-					    Log.i(FILE_MEDIA_LIST_NAME, "File created ");
-						
-						FileWriter writer = new FileWriter(file); 
-						// Writes the content to the file
-						writer.write(TEXT_CSV); 
-						writer.flush();
-						writer.close();
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    }
-		    else
-		    {
-		    	//on va lire le fichier
-		    }
+		    	    else
+		    	        Log.e("ExternalStorage "+listPath[i], "Directory created ");
+			    }
+	    	}
 		}
 		else
 		{
-		    File filer = new File(Environment.getExternalStoragePublicDirectory(
-		            Environment.DIRECTORY_MOVIES), PATH_GEOJIR );
+		    //créer le path interne
+			File file = new File(context.getFilesDir(), PATH_GEOJIR );
 		    
-		    if (!filer.mkdirs()) {
+		    if (!file.mkdirs()) {
 		        Log.e(PATH_GEOJIR, "Directory not created");
 		    }
 		}

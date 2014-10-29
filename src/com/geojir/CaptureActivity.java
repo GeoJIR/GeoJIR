@@ -60,7 +60,16 @@ public class CaptureActivity extends ParentMenuActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_capture);
+/******************************************POUR LES TESTS*************************************************************/
+    	//Init des variables / constantes
+    	Constants.initConstants(getApplicationContext());
 
+		//BOF : appel ListMedia activity
+		Intent intent = new Intent(this, ListMediaActivity.class);
+		startActivity(intent);
+		//EOF : appel ListMedia activity
+/******************************************POUR LES TESTS*************************************************************/
+        
 		// on récupére le chemin de la photo s'il y en avait déjà une
 		if (savedInstanceState != null) {
 			mPhotoName = savedInstanceState.getString("maphoto");
