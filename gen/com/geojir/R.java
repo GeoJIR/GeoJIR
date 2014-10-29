@@ -78,21 +78,23 @@ public final class R {
         public static final int drawable_around=0x7f05000c;
         public static final int drawable_capture=0x7f05000b;
         public static final int drawable_follow=0x7f05000d;
-        public static final int email=0x7f050013;
+        public static final int email=0x7f050014;
         public static final int hello_world=0x7f050001;
         public static final int ic_camera_description=0x7f050005;
         public static final int ic_medias_description=0x7f050007;
         public static final int ic_micro_description=0x7f050006;
         public static final int ic_photo_description=0x7f050004;
         public static final int ic_photo_label=0x7f050008;
-        public static final int infoAccount=0x7f050014;
+        public static final int infoAccount=0x7f050016;
         public static final int play_song=0x7f05000a;
         public static final int save_song=0x7f050009;
         public static final int title_activity_account=0x7f050011;
         public static final int title_activity_around=0x7f05000f;
         public static final int title_activity_follow=0x7f050010;
-        public static final int title_activity_list_media=0x7f050015;
+        public static final int title_activity_list_media=0x7f050017;
         public static final int username=0x7f050012;
+        public static final int youremail=0x7f050015;
+        public static final int yourname=0x7f050013;
     }
     public static final class style {
         /** 

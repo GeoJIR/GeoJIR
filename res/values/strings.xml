@@ -22,7 +22,9 @@
     <string name="title_activity_account">AccountActivity</string>
 
     <string name="username">"Nom d'utilisateur"</string>
+    <string name="yourname">"Votre nom"</string>
     <string name="email">Adresse email</string>
+    <string name="youremail">Votre email</string>
     <string name="infoAccount">Enregistrer les infos</string>
 
     <string name="title_activity_list_media">Liste des derniers medias</string>

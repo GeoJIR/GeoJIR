@@ -16,8 +16,9 @@
         android:id="@+id/acountcreation_email"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:inputType="textEmailAddress"
-        android:layout_gravity="center" />
+        android:text="@string/yourname" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,7 +34,8 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:inputType="textPassword" />
+        android:inputType="text"
+        android:text="@string/youremail" />
 
     <Button
         android:id="@+id/acountcreation_connect"

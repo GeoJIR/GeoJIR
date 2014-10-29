@@ -3,8 +3,6 @@ package com.geojir;
 import java.io.File;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.util.Log;
 
@@ -58,60 +56,6 @@ public class Constants extends Activity {
 	Name and/or email address of "followers" [can NOT edit]	
 	 */
 	
-	//SET preferences element
-	public void setAccountName(SharedPreferences preferences, String value) {
-		
-		((SharedPreferences) preferences).edit();
-		((Editor) preferences).putString(PREF_ACCOUNT_NAME, value);
-		((Editor) preferences).commit();
-	}
-
-	public void setAccountEmail(SharedPreferences preferences, String value) {
-		
-		((SharedPreferences) preferences).edit();
-		((Editor) preferences).putString(PREF_ACCOUNT_EMAIL, value);
-		((Editor) preferences).commit();
-	}
-
-	public void setAccountFollowed(SharedPreferences preferences, String value) {
-		
-		((SharedPreferences) preferences).edit();
-		((Editor) preferences).putString(PREF_ACCOUNT_FOLLOWED, value);
-		((Editor) preferences).commit();
-	}
-
-	public void setAccountFollowers(SharedPreferences preferences, String value) {
-		
-		((SharedPreferences) preferences).edit();
-		((Editor) preferences).putString(PREF_ACCOUNT_FOLLOWERS, value);
-		((Editor) preferences).commit();
-	}
-
-	//GET preferences element
-	public String getAccountName(SharedPreferences preferences) {
-		
-		return preferences.getString(PREF_ACCOUNT_NAME, PREF_DEFAULT_ACCOUNT_NAME);
-		
-	}
-
-	public String getAccountEmail(SharedPreferences preferences) {
-		
-		return preferences.getString(PREF_ACCOUNT_EMAIL, PREF_DEFAULT_ACCOUNT_EMAIL);
-		
-	}
-
-	public String getAccountFollowed(SharedPreferences preferences) {
-		
-		return preferences.getString(PREF_ACCOUNT_FOLLOWED, PREF_DEFAULT_ACCOUNT_FOLLOWED);
-		
-	}
-
-	public String getAccountFollowers(SharedPreferences preferences) {
-		
-		return preferences.getString(PREF_ACCOUNT_FOLLOWERS, PREF_DEFAULT_ACCOUNT_FOLLOWERS);
-		
-	}
-
 	// Checks if external storage is available for read and write
 	private static boolean isExternalStorageWritable() 
 	{

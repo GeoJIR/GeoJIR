@@ -63,11 +63,16 @@ public class CaptureActivity extends ParentMenuActivity {
 /******************************************POUR LES TESTS*************************************************************/
     	//Init des variables / constantes
     	Constants.initConstants(getApplicationContext());
-
+/*
 		//BOF : appel ListMedia activity
 		Intent intent = new Intent(this, ListMediaActivity.class);
 		startActivity(intent);
 		//EOF : appel ListMedia activity
+*/		
+		//BOF : appel AccountActivity activity
+		Intent intent2 = new Intent(this, AccountActivity.class);
+		startActivity(intent2);
+		//EOF : appel AccountActivity activity
 /******************************************POUR LES TESTS*************************************************************/
         
 		// on récupére le chemin de la photo s'il y en avait déjà une
