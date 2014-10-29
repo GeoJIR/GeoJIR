@@ -38,11 +38,6 @@ public class ListMediaActivity extends Activity {
 	    
 	    vue.setAdapter(adapterSimple);
 	}
-	
-	protected void onSaveInstanceState(Bundle savedInstanceState)
-	{
-		super.onSaveInstanceState(savedInstanceState);
-	}
- }
+}
 
 

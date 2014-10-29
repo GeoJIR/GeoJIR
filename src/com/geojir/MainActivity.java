@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.geojir.MicroActivity.PlayButton;
-import com.geojir.MicroActivity.RecordButton;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
