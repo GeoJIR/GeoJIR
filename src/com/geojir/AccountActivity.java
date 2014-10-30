@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -37,34 +39,46 @@ public class AccountActivity extends ParentMenuActivity {
 		mail.setText(getAccountEmail(preferences));
 		
 		//on ajoute un listener au TextEdit du nom pour éventuellement le mettre à ""
-		//et si le Text Edit du mail est à "" on lui remet la valeur par défaut
 		username.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				//TODO : la mise à jour du TextEdit n'est pas intantanée
-				if( mail.getText().toString().equals(""))
-					mail.setText(Constants.PREF_DEFAULT_ACCOUNT_EMAIL);
-				
 				if( username.getText().toString().equals(Constants.PREF_DEFAULT_ACCOUNT_NAME))
 					username.setText("");
 			}
 		});
 		
+		//un listener sur username pour que si le TextEdit du mail est à "" on lui remet la valeur par défaut
+		username.addTextChangedListener(new TextWatcher(){
+	        public void afterTextChanged(Editable s) {
+	        }
+	        public void beforeTextChanged(CharSequence s, int start, int count, int after){
+				if( mail.getText().toString().equals(""))
+					mail.setText(Constants.PREF_DEFAULT_ACCOUNT_EMAIL);
+	        }
+	        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	    }); 
+
 		//on ajoute un listener au TextEdit du mail pour éventuellement le mettre à ""
-		//et si le Text Edit du nom est à "" on lui remet la valeur par défaut
 		mail.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				//TODO : la mise à jour du TextEdit n'est pas intantanée
-				if( username.getText().toString().equals(""))
-					username.setText(Constants.PREF_DEFAULT_ACCOUNT_NAME);
-				
 				if( mail.getText().toString().equals(Constants.PREF_DEFAULT_ACCOUNT_EMAIL))
 					mail.setText("");
 			}
 		});
+		
+		//un listener sur email pour que si le TextEdit du nom est à "" on lui remet la valeur par défaut
+		mail.addTextChangedListener(new TextWatcher(){
+	        public void afterTextChanged(Editable s) {
+	        }
+	        public void beforeTextChanged(CharSequence s, int start, int count, int after){
+				if( username.getText().toString().equals(""))
+					username.setText(Constants.PREF_DEFAULT_ACCOUNT_NAME);
+	        }
+	        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	    }); 
 		
 		//on ajoute un listener au boutton de la vue
 		saveButton = (Button) findViewById(R.id.acountcreation_connect);
