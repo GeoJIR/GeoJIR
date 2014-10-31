@@ -75,7 +75,7 @@
 		        android:orientation="horizontal" >
 		
 		        <TextView
-		            android:id="@+id/textView1"
+		            android:id="@+id/textViewFollowers"
 		            android:layout_width="0dp"
 		            android:layout_height="wrap_content"
 		            android:layout_weight="1"

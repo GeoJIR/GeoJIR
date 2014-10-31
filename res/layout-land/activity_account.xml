@@ -3,46 +3,115 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="20dp"
-        android:text="@string/username"
-        android:textSize="15sp"
-        android:textColor="#000000" />
+        android:layout_weight="0.65"
+        android:columnCount="1" >
 
-    <EditText
-        android:id="@+id/acountcreation_email"
-        android:layout_width="172dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="@string/yourname"
-        android:inputType="textEmailAddress" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="0.75"
+            android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="20dp"
-        android:textSize="15sp"
-        android:text="@string/email"
-        android:textColor="#000000" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="20dp"
+                android:text="@string/username"
+                android:textColor="#000000"
+                android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/acountcreation_password"
-        android:layout_width="244dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="@string/youremail"
-        android:inputType="text" />
+            <EditText
+                android:id="@+id/acountcreation_email"
+                android:layout_width="172dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:hint="@string/yourname"
+                android:inputType="textEmailAddress" />
 
-    <Button
-        android:id="@+id/acountcreation_connect"
-        android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="20dp"
+                android:text="@string/email"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/acountcreation_password"
+                android:layout_width="244dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:hint="@string/youremail"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="269dp"
+            android:layout_height="match_parent"
+            android:layout_column="0"
+            android:layout_gravity="right"
+            android:layout_row="0"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textViewFollowers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="20dp"
+                android:text="@string/followersList"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/editText1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="Mettre une liste" >
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="20dp"
+                android:text="@string/followedsList"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="Mettre une liste" />
+
+        </LinearLayout>
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="530dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="@string/infoAccount" />
+        android:layout_gravity="right"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/acountcreation_connect"
+            android:layout_width="252dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/infoAccount" />
+    </LinearLayout>
 
 </LinearLayout>
