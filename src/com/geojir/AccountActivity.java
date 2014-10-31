@@ -1,17 +1,17 @@
 package com.geojir;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.geojir.Constants.*;
+import android.widget.Toast;
 
 public class AccountActivity extends ParentMenuActivity {
 
@@ -25,6 +25,9 @@ public class AccountActivity extends ParentMenuActivity {
 	//shared preferences
 	SharedPreferences preferences;
 
+	/* (non-Javadoc)
+	 * @see com.geojir.ParentMenuActivity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,60 +40,37 @@ public class AccountActivity extends ParentMenuActivity {
 		
 		username.setText(getAccountName(preferences));
 		mail.setText(getAccountEmail(preferences));
-		
-		//on ajoute un listener au TextEdit du nom pour éventuellement le mettre à ""
-		username.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				if( username.getText().toString().equals(Constants.PREF_DEFAULT_ACCOUNT_NAME))
-					username.setText("");
-			}
-		});
+		//Observable sur le bouton
+		final String message = getString(R.string.infoSaved);
 		
-		//un listener sur username pour que si le TextEdit du mail est à "" on lui remet la valeur par défaut
-		username.addTextChangedListener(new TextWatcher(){
-	        public void afterTextChanged(Editable s) {
-	        }
-	        public void beforeTextChanged(CharSequence s, int start, int count, int after){
-				if( mail.getText().toString().equals(""))
-					mail.setText(Constants.PREF_DEFAULT_ACCOUNT_EMAIL);
-	        }
-	        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	    }); 
+		final OnClickTest onSubscribe = new OnClickTest(message);
+		
+		final Observable<String> myObservable = Observable.create(onSubscribe);
 
-		//on ajoute un listener au TextEdit du mail pour éventuellement le mettre à ""
-		mail.setOnClickListener(new OnClickListener() {
+		final Action1<String> onNextAction = new Action1<String>() {
+		    @Override
+		    public void call(String s) { 
+		    	Toast.makeText(AccountActivity.this, message, Toast.LENGTH_SHORT).show(); }
+		};
 
-			@Override
-			public void onClick(View v) {
-				if( mail.getText().toString().equals(Constants.PREF_DEFAULT_ACCOUNT_EMAIL))
-					mail.setText("");
-			}
-		});
-		
-		//un listener sur email pour que si le TextEdit du nom est à "" on lui remet la valeur par défaut
-		mail.addTextChangedListener(new TextWatcher(){
-	        public void afterTextChanged(Editable s) {
-	        }
-	        public void beforeTextChanged(CharSequence s, int start, int count, int after){
-				if( username.getText().toString().equals(""))
-					username.setText(Constants.PREF_DEFAULT_ACCOUNT_NAME);
-	        }
-	        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	    }); 
-		
+		myObservable.subscribe(onNextAction);
+
 		//on ajoute un listener au boutton de la vue
 		saveButton = (Button) findViewById(R.id.acountcreation_connect);
+		
 		saveButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				//enregistrement dans les préférences des infos de l'utilisateur
-				setAccountName(preferences, username.getText().toString());
-				setAccountEmail(preferences, mail.getText().toString());
+				setAccountName(preferences, username.getText().toString().trim());
+				setAccountEmail(preferences, mail.getText().toString().trim());
+				
+				//on informe l'observable 
+				onSubscribe.onClick();
 			}
 		});
+		
 	}	
 
 	//SET preferences element
@@ -122,26 +102,45 @@ public class AccountActivity extends ParentMenuActivity {
 	
 	//GET preferences element
 	public String getAccountName(SharedPreferences preferences) {
-		return preferences.getString(Constants.PREF_ACCOUNT_NAME, Constants.PREF_DEFAULT_ACCOUNT_NAME);
-		
+		return preferences.getString(Constants.PREF_ACCOUNT_NAME, null);
 	}
 	
 	public String getAccountEmail(SharedPreferences preferences) {
-		
-		return preferences.getString(Constants.PREF_ACCOUNT_EMAIL, Constants.PREF_DEFAULT_ACCOUNT_EMAIL);
-		
+		return preferences.getString(Constants.PREF_ACCOUNT_EMAIL, null);
 	}
 	
 	public String getAccountFollowed(SharedPreferences preferences) {
-		
 		return preferences.getString(Constants.PREF_ACCOUNT_FOLLOWED, Constants.PREF_DEFAULT_ACCOUNT_FOLLOWED);
-		
 	}
 	
 	public String getAccountFollowers(SharedPreferences preferences) {
-		
 		return preferences.getString(Constants.PREF_ACCOUNT_FOLLOWERS, Constants.PREF_DEFAULT_ACCOUNT_FOLLOWERS);
-		
 	}
 
+	/**
+	 * 
+	 * @author Igor
+	 *
+	 */
+	private final class OnClickTest implements Observable.OnSubscribe<String>
+	{
+		private final String message;
+		private Subscriber<? super String> subscriber;
+
+		private OnClickTest(String message)
+		{
+			this.message = message;
+		}
+
+		@Override
+		public void call(Subscriber<? super String> subscriber)
+		{
+			this.subscriber = subscriber;
+			
+		}
+
+		public void onClick() {
+			this.subscriber.onNext(message);
+		}
+	}
 }

@@ -26,6 +26,7 @@
     <string name="email">Adresse email</string>
     <string name="youremail">Votre email</string>
     <string name="infoAccount">Enregistrer les infos</string>
-
+    <string name="infoSaved">Infos enregistrées</string>
+    
     <string name="title_activity_list_media">Liste des derniers medias</string>
 </resources>
