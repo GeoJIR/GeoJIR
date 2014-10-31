@@ -61,41 +61,41 @@
             android:layout_row="0"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textViewFollowers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingTop="20dp"
-                android:text="@string/followersList"
-                android:textColor="#000000"
-                android:textSize="16sp" />
+     <TextView
+         android:id="@+id/textViewFollowers"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center"
+         android:paddingTop="20dp"
+         android:text="@string/followersList"
+         android:textColor="#000000"
+         android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="Mettre une liste" >
+     <EditText
+         android:id="@+id/editText1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:ems="10"
+         android:text="Mettre une liste" >
 
-                <requestFocus />
-            </EditText>
+         <requestFocus />
+     </EditText>
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingTop="20dp"
-                android:text="@string/followedsList"
-                android:textSize="16sp" />
+     <TextView
+         android:id="@+id/textView1"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center"
+         android:paddingTop="20dp"
+         android:text="@string/followedsList"
+         android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/editText2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="Mettre une liste" />
+     <EditText
+         android:id="@+id/editText2"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:ems="10"
+         android:text="Mettre une liste" />
 
         </LinearLayout>
     </GridLayout>

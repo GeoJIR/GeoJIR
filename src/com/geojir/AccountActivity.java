@@ -63,6 +63,7 @@ public class AccountActivity extends ParentMenuActivity {
 			@Override
 			public void onClick(View v) {
 				//enregistrement dans les préférences des infos de l'utilisateur
+				//TODO vérifier si un(les) champ(s) ne sont pas vides
 				setAccountName(preferences, username.getText().toString().trim());
 				setAccountEmail(preferences, mail.getText().toString().trim());
 				
