@@ -22,6 +22,14 @@
             android:contentDescription="@string/ic_photo_description"
             android:src="@drawable/ic_photo" />
 
+	    <ImageView
+	        android:id="@+id/imageMicro"
+	        android:layout_width="0dp"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:contentDescription="@string/ic_micro_description"
+	        android:src="@drawable/ic_micro" />
+	
         <!--
 	    <ImageView
 	        android:id="@+id/imageCamera"
@@ -30,14 +38,6 @@
 	        android:layout_height="wrap_content"
 	        android:contentDescription="@string/ic_camera_description"
 	        android:src="@drawable/ic_camera" />
-	
-	    <ImageView
-	        android:id="@+id/imageMicro"
-	        android:layout_width="0dp"
-	        android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:contentDescription="@string/ic_micro_description"
-	        android:src="@drawable/ic_micro" />
 	
 	    <ImageView
 	        android:id="@+id/imageMedias"
@@ -50,48 +50,65 @@
 
     </LinearLayout>
 
-    <!--
-    <MediaController
-        android:id="@+id/mediaController1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    </MediaController>
-    -->
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textViewPhoto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ic_photo_label" />
+
+        <TextView
+            android:id="@+id/textViewMicro"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/ic_micro_label" />
+        
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imageApercu"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginTop="40dp"
-        android:contentDescription="@string/ic_medias_description"
-        android:src="@drawable/ic_medias" />
-
-    <Button
-        android:id="@+id/recordbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save_song" />
-
-    <Button
-        android:id="@+id/playbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/play_song" />
+    <FrameLayout
+        android:id="@+id/contentMediaCapture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
+        <com.geojir.view.CaptureImageView
+		    xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/captureImageView"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="40dp"
+			android:layout_marginRight="40dp"
+			android:layout_marginTop="40dp"
+			android:contentDescription="@string/ic_medias_description"
+			android:src="@drawable/ic_medias" />
+       
+		<LinearLayout 
+		    android:id="@+id/mediaController"
+  			android:orientation="vertical"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent" >
+		    
+		    <Button
+		        android:id="@+id/recordbutton"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/save_song" />
+		
+		    <Button
+		        android:id="@+id/playbutton"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/play_song" />
+		    
+		</LinearLayout>
+	
+	</FrameLayout>   
 
 </LinearLayout>
