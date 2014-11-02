@@ -76,16 +76,17 @@
     <FrameLayout
         android:id="@+id/contentMediaCapture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content" >
         
         <com.geojir.view.CaptureImageView
 		    xmlns:android="http://schemas.android.com/apk/res/android"
 			android:id="@+id/captureImageView"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="40dp"
-			android:layout_marginRight="40dp"
-			android:layout_marginTop="40dp"
+			android:minHeight="200dp"
+			android:layout_marginLeft="32dp"
+			android:layout_marginRight="32dp"
+			android:layout_marginTop="32dp"
 			android:contentDescription="@string/ic_medias_description"
 			android:src="@drawable/ic_medias" />
        
@@ -96,13 +97,13 @@
 		    android:layout_height="match_parent" >
 		    
 		    <Button
-		        android:id="@+id/recordbutton"
+		        android:id="@+id/recordAudioButton"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="@string/save_song" />
 		
 		    <Button
-		        android:id="@+id/playbutton"
+		        android:id="@+id/playAudioButton"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="@string/play_song" />
@@ -110,5 +111,11 @@
 		</LinearLayout>
 	
 	</FrameLayout>   
+
+    <Button
+        android:id="@+id/saveMediaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_media" />
 
 </LinearLayout>

@@ -29,7 +29,7 @@ public class Constants
 
 	// Extension of medias
 	public static final String EXT_VIDEO = ".mp4";
-	public static final String EXT_AUDIO = ".3gp";
+	public static final String EXT_AUDIO = ".amr";
 	public static final String EXT_IMAGE = ".jpg";
 
 	// Intent Photo

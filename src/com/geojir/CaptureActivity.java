@@ -2,11 +2,13 @@ package com.geojir;
 
 import static com.geojir.Constants.REQUEST_TAKE_PHOTO;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.List;
 
-import android.content.Context;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,275 +16,282 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import butterknife.ButterKnife;
-import butterknife.ButterKnife.Setter;
 import butterknife.InjectView;
 import butterknife.InjectViews;
 import butterknife.OnClick;
 
+import com.geojir.medias.Media;
+import com.geojir.medias.Photo;
+import com.geojir.medias.RecordableMedia;
 import com.geojir.medias.Sound;
+import com.geojir.menus.TabImageMenu;
+import com.geojir.override.OneLineArrayList;
 import com.geojir.view.CaptureImageView;
 
 public class CaptureActivity extends ParentMenuActivity
 {
-	// Context memory for use in Medias class
-	public static Context CONTEXT;
-
 	// Butterknife injectViews
 	@InjectView(R.id.captureImageView)
 	CaptureImageView captureImageView;
-	@InjectView(R.id.playbutton)
-	Button playButton;
-	@InjectView(R.id.recordbutton)
-	Button recordButton;
-	@InjectViews(
-	{ R.id.captureImageView, R.id.mediaController })
-	List<View> mediasLayout;
-	@InjectViews(
-	{ R.id.imagePhotos, R.id.imageMicro })
+	@InjectView(R.id.playAudioButton)
+	Button playAudioButton;
+	@InjectView(R.id.recordAudioButton)
+	Button recordAudioButton;
+	@InjectViews({ R.id.imagePhotos, R.id.imageMicro })
 	List<ImageView> mediasIcons;
+	@InjectViews({ R.id.captureImageView, R.id.mediaController })
+	List<View> mediasLayout;
 	
 	// List of media
-	protected Hashtable<Integer, String> mediasList = new Hashtable<Integer, String>();
+	protected OneLineArrayList<String> mediasList = new OneLineArrayList<String>()
+			.put(Constants.TYPE_IMAGE).put(Constants.TYPE_AUDIO);
+	
+	// ////// WARNING ////////
+	// Order and size of mediasLayout, mediasIcons and mediasList have to be
+	// coherent
+	
 	// Memory of current media
-	protected String media = Constants.TYPE_IMAGE;
+	protected String currentMedia = Constants.TYPE_IMAGE;
 	
 	// Save instance constants
-	final String photoOnRestore = "photoOnRestore";
-	final String audioOnRestore = "audioOnRestore";
-	final String audioOnRestoreURI = "audioOnRestoreURI";
-	final String mediaOnRestore = media;
+	protected final static String PHOTO_ON_RESTORE = "photoOnRestore";
+	protected final static String AUDIO_ON_RESTORE = "audioOnRestore";
+	protected final static String MEDIA_ON_RESTORE = Constants.TYPE_IMAGE;
 	
-	// Butterknife Setter
-	// Set visibility of media recording layout
-	static final Setter<View, Boolean> VISIBILITY = new Setter<View, Boolean>()
-	{
-		@Override
-		public void set(View view, Boolean value, int index)
-		{
-			if (value)
-				view.setVisibility(View.VISIBLE);
-			else
-				view.setVisibility(View.INVISIBLE);
-
-			view.setEnabled(value);
-		}
-	};
-	// Set alpha of media icon
-	static final Setter<View, Boolean> ENABLED = new Setter<View, Boolean>()
-	{
-		@Override
-		public void set(View view, Boolean value, int index)
-		{
-			if (value)
-				view.setAlpha((float) 1);
-			else
-				view.setAlpha((float) .3);
-		}
-	};
-
-	// chemin du fichier son
-	// private static String mFileName = null;
-
-	boolean boolAudioRecording = true;
-	boolean boolAudioPlaying = true;
-	boolean boolAudioExist = false;
+	// Media variable
 	protected Sound sound;
-
+	protected Photo photo;
+	
+	protected TabImageMenu menu = new TabImageMenu();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		// Create medias list possibility
-		if (mediasList.isEmpty())
-		{
-			mediasList.put(R.id.imagePhotos, Constants.TYPE_IMAGE);
-			mediasList.put(R.id.imageMicro, Constants.TYPE_AUDIO);
-		}
 		// CreateView
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_capture);
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
-
-		if (savedInstanceState != null)
-		{
-			if (savedInstanceState.getString(photoOnRestore) != null && !savedInstanceState.getString(photoOnRestore).isEmpty())
-				captureImageView.restore(savedInstanceState.getString(photoOnRestore));
-			
-			boolAudioExist = savedInstanceState.getBoolean(audioOnRestore);
-			if (boolAudioExist)
-				sound = new Sound(savedInstanceState.getString(audioOnRestoreURI));
-
-			media = savedInstanceState.getString(mediaOnRestore);
-		}
 		
-		// Save Context for Media class
-		CONTEXT = getApplicationContext();
-
+		restoreState(savedInstanceState);
+		
+		// Create tab menu images
+		menu.addAll(mediasIcons, mediasLayout);
 		// Update screen
 		changeCaptureType();
-
-		// photo
-		captureImageView.onClickEvent(this);
-
-		// Audio
-		if (sound != null && sound.getFile().exists()
-				&& !sound.getFile().getPath().isEmpty())
-			playButton.setEnabled(true);
+		
+		// Initialize Audio button
+		if (sound == null)
+			sound = new Sound();
+		if (new File(sound.getPath()).exists())
+			playAudioButton.setEnabled(true);
 		else
-			playButton.setEnabled(false);
+			playAudioButton.setEnabled(false);
+	}
+	
+	// Restore medias
+	protected void restoreState(Bundle savedInstanceState)
+	{
+		if (savedInstanceState != null)
+		{
+			// Restore photo
+			String photoRestore = savedInstanceState.getString(PHOTO_ON_RESTORE);
+			if (photoRestore != null && !photoRestore.isEmpty())
+			{
+				photo = new Photo();
+				photo.restore(photoRestore);
+				captureImageView.load(photoRestore);
+			}
+			// restore audio
+			String audioRestore = savedInstanceState.getString(AUDIO_ON_RESTORE);
+			if (audioRestore != null && !audioRestore.isEmpty())
+			{
+				sound = new Sound();
+				sound.restore(audioRestore);
+				createSoundObserver();
+			}
+			
+			// Restore current media
+			currentMedia = savedInstanceState.getString(MEDIA_ON_RESTORE);
+		}
+	}
+	
+	// Create observer to detected sound state change
+	protected void createSoundObserver()
+	{
+		Observable.create(sound)
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(new Action1<String>()
+			{
+				@Override
+				public void call(String status)
+				{
+					changeAudioButtonState();
+				}
+			});
 	}
 
 	// Change current media when click on media icon
-	@OnClick(
-	{ R.id.imagePhotos, R.id.imageMicro })
-	public void clickIconForChangeMedia(View view)
+	@OnClick(R.id.saveMediaButton)
+	public void clickOnSaveMedia(View view)
 	{
-		media = mediasList.get(view.getId());
+		Media mediaTemp = null;
+		if (currentMedia == Constants.TYPE_IMAGE)
+			mediaTemp = photo;
+		else if (currentMedia == Constants.TYPE_AUDIO)
+			mediaTemp = sound;
+		
+		if (mediaTemp != null)
+			try
+			{
+				mediaTemp.save("un commentaire");
+			}
+			catch (InstantiationException | IllegalAccessException
+					| IOException e) {}
+	}
+	
+	// Change current media when click on media icon
+	@OnClick({ R.id.imagePhotos, R.id.imageMicro })
+	public void clickIconForChangeMedia(ImageView view)
+	{
+		int index_temp = mediasIcons.indexOf(view);
+		currentMedia = mediasList.get(index_temp);
 		changeCaptureType();
 	}
 	
-	@OnClick(R.id.recordbutton)
+	@OnClick(R.id.recordAudioButton)
 	public void clickOnAudioRecord(View view)
 	{
-		if (boolAudioRecording)
-			startAudioRecording();
+		// Create sound if not exist
+		if (sound == null)
+		{
+			sound = new Sound();
+			createSoundObserver();
+		}
+		// Active/Stop record
+		if (sound.getState() != RecordableMedia.RECORD_STATE)
+			sound.record();
 		else
-			stopAudioRecording();
-		
-		boolAudioRecording = !boolAudioRecording;
-	}
-
-	protected void startAudioRecording()
-	{
-		// Enable play button
-		playButton.setEnabled(false);
-		recordButton.setText(R.string.stop_record);
-		
-		Toast.makeText(getApplicationContext(), R.string.stop_record,
-				Toast.LENGTH_SHORT).show();
-
-		sound = new Sound();
-		boolAudioExist = true;
-	}
-
-	private void stopAudioRecording()
-	{
-		if (sound != null)
 			sound.stop();
-
-		// on reactive le boutton pour jouer le son audio
-		playButton.setEnabled(true);
-		recordButton.setText(R.string.start_audio_record);
-
-		Toast.makeText(getApplicationContext(),
-				R.string.end_ok_record, Toast.LENGTH_SHORT)
+	}
+	
+	// Shorts methods for toast
+	protected void toast(int idString)
+	{
+		toast(getString(idString));
+	}
+	
+	protected void toast(String message)
+	{
+		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
 				.show();
 	}
-
-	@OnClick(R.id.playbutton)
+	
+	// Change text and avaibility of audio button and display toast
+	protected void changeAudioButtonState()
+	{
+		if (sound == null)
+			return;
+		
+		// Start record
+		if (sound.getState() == RecordableMedia.RECORD_STATE)
+		{
+			playAudioButton.setEnabled(false);
+			recordAudioButton.setText(R.string.stop_audio_record_button_text);
+			toast(R.string.start_audio_record_toast);
+		}
+		// Start play
+		if (sound.getState() == RecordableMedia.PLAY_STATE)
+		{
+			recordAudioButton.setEnabled(false);
+			playAudioButton.setText(R.string.stop_audio_play_button_text);
+		}
+		// Stop
+		if (sound.getState() == RecordableMedia.STOP_STATE)
+		{
+			// stop record
+			if (!playAudioButton.isEnabled())
+			{
+				playAudioButton.setEnabled(true);
+				recordAudioButton.setText(R.string.start_audio_record_button_text);
+				toast(R.string.stop_audio_record_toast);
+			}
+			// Stop playing
+			else if (!recordAudioButton.isEnabled())
+			{
+				recordAudioButton.setEnabled(true);
+				playAudioButton.setText(R.string.start_audio_play_button_text);
+				toast(R.string.stop_audio_play_toast);
+			}			
+		}
+	}
+	
+	@OnClick(R.id.playAudioButton)
 	public void clickOnAudioPlay(View view)
 	{
-		if (boolAudioPlaying)
+		// Only if a sound exist
+		if (sound == null)
+			return;
+		
+		if (sound.getState() != RecordableMedia.PLAY_STATE)
 		{
 			try
 			{
-				startPlaying();
-			} catch (IllegalArgumentException | SecurityException
-					| IllegalStateException | IOException e)
-			{
-				e.printStackTrace();
+				sound.play();
 			}
-		} else
-			stopPlaying();
-
-		boolAudioPlaying = !boolAudioPlaying;
-	}
-
-	protected void startPlaying() throws IllegalArgumentException,
-			SecurityException, IllegalStateException, IOException
-	{
-		// on desactive le boutton d'enregistrement
-		recordButton.setEnabled(false);
-		playButton.setText(R.string.end_play);
-		sound.play();
-
-		// message pour dire que lon joue le son audio
-		Toast.makeText(getApplicationContext(), R.string.start_audio_play_message,
-				Toast.LENGTH_SHORT).show();
-	}
-
-	private void stopPlaying()
-	{
-		if (sound != null)
+			catch (IllegalArgumentException | SecurityException
+					| IllegalStateException | IOException e) {}
+		}
+		else
 			sound.stop();
-
-		// on reactive le bouton pour enregistrer le son audio
-		recordButton.setEnabled(true);
-		playButton.setText(R.string.start_audio_play);
-
-		Toast.makeText(getApplicationContext(), R.string.stop_audio_play_message,
-				Toast.LENGTH_SHORT).show();
 	}
-
+	
 	// Display only current media
 	protected void changeCaptureType()
 	{
-		// Mask all medias layout
-		ButterKnife.apply(mediasLayout, VISIBILITY, false);
-		// Disable all media icons
-		ButterKnife.apply(mediasIcons, ENABLED, false);
-
-		// Active and display element depending current media
-		if (media == Constants.TYPE_IMAGE)
-		{
-			VISIBILITY.set(ButterKnife.findById(this, R.id.captureImageView),
-					true, 0);
-			ENABLED.set(ButterKnife.findById(this, R.id.imagePhotos), true, 0);
-		}
-		if (media == Constants.TYPE_AUDIO)
-		{
-			VISIBILITY.set(ButterKnife.findById(this, R.id.mediaController),
-					true, 0);
-			ENABLED.set(ButterKnife.findById(this, R.id.imageMicro), true, 0);
-		}
+		int index_temp = mediasList.indexOf(currentMedia);
+		menu.activeTab(mediasIcons.get(index_temp));
 	}
 	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus)
 	{
 		super.onWindowFocusChanged(hasFocus);
-
-		// on teste si il y a une photo deja présente
+		
+		// reload photo if captureImageView exists
 		if (captureImageView != null)
-			captureImageView.load();
-		if (boolAudioExist)
 		{
-			stopAudioRecording();
-			stopPlaying();
+			captureImageView.load();
+			photo = new Photo();
 		}
-
 	}
-
+	
+	// When an another app send result
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_TAKE_PHOTO)
 		{
 			captureImageView.load();
+			photo = new Photo();
 		}
 	}
-
+	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
+		// if sound exist, stop this
+		if (sound != null)
+			sound.stop();
 		// Always call the superclass so it can save the view hierarchy state
 		super.onSaveInstanceState(savedInstanceState);
-
-		savedInstanceState.putString(mediaOnRestore, media);
-		// Save the user's current game state
-		savedInstanceState.putString(photoOnRestore, captureImageView.getPath());
-		savedInstanceState.putBoolean(audioOnRestore, boolAudioExist);
-		if (sound != null && sound.getFile() != null)
-			savedInstanceState.putString(audioOnRestoreURI, sound.getFile().getPath());
+		
+		savedInstanceState.putString(MEDIA_ON_RESTORE, currentMedia);
+		// Save the user's current medias
+		if (photo != null)
+			savedInstanceState.putString(PHOTO_ON_RESTORE, photo.getPath());
+		if (sound != null)
+			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
 	}
-
+	
 }

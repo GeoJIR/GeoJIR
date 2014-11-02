@@ -2,6 +2,7 @@ package com.geojir;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -11,50 +12,78 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+
+import com.geojir.medias.Media;
 
 public class ParentMenuActivity extends Activity
 {
-	private DrawerLayout drawer_layout;
-	private ViewGroup lateral_menu_left;
+	// Context memory for use in Medias class
+	public static Context CONTEXT;
+	public static Boolean firstLaunch = true;
+	
+	//@InjectView(R.id.drawer_layout)
+	DrawerLayout drawerLayout;
+	//@InjectView(R.id.lateral_menu_left)
+	ViewGroup lateralMenuLeft;
+	//@InjectView(R.id.content_frame)
+	FrameLayout drawerContent;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		// load layout drawer
 		super.setContentView(R.layout.activity_parent_menu);
-
-		drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+		
+		// Save Context for Media class
+		CONTEXT = getApplicationContext();
+		// Delete temp file if exists on firstLaunch
+		if (firstLaunch)
+		{
+			try
+			{
+				Media.deleteTempFile();
+			}
+			catch (InstantiationException | IllegalAccessException e) {}
+			
+			firstLaunch = false;
+		}
+		
+		// Manual ButterKnife injections for skip child injections
+		//ButterKnife.inject(this);
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		lateralMenuLeft = (ViewGroup) findViewById(R.id.lateral_menu_left);
+		drawerContent = (FrameLayout) findViewById(R.id.content_frame);
+		
+		// Active actionBar
 		ActionBar actionBar = getActionBar();
 		actionBar.setHomeButtonEnabled(true);
-
-		lateral_menu_left = (LinearLayout) findViewById(R.id.lateral_menu_left);
-
-		final ParentMenuActivity this_temp = this;
 		
-		for (int index = 0; index < lateral_menu_left.getChildCount(); index++)
+		// Create listener for all menu item
+		for (int index = 0; index < lateralMenuLeft.getChildCount(); index++)
 		{
-			View button = lateral_menu_left.getChildAt(index);
-			button.setOnClickListener(new View.OnClickListener()
+			View item = lateralMenuLeft.getChildAt(index);
+			item.setOnClickListener(new View.OnClickListener()
 			{
 				@Override
 				public void onClick(View v)
 				{
-					this_temp.clickOnMenu(v);
+					clickOnMenu(v);
 				}
 			});
 		}
 	}
-
-	protected void clickOnMenu(View v)
+	
+	// Function call after an item click
+	protected void clickOnMenu(View item)
 	{
-		drawer_layout.closeDrawer(GravityCompat.START);
+		drawerLayout.closeDrawer(GravityCompat.START);
 
 		Class<? extends ParentMenuActivity> startActivity = this.getClass();
 		Class<? extends ParentMenuActivity> endActivity = this.getClass();
-
-		switch (v.getId())
+		
+		// Switch on item
+		switch (item.getId())
 		{
 			case R.id.drawable_capture:
 				endActivity = CaptureActivity.class;
@@ -69,7 +98,8 @@ public class ParentMenuActivity extends Activity
 				endActivity = AccountActivity.class;
 				break;
 		}
-
+		
+		// Change activity only if different
 		if (startActivity != endActivity)
 		{
 			Intent intent = new Intent(this, endActivity);
@@ -78,45 +108,53 @@ public class ParentMenuActivity extends Activity
 	}
 
 	@Override
+	// setContent activity in content Frame
 	public void setContentView(int activity)
 	{
-		FrameLayout item = (FrameLayout) findViewById(R.id.content_frame);
-		getLayoutInflater().inflate(activity, item);
+		getLayoutInflater().inflate(activity, drawerContent);
 	}
-
-	/*
+	
+	// force initial setContent 
 	public void setContentView(int activity, Boolean original)
 	{
-		super.setContentView(activity);
+		if (original)
+			super.setContentView(activity);
+		else
+			setContentView(activity);
 	}
-
+	
+	// SetContent and menu layout
 	public void setContentView(int activity, int activity_menu)
 	{
 		this.setContentView(activity);
-
-		ViewGroup parent = (ViewGroup) lateral_menu_left.getParent();
+		
+		// Inflate new menu
+		ViewGroup parent = (ViewGroup) lateralMenuLeft.getParent();
 		View lateral_temp = getLayoutInflater().inflate(activity_menu, parent, false);
 		
+		// Stop method if inflate fail
 		if (!(lateral_temp instanceof ViewGroup))
 			return;
 		
-		int index = parent.indexOfChild(lateral_menu_left);
-		parent.removeView(lateral_menu_left);
-		lateral_menu_left = (ViewGroup) lateral_temp;
-		parent.addView(lateral_menu_left, index);
+		// Suppress old menu
+		int index = parent.indexOfChild(lateralMenuLeft);
+		parent.removeView(lateralMenuLeft);
+		// Add new menu
+		lateralMenuLeft = (ViewGroup) lateral_temp;
+		parent.addView(lateralMenuLeft, index);
 	}
-	*/
 
 	@Override
+	// Open/Close drawer on click home
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		int id = item.getItemId();
 		if (id == android.R.id.home)
 		{
-			if (drawer_layout.isDrawerOpen(GravityCompat.START))
-				drawer_layout.closeDrawer(GravityCompat.START);
+			if (drawerLayout.isDrawerOpen(GravityCompat.START))
+				drawerLayout.closeDrawer(GravityCompat.START);
 			else
-				drawer_layout.openDrawer(GravityCompat.START);
+				drawerLayout.openDrawer(GravityCompat.START);
 
 			return true;
 		}
