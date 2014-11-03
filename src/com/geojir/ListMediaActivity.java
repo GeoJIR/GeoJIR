@@ -3,13 +3,12 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-public class ListMediaActivity extends Activity
+public class ListMediaActivity extends ParentMenuActivity
 {
 	
 	ArrayList<Map<String, String>> values;

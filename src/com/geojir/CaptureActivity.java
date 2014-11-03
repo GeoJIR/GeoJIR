@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import butterknife.ButterKnife;
@@ -40,6 +41,10 @@ public class CaptureActivity extends ParentMenuActivity
 	Button playAudioButton;
 	@InjectView(R.id.recordAudioButton)
 	Button recordAudioButton;
+	@InjectView(R.id.commentText)
+	EditText editComment;
+	@InjectView(R.id.saveMediaButton)
+	Button saveMediaButton;
 	@InjectViews({ R.id.imagePhotos, R.id.imageMicro })
 	List<ImageView> mediasIcons;
 	@InjectViews({ R.id.photoFrame, R.id.audioFrame })
@@ -77,6 +82,7 @@ public class CaptureActivity extends ParentMenuActivity
 		ButterKnife.inject(this);
 		
 		restoreState(savedInstanceState);
+		saveMediaButton.requestFocus();
 		
 		// Create tab menu images
 		menu.addAll(mediasIcons, mediasLayout);
@@ -147,7 +153,7 @@ public class CaptureActivity extends ParentMenuActivity
 		if (mediaTemp != null)
 			try
 			{
-				mediaTemp.save("un commentaire");
+				mediaTemp.save(editComment.getText().toString());
 			}
 			catch (InstantiationException | IllegalAccessException
 					| IOException e) {}
