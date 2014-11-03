@@ -68,6 +68,6 @@
             android:minHeight="48dp"
             android:text="@string/drawable_account" />
 
-		</LinearLayout>
+	</LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
