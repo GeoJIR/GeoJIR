@@ -43,10 +43,11 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		recorder.setOutputFile(getPath());
 		
 		// Initialize state depending on file existence
+		// Not use changeState for not calling subscriber
 		if (file != null)
-			changeState(STOP_STATE);
+			state = STOP_STATE;
 		else
-			changeState(EMPTY_STATE);
+			state = EMPTY_STATE;
 	}
 	
 	// Configuration depend on media, see child class
@@ -97,14 +98,14 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		{
 			recorder.stop();
 			recorder.release();
+			changeState(STOP_STATE);
 		}
 		else if (state == PLAY_STATE)
 		{
 			player.release();
 			player = null;
+			changeState(STOP_STATE);
 		}
-		
-		changeState(STOP_STATE);
 	}
 	
 	// Play media

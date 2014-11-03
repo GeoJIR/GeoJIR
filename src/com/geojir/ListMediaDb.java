@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import rx.Observable;
+import rx.Subscriber;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,9 +13,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 //Database for list media
-public class ListMediaDb extends SQLiteOpenHelper
+public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscribe<Map<String, String>>
 {
-	
+	protected Subscriber<? super Map<String, String>> subscriber;
 	// DATABASE
 	private static final int DATABASE_VERSION = 1;
 	private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
@@ -165,7 +167,10 @@ public class ListMediaDb extends SQLiteOpenHelper
 		{
 			do
 			{
-				list.add(putData(cursor.getString(1), cursor.getString(2)));
+				HashMap<String, String> item = createItem(cursor.getString(1), cursor.getString(2));
+				list.add(item);
+				if (subscriber != null)
+					subscriber.onNext(item);
 			}
 			while (cursor.moveToNext());
 		}
@@ -181,11 +186,19 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 * @param remark
 	 * @return
 	 */
-	private HashMap<String, String> putData(String pathFileName, String remark)
+	private HashMap<String, String> createItem(String pathFileName, String remark)
 	{
 		HashMap<String, String> item = new HashMap<String, String>();
 		item.put("pathFileName", pathFileName);
 		item.put("remark", remark);
 		return item;
 	}
+
+	@Override
+	public void call(Subscriber<? super Map<String, String>> newSubscriber)
+	{
+		subscriber = newSubscriber;
+		getAllMedias();
+	}
+
 }

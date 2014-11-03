@@ -91,7 +91,7 @@ public class CaptureActivity extends ParentMenuActivity
 		
 		// Initialize Audio button
 		if (sound == null)
-			sound = new Sound();
+			createSound();
 		if (new File(sound.getPath()).exists())
 			playAudioButton.setEnabled(true);
 		else
@@ -107,15 +107,13 @@ public class CaptureActivity extends ParentMenuActivity
 			String photoRestore = savedInstanceState.getString(PHOTO_ON_RESTORE);
 			if (photoRestore != null && !photoRestore.isEmpty())
 			{
-				photo = new Photo();
-				photo.restore(photoRestore);
-				captureImageView.load(photoRestore);
+				createPhoto(photoRestore);
 			}
 			// restore audio
 			String audioRestore = savedInstanceState.getString(AUDIO_ON_RESTORE);
 			if (audioRestore != null && !audioRestore.isEmpty())
 			{
-				sound = new Sound();
+				createSound();
 				sound.restore(audioRestore);
 				createSoundObserver();
 			}
@@ -171,6 +169,8 @@ public class CaptureActivity extends ParentMenuActivity
 	public void clickIconForChangeMedia(ImageView view)
 	{
 		int index_temp = mediasIcons.indexOf(view);
+		if (sound != null)
+			sound.stop();
 		currentMedia = mediasList.get(index_temp);
 		changeCaptureType();
 	}
@@ -180,15 +180,32 @@ public class CaptureActivity extends ParentMenuActivity
 	{
 		// Create sound if not exist
 		if (sound == null)
-		{
-			sound = new Sound();
-			createSoundObserver();
-		}
+			createSound();
 		// Active/Stop record
 		if (sound.getState() != RecordableMedia.RECORD_STATE)
 			sound.record();
 		else
 			sound.stop();
+	}
+
+	protected void createSound()
+	{
+		sound = new Sound();
+		createSoundObserver();
+	}
+	
+	protected void createPhoto()
+	{
+		createPhoto("");
+	}
+	
+	protected void createPhoto(String restoreString)
+	{
+		photo = new Photo();
+		if (restoreString != "")
+			photo.restore(restoreString);
+		captureImageView.load();
+		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
 	
 	// Shorts methods for toast
@@ -277,10 +294,7 @@ public class CaptureActivity extends ParentMenuActivity
 		
 		// reload photo if captureImageView exists
 		if (captureImageView != null)
-		{
-			captureImageView.load();
-			photo = new Photo();
-		}
+			createPhoto();
 	}
 	
 	// When an another app send result
@@ -288,10 +302,7 @@ public class CaptureActivity extends ParentMenuActivity
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_TAKE_PHOTO)
-		{
-			captureImageView.load();
-			photo = new Photo();
-		}
+			createPhoto();
 	}
 	
 	@Override

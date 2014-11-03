@@ -135,6 +135,7 @@
 	        android:id="@+id/commentText"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
+	        android:hint="@string/comment"
 	        android:ems="10"
 	        android:inputType="textMultiLine" >
 
