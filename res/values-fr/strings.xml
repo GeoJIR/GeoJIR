@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GeoJIR</string>
+    
+    <string name="ic_photo_description">Appareil photo</string>
+    <string name="ic_camera_description">Caméra</string>
+    <string name="ic_micro_description">Magnétophone</string>
+    <string name="ic_medias_description">Bibliothèque de médias</string>
+    <string name="ic_photo_label">Prendre une photo</string>
+    <string name="ic_micro_label">Enregistrer un son</string>
+    <string name="save_song">Enregistrer</string>
+    <string name="play_song">Jouer le son enregistré</string>
+    <string name="save_media">Enregistrer le média</string>
+    <string name="black_and_white">Noir et Blanc</string>
+    <string name="comment">Commentaire</string>
+    
+    <string name="stop_audio_record_button_text">Arrêter l\'enregistrement</string>
+    <string name="start_audio_record_button_text">Enregistrer un son</string>
+    <string name="start_audio_record_toast">Début de l\'enregistrement</string>
+    <string name="stop_audio_record_toast">L\'enregistrement s\'est bien passé</string>
+    <string name="stop_audio_play_button_text">Arrêter de jouer le son</string>
+    <string name="start_audio_play_button_text">Jouer le son enregistrer</string>
+    <string name="start_audio_play_toast">Lecture de l\'audio</string>
+    <string name="stop_audio_play_toast">Son arreté</string>
+    
+    <string name="drawable_capture">Capturer un média</string>
+    <string name="drawable_around">Les médias autour de moi</string>
+    <string name="drawable_follow">Les médias de ceux que je suis</string>
+    <string name="drawable_account">Mon compte</string>
+    <string name="drawable_historic">Derniers Médias</string>
+    <string name="title_activity_around">AroundActivity</string>
+    <string name="title_activity_follow">FollowActivity</string>
+    <string name="title_activity_account">AccountActivity</string>
+
+    <string name="username">"Nom d'utilisateur name"</string>
+    <string name="yourname">"Votre nom"</string>
+    <string name="email">Courriel</string>
+    <string name="youremail">Votre courriel</string>
+    <string name="followersList">Liste de vos followers</string>
+    <string name="followedsList">Liste de vos followeds</string>
+    <string name="infoAccount">Enregistrer les infos</string>
+    <string name="infoSaved">Infos mises à jour</string>
+    
+    <string name="title_activity_list_media">Liste des derniers médias</string>
+</resources>
