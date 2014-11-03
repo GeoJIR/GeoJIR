@@ -30,9 +30,9 @@ public class Constants {
     public static final String TYPE_IMAGE = Environment.DIRECTORY_PICTURES;
 	
 	//Extension of medias
-	public static final String EXT_VIDEO = "mp4";
-	public static final String EXT_AUDIO = "3gp";
-	public static final String EXT_IMAGE = "jpg";
+	public static final String EXT_VIDEO = ".mp4";
+	public static final String EXT_AUDIO = ".amr";
+	public static final String EXT_IMAGE = ".jpg";
 	
 	//Intent Photo
 	public static final int REQUEST_CODE = 1888;
