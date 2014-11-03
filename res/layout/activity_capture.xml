@@ -1,121 +1,142 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.geojir.MainActivity" >
+    tools:context="com.geojir.CaptureActivity" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:id="@+id/imagePhotos"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/ic_photo_description"
-            android:src="@drawable/ic_photo" />
-
-	    <ImageView
-	        android:id="@+id/imageMicro"
-	        android:layout_width="0dp"
-	        android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:contentDescription="@string/ic_micro_description"
-	        android:src="@drawable/ic_micro" />
-	
-        <!--
-	    <ImageView
-	        android:id="@+id/imageCamera"
-	        android:layout_width="0dp"
-	        android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:contentDescription="@string/ic_camera_description"
-	        android:src="@drawable/ic_camera" />
-	
-	    <ImageView
-	        android:id="@+id/imageMedias"
-	        android:layout_width="0dp"
-	        android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:contentDescription="@string/ic_medias_description"
-	        android:src="@drawable/ic_medias" />
-	        -->
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/textViewPhoto"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/ic_photo_label" />
-
-        <TextView
-            android:id="@+id/textViewMicro"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/ic_micro_label" />
-        
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/contentMediaCapture"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        
-        <com.geojir.view.CaptureImageView
-		    xmlns:android="http://schemas.android.com/apk/res/android"
-			android:id="@+id/captureImageView"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:minHeight="200dp"
-			android:layout_marginLeft="32dp"
-			android:layout_marginRight="32dp"
-			android:layout_marginTop="32dp"
-			android:contentDescription="@string/ic_medias_description"
-			android:src="@drawable/ic_medias" />
-       
-		<LinearLayout 
-		    android:id="@+id/mediaController"
-  			android:orientation="vertical"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" >
-		    
-		    <Button
-		        android:id="@+id/recordAudioButton"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/save_song" />
-		
-		    <Button
-		        android:id="@+id/playAudioButton"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/play_song" />
-		    
-		</LinearLayout>
-	
-	</FrameLayout>   
-
-    <Button
-        android:id="@+id/saveMediaButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/save_media" />
-
-</LinearLayout>
+    	android:orientation="vertical" >
+        
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	
+	        <ImageView
+	            android:id="@+id/imagePhotos"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:contentDescription="@string/ic_photo_description"
+	            android:src="@drawable/ic_photo" />
+	
+		    <ImageView
+		        android:id="@+id/imageMicro"
+		        android:layout_width="0dp"
+		        android:layout_weight="1"
+		        android:layout_height="wrap_content"
+		        android:contentDescription="@string/ic_micro_description"
+		        android:src="@drawable/ic_micro" />
+		
+	        <!--
+		    <ImageView
+		        android:id="@+id/imageCamera"
+		        android:layout_width="0dp"
+		        android:layout_weight="1"
+		        android:layout_height="wrap_content"
+		        android:contentDescription="@string/ic_camera_description"
+		        android:src="@drawable/ic_camera" />
+		
+		    <ImageView
+		        android:id="@+id/imageMedias"
+		        android:layout_width="0dp"
+		        android:layout_weight="1"
+		        android:layout_height="wrap_content"
+		        android:contentDescription="@string/ic_medias_description"
+		        android:src="@drawable/ic_medias" />
+		        -->
+	
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	
+	        <TextView
+	            android:id="@+id/textViewPhoto"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:text="@string/ic_photo_label" />
+	
+	        <TextView
+	            android:id="@+id/textViewMicro"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:text="@string/ic_micro_label" />
+	        
+	    </LinearLayout>
+	
+	    <FrameLayout
+	        android:id="@+id/contentMediaCapture"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	        
+			<LinearLayout 
+			    android:id="@+id/photoFrame"
+	  			android:orientation="vertical"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent" >
+			
+		        <com.geojir.view.CaptureImageView
+				    xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/captureImageView"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:minHeight="200dp"
+					android:layout_marginLeft="32dp"
+					android:layout_marginRight="32dp"
+					android:layout_marginTop="32dp"
+					android:contentDescription="@string/ic_medias_description"
+					android:src="@drawable/ic_medias" />
+				
+		        
+				<CheckBox
+				    android:id="@+id/filterMonochrome"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:text="@string/black_and_white" />
+			
+			</LinearLayout>
+			      
+			<LinearLayout 
+			    android:id="@+id/audioFrame"
+	  			android:orientation="vertical"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent" >
+			    
+			    <Button
+			        android:id="@+id/recordAudioButton"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/save_song" />
+			
+			    <Button
+			        android:id="@+id/playAudioButton"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/play_song" />
+			    
+			</LinearLayout>
+		
+		</FrameLayout>   
+	
+	    <Button
+	        android:id="@+id/saveMediaButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/save_media" />
+	
+	</LinearLayout>
+	
+</ScrollView>

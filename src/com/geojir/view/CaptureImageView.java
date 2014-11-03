@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -135,5 +137,25 @@ public class CaptureImageView extends ImageView
 		// Display default icon otherwise
 		else
 			this.setImageResource(R.drawable.ic_medias);
+	}
+	
+	// Enable/disable black and white filter
+	public void blackAndWhiteMode(Boolean enable)
+	{
+		if (enable)
+		{
+			float[] colorMatrix =
+			{ 
+			     0.33f, 0.33f, 0.33f, 0, 0, //red
+			     0.33f, 0.33f, 0.33f, 0, 0, //green
+			     0.33f, 0.33f, 0.33f, 0, 0, //blue
+			     0, 0, 0, 1, 0    //alpha    
+			};
+		     
+		    ColorFilter colorFilter = new ColorMatrixColorFilter(colorMatrix);
+		    this.setColorFilter(colorFilter);  
+		}
+		else
+			this.clearColorFilter();
 	}
 }

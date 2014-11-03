@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Toast;
 import butterknife.ButterKnife;
@@ -33,13 +34,15 @@ public class CaptureActivity extends ParentMenuActivity
 	// Butterknife injectViews
 	@InjectView(R.id.captureImageView)
 	CaptureImageView captureImageView;
+	@InjectView(R.id.filterMonochrome)
+	CheckBox filterMonochrome;
 	@InjectView(R.id.playAudioButton)
 	Button playAudioButton;
 	@InjectView(R.id.recordAudioButton)
 	Button recordAudioButton;
 	@InjectViews({ R.id.imagePhotos, R.id.imageMicro })
 	List<ImageView> mediasIcons;
-	@InjectViews({ R.id.captureImageView, R.id.mediaController })
+	@InjectViews({ R.id.photoFrame, R.id.audioFrame })
 	List<View> mediasLayout;
 	
 	// List of media
@@ -151,6 +154,13 @@ public class CaptureActivity extends ParentMenuActivity
 	}
 	
 	// Change current media when click on media icon
+	@OnClick(R.id.filterMonochrome)
+	public void clickOnMonochromeFilter(View view)
+	{
+		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
+	}
+	
+	// Change current media when click on media icon
 	@OnClick({ R.id.imagePhotos, R.id.imageMicro })
 	public void clickIconForChangeMedia(ImageView view)
 	{
@@ -205,6 +215,7 @@ public class CaptureActivity extends ParentMenuActivity
 		{
 			recordAudioButton.setEnabled(false);
 			playAudioButton.setText(R.string.stop_audio_play_button_text);
+			toast(R.string.start_audio_play_toast);
 		}
 		// Stop
 		if (sound.getState() == RecordableMedia.STOP_STATE)
@@ -293,5 +304,4 @@ public class CaptureActivity extends ParentMenuActivity
 		if (sound != null)
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
 	}
-	
 }
