@@ -41,6 +41,8 @@
     <string name="followedsList">Followeds list</string>
     <string name="infoAccount">Save info</string>
     <string name="infoSaved">Infos updated</string>
+    <string name="oneFieldIsEmpty">One field at least is empty</string>
+    
     
     <string name="title_activity_list_media">List of the last medias</string>
 </resources>
