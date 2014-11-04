@@ -19,37 +19,55 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:background="#ccc"
+        android:clickable="true"
         android:id="@+id/lateral_menu_left"
         android:orientation="vertical" >
         
-        <Button
+        <TextView
             android:id="@+id/drawable_capture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:minHeight="48dp"
             android:text="@string/drawable_capture" />
     
-        <Button
+        <TextView
             android:id="@+id/drawable_around"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:minHeight="48dp"
             android:text="@string/drawable_around" />
     
-		<Button
+		<TextView
             android:id="@+id/drawable_follow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:minHeight="48dp"
             android:text="@string/drawable_follow" />
     
-		<Button
+		<TextView
+            android:id="@+id/drawable_historic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:minHeight="48dp"
+            android:text="@string/drawable_historic" />
+
+		<TextView
             android:id="@+id/drawable_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
+            android:textSize="24sp"
+            android:minHeight="48dp"
             android:text="@string/drawable_account" />
 
-        </LinearLayout>
+	</LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
