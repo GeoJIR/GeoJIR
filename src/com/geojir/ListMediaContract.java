@@ -13,7 +13,7 @@ public class ListMediaContract {
     public static abstract class MediasDb implements BaseColumns {
     	public static final int DATABASE_VERSION = 1;
     	
-    	public static final String DATABASE_NAME = "ListMedia.db";
+    	public static final String DATABASE_NAME = "GeoJIR.db";
         public static final String TABLE_NAME = "ListMedia";
         
         public static final String FILE_NAME_COLUMN = "Filename";
