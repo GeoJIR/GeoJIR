@@ -4,8 +4,5 @@
 .settings/
 bin/
 gen/
-<<<<<<< HEAD
-/.apt_generated/
-=======
+
 .apt_generated/
->>>>>>> 8c9ae69309b8952e14367dd6b28beb876c24e655
