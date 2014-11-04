@@ -13,10 +13,19 @@ import java.util.Locale;
 import android.os.Environment;
 
 import com.geojir.Constants;
+import com.geojir.ListMediaDb;
 import com.geojir.ParentMenuActivity;
 import com.geojir.interfaces.IFiles;
 import com.geojir.override.OneLineArrayList;
 
+/**
+ * @author HumanBooster
+ *
+ */
+/**
+ * @author HumanBooster
+ *
+ */
 public abstract class Media implements IFiles
 {
 	// Comment of the media
@@ -93,7 +102,7 @@ public abstract class Media implements IFiles
 	}
 	
 	// Create file from temp file and save comment
-	public void save(String commit) throws IOException, InstantiationException, IllegalAccessException
+	public void save(String commentary) throws IOException, InstantiationException, IllegalAccessException
 	{
 		if (file == null)
 		{
@@ -101,8 +110,16 @@ public abstract class Media implements IFiles
 			copyFile();
 		}
 		
-		comment = commit;
+		comment = commentary;
 		deleteTempFile();
+		callToDataBase();
+	}
+	
+	// Call save to Database
+	protected void callToDataBase()
+	{
+		ListMediaDb listMedia = new ListMediaDb(ParentMenuActivity.CONTEXT);
+		listMedia.addMedia(getPath(), comment, false);
 	}
 	
 	// Restore media if needed (screen rotate)

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import rx.Observable;
+import rx.Subscriber;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,37 +16,25 @@ import android.util.Log;
 import com.geojir.ListMediaContract.MediasDb;
 
 //Database for list media
-public class ListMediaDb extends SQLiteOpenHelper
+public class ListMediaDb extends SQLiteOpenHelper implements
+		Observable.OnSubscribe<Map<String, String>>
 {
-
+	protected Subscriber<? super Map<String, String>> subscriber;
 	// DATABASE
 	private static final int DATABASE_VERSION = 1;
 	// private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
 	private static final int NB_LIST_LAST_MEDIA = 10;
 
-	/*
-	 * private static final String KEY_ID = "_id"; private static final String
-	 * KEY_FILE_NAME = "Filename"; private static final String KEY_REMARK =
-	 * "Remark"; private static final String KEY_FILTER = "Filter";
-	 */
+	protected SQLiteDatabase db;
 
-	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE " + 
-			MediasDb.TABLE_NAME + " (" + 
-			MediasDb._ID + " INTEGER PRIMARY KEY," + 
-			MediasDb.FILE_NAME_COLUMN + " TEXT, "+ 
-			MediasDb.REMARK_COLUMN + " TEXT, " + 
-			MediasDb.FILTER_COLUMN + " NUMERIC)" + ";";
+	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE "
+			+ MediasDb.TABLE_NAME + " (" + MediasDb._ID
+			+ " INTEGER PRIMARY KEY," + MediasDb.FILE_NAME_COLUMN + " TEXT, "
+			+ MediasDb.REMARK_COLUMN + " TEXT, " + MediasDb.FILTER_COLUMN
+			+ " NUMERIC)" + ";";
 
 	private static final String SQL_SELECT_ENTRIES = "SELECT * FROM "
 			+ MediasDb.TABLE_NAME;
-
-	/*
-	 * Not use for now private static final String SQL_DELETE_ENTRIES =
-	 * "DELETE FROM " + LISTMEDIA_TABLE_NAME;
-	 * 
-	 * private static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " +
-	 * LISTMEDIA_TABLE_NAME;
-	 */
 
 	private static final String SQL_COUNT_TABLE = "SELECT COUNT(*) FROM "
 			+ MediasDb.TABLE_NAME;
@@ -54,17 +44,29 @@ public class ListMediaDb extends SQLiteOpenHelper
 		super(context, MediasDb.TABLE_NAME, null, DATABASE_VERSION);
 	}
 
-	@Override
-	public void onCreate(SQLiteDatabase db)
+	protected void openDb()
 	{
+		db = this.getWritableDatabase();
+	}
+
+	protected void closeDb()
+	{
+		if (db != null)
+			db.close();
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase newDb)
+	{
+		db = newDb;
 		db.execSQL(LISTMEDIA_TABLE_CREATE);
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+	public void onUpgrade(SQLiteDatabase newDb, int oldVersion, int newVersion)
 	{
+		db = newDb;
 		db.delete(MediasDb.TABLE_NAME, null, null);
-		onCreate(db);
 	}
 
 	/**
@@ -73,60 +75,48 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 */
 	public ArrayList<Map<String, String>> getAllMedias()
 	{
-		SQLiteDatabase db = this.getWritableDatabase();
+		openDb();
+		ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
-		// pour les tests
-		// Cursor cursorDrop = db.rawQuery(SQL_DELETE_TABLE, null);
-		// Cursor cursorDrop = db.rawQuery(SQL_DELETE_ENTRIES, null);
-		// cursorDrop.close();
+		Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
 
-		// Test nb entries
-		testNbEntries(db);
+		if (cursor.moveToFirst())
+		{
+			do
+			{
+				HashMap<String, String> item = createItem(cursor.getString(1),
+						cursor.getString(2));
+				list.add(item);
+				if (subscriber != null)
+					subscriber.onNext(item);
+			} while (cursor.moveToNext());
+		}
 
-		ArrayList<Map<String, String>> mediaList = buildData(db);
-
-		return mediaList;
+		closeDb();
+		return list;
 	}
 
 	/**
 	 * @param db
 	 */
-	public void testNbEntries(SQLiteDatabase db)
-	{
-		// on récupère le nombre d'entrées dans la base
-		int nbEntries = countEntries(db);
-		Boolean filter = false;
-
-		if (nbEntries == NB_LIST_LAST_MEDIA)
-		{
-			// BOF : pour les tests
-			int lastentry = lastEntry(db);
-			lastentry += 1;
-
-			// addMedia(lastentry, "NomFichier"+lastentry, "Remarque"+lastentry,
-			// filter, db);
-			addMedia(Constants.PATH_IMAGE + "/picture01.jpg", "Remarque"
-					+ lastentry, filter, db);
-			// EOF : pour les tests
-		} else
-		{
-			if (nbEntries > NB_LIST_LAST_MEDIA)
-			{
-				// on a plus de X entrées, on les supprime toutes
-				db.delete(MediasDb.TABLE_NAME, null, null);
-			}
-			if (!(nbEntries < NB_LIST_LAST_MEDIA && nbEntries > 0))
-			{
-				// puis on en rajoute X pour les test
-				for (int i = 0; i < 10; i++)
-				{
-					// addMedia(i, "NomFichier"+i, "Remarque"+i, filter, db);
-					addMedia(Constants.PATH_IMAGE + "/picture01.jpg",
-							"Remarque" + i, filter, db);
-				}
-			}
-		}
-	}
+	/*
+	 * public void testNbEntries(SQLiteDatabase db) { // on récupère le nombre
+	 * d'entrées dans la base int nbEntries = countEntries(db); Boolean filter =
+	 * false;
+	 * 
+	 * if (nbEntries == NB_LIST_LAST_MEDIA) { // BOF : pour les tests int
+	 * lastentry = lastEntry(db); lastentry += 1;
+	 * 
+	 * // addMedia(lastentry, "NomFichier"+lastentry, "Remarque"+lastentry, //
+	 * filter, db); addMedia(Constants.PATH_IMAGE + "/picture01.jpg", "Remarque"
+	 * + lastentry, filter, db); // EOF : pour les tests } else { if (nbEntries
+	 * > NB_LIST_LAST_MEDIA) { // on a plus de X entrées, on les supprime toutes
+	 * db.delete(MediasDb.TABLE_NAME, null, null); } if (!(nbEntries <
+	 * NB_LIST_LAST_MEDIA && nbEntries > 0)) { // puis on en rajoute X pour les
+	 * test for (int i = 0; i < 10; i++) { // addMedia(i, "NomFichier"+i,
+	 * "Remarque"+i, filter, db); addMedia(Constants.PATH_IMAGE +
+	 * "/picture01.jpg", "Remarque" + i, filter, db); } } } }
+	 */
 
 	/**
 	 * @param pathFileName
@@ -134,19 +124,19 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 * @param filter
 	 * @param db
 	 */
-	private void addMedia(String pathFileName, String remark, Boolean filter,
-			SQLiteDatabase db)
+	public void addMedia(String pathFileName, String remark, Boolean filter)
 	{
+		openDb();
 		// return datebase's count entries
-		int nbEntries = countEntries(db);
+		int nbEntries = countEntries();
 
 		if (nbEntries == NB_LIST_LAST_MEDIA || nbEntries < NB_LIST_LAST_MEDIA)
 		{
 			// add a new entry then delete the first entry of the database
-			addEntry(pathFileName, remark, filter, db);
+			addEntry(pathFileName, remark, filter);
 			if (nbEntries == NB_LIST_LAST_MEDIA)
 			{
-				deleteFirstEntry(db);
+				deleteFirstEntry();
 			}
 		} else
 		{
@@ -157,22 +147,24 @@ public class ListMediaDb extends SQLiteOpenHelper
 			// then add tests entries
 			for (int i = 0; i < 10; i++)
 			{
-				addEntry("NomFichier" + i, "Remarque" + i, filter, db);
+				addEntry("NomFichier" + i, "Remarque" + i, filter);
 			}
 		}
+
+		closeDb();
 	}
 
 	/**
 	 * @param db
 	 */
-	private void deleteFirstEntry(SQLiteDatabase db)
+	private void deleteFirstEntry()
 	{
 		Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
 		if (cursor.moveToFirst())
 		{
 			int key = cursor.getInt(0);
-			
-			db.delete(MediasDb.TABLE_NAME, "'" + MediasDb._ID + "' = " + key, null);
+			db.delete(MediasDb.TABLE_NAME, "'" + MediasDb._ID + "' = " + key,
+					null);
 		}
 		cursor.close();
 	}
@@ -184,8 +176,7 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 * @param Remark
 	 * @param db
 	 */
-	private void addEntry(String pathFileName, String remark, Boolean filter,
-			SQLiteDatabase db)
+	private void addEntry(String pathFileName, String remark, Boolean filter)
 	{
 		ContentValues values = new ContentValues();
 
@@ -201,7 +192,7 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 * @param db
 	 * @return
 	 */
-	private int countEntries(SQLiteDatabase db)
+	private int countEntries()
 	{
 		Cursor cursorCount = db.rawQuery(SQL_COUNT_TABLE, null);
 		cursorCount.moveToFirst();
@@ -211,6 +202,8 @@ public class ListMediaDb extends SQLiteOpenHelper
 	}
 
 	/**
+	 * Fill the arraylist for the ListView
+	 * 
 	 * @param db
 	 * @return
 	 */
@@ -240,7 +233,7 @@ public class ListMediaDb extends SQLiteOpenHelper
 		{
 			do
 			{
-				list.add(putData(cursor.getString(0), cursor.getString(1)));
+				list.add(createItem(cursor.getString(0), cursor.getString(1)));
 			} while (cursor.moveToNext());
 		}
 
@@ -256,11 +249,19 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 * @param remark
 	 * @return
 	 */
-	private HashMap<String, String> putData(String pathFileName, String remark)
+	private HashMap<String, String> createItem(String pathFileName,	String remark)
 	{
 		HashMap<String, String> item = new HashMap<String, String>();
 		item.put("pathFileName", pathFileName);
 		item.put("remark", remark);
 		return item;
 	}
+
+	@Override
+	public void call(Subscriber<? super Map<String, String>> newSubscriber)
+	{
+		subscriber = newSubscriber;
+		getAllMedias();
+	}
+
 }

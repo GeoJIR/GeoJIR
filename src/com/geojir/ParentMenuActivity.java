@@ -94,11 +94,11 @@ public class ParentMenuActivity extends Activity
 			case R.id.drawable_follow:
 				endActivity = FollowActivity.class;
 				break;
-			case R.id.drawable_account:
-				endActivity = AccountActivity.class;
-				break;
 			case R.id.drawable_historic:
 				endActivity = ListMediaActivity.class;
+				break;
+			case R.id.drawable_account:
+				endActivity = AccountActivity.class;
 				break;
 		}
 		

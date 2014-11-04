@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import butterknife.ButterKnife;
@@ -40,6 +41,10 @@ public class CaptureActivity extends ParentMenuActivity
 	Button playAudioButton;
 	@InjectView(R.id.recordAudioButton)
 	Button recordAudioButton;
+	@InjectView(R.id.commentText)
+	EditText editComment;
+	@InjectView(R.id.saveMediaButton)
+	Button saveMediaButton;
 	@InjectViews({ R.id.imagePhotos, R.id.imageMicro })
 	List<ImageView> mediasIcons;
 	@InjectViews({ R.id.photoFrame, R.id.audioFrame })
@@ -77,6 +82,7 @@ public class CaptureActivity extends ParentMenuActivity
 		ButterKnife.inject(this);
 		
 		restoreState(savedInstanceState);
+		saveMediaButton.requestFocus();
 		
 		// Create tab menu images
 		menu.addAll(mediasIcons, mediasLayout);
@@ -85,7 +91,7 @@ public class CaptureActivity extends ParentMenuActivity
 		
 		// Initialize Audio button
 		if (sound == null)
-			sound = new Sound();
+			createSound();
 		if (new File(sound.getPath()).exists())
 			playAudioButton.setEnabled(true);
 		else
@@ -101,15 +107,13 @@ public class CaptureActivity extends ParentMenuActivity
 			String photoRestore = savedInstanceState.getString(PHOTO_ON_RESTORE);
 			if (photoRestore != null && !photoRestore.isEmpty())
 			{
-				photo = new Photo();
-				photo.restore(photoRestore);
-				captureImageView.load(photoRestore);
+				createPhoto(photoRestore);
 			}
 			// restore audio
 			String audioRestore = savedInstanceState.getString(AUDIO_ON_RESTORE);
 			if (audioRestore != null && !audioRestore.isEmpty())
 			{
-				sound = new Sound();
+				createSound();
 				sound.restore(audioRestore);
 				createSoundObserver();
 			}
@@ -147,7 +151,7 @@ public class CaptureActivity extends ParentMenuActivity
 		if (mediaTemp != null)
 			try
 			{
-				mediaTemp.save("un commentaire");
+				mediaTemp.save(editComment.getText().toString());
 			}
 			catch (InstantiationException | IllegalAccessException
 					| IOException e) {}
@@ -165,6 +169,8 @@ public class CaptureActivity extends ParentMenuActivity
 	public void clickIconForChangeMedia(ImageView view)
 	{
 		int index_temp = mediasIcons.indexOf(view);
+		if (sound != null)
+			sound.stop();
 		currentMedia = mediasList.get(index_temp);
 		changeCaptureType();
 	}
@@ -174,15 +180,32 @@ public class CaptureActivity extends ParentMenuActivity
 	{
 		// Create sound if not exist
 		if (sound == null)
-		{
-			sound = new Sound();
-			createSoundObserver();
-		}
+			createSound();
 		// Active/Stop record
 		if (sound.getState() != RecordableMedia.RECORD_STATE)
 			sound.record();
 		else
 			sound.stop();
+	}
+
+	protected void createSound()
+	{
+		sound = new Sound();
+		createSoundObserver();
+	}
+	
+	protected void createPhoto()
+	{
+		createPhoto("");
+	}
+	
+	protected void createPhoto(String restoreString)
+	{
+		photo = new Photo();
+		if (restoreString != "")
+			photo.restore(restoreString);
+		captureImageView.load();
+		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
 	
 	// Shorts methods for toast
@@ -271,10 +294,7 @@ public class CaptureActivity extends ParentMenuActivity
 		
 		// reload photo if captureImageView exists
 		if (captureImageView != null)
-		{
-			captureImageView.load();
-			photo = new Photo();
-		}
+			createPhoto();
 	}
 	
 	// When an another app send result
@@ -282,10 +302,7 @@ public class CaptureActivity extends ParentMenuActivity
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_TAKE_PHOTO)
-		{
-			captureImageView.load();
-			photo = new Photo();
-		}
+			createPhoto();
 	}
 	
 	@Override
