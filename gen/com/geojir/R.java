@@ -100,6 +100,7 @@ public final class R {
         public static final int ic_photo_label=0x7f050005;
         public static final int infoAccount=0x7f050022;
         public static final int infoSaved=0x7f050023;
+        public static final int oneFieldIsEmpty=0x7f050024;
         public static final int play_song=0x7f050008;
         public static final int save_media=0x7f050009;
         public static final int save_song=0x7f050007;
@@ -114,7 +115,7 @@ public final class R {
         public static final int title_activity_account=0x7f05001b;
         public static final int title_activity_around=0x7f050019;
         public static final int title_activity_follow=0x7f05001a;
-        public static final int title_activity_list_media=0x7f050024;
+        public static final int title_activity_list_media=0x7f050025;
         public static final int username=0x7f05001c;
         public static final int youremail=0x7f05001f;
         public static final int yourname=0x7f05001d;

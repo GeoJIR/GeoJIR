@@ -41,6 +41,7 @@
     <string name="followedsList">Liste de vos followeds</string>
     <string name="infoAccount">Enregistrer les infos</string>
     <string name="infoSaved">Infos mises à jour</string>
+    <string name="oneFieldIsEmpty">Un champ au moins est vide</string>
     
     <string name="title_activity_list_media">Liste des derniers médias</string>
 </resources>

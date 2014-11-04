@@ -18,6 +18,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 	protected Subscriber<? super Map<String, String>> subscriber;
 	// DATABASE
 	private static final int DATABASE_VERSION = 1;
+	private static final String LISTMEDIA_DATABASE_NAME = "ListMedia.db";
 	private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
 	private static final int NB_LIST_LAST_MEDIA = 10;
 	
@@ -41,7 +42,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 	
 	public ListMediaDb(Context context)
 	{
-		super(context, LISTMEDIA_TABLE_NAME, null, DATABASE_VERSION);
+		super(context, LISTMEDIA_DATABASE_NAME, null, DATABASE_VERSION);
 	}
 	
 	protected void openDb()
@@ -115,8 +116,9 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 		Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
 		if (cursor.moveToFirst())
 		{
-			int key = cursor.getInt(0);
-			db.delete(LISTMEDIA_TABLE_NAME, KEY_ID + " = " + key, null);
+			String whereClause = KEY_ID + "=?";
+			String[] whereArgs = new String[] { String.valueOf(cursor.getInt(0)) };
+			db.delete(LISTMEDIA_TABLE_NAME, whereClause, whereArgs);
 		}
 		cursor.close();
 	}
