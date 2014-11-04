@@ -84,8 +84,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		{
 			do
 			{
-				HashMap<String, String> item = createItem(cursor.getString(1),
-						cursor.getString(2));
+				HashMap<String, String> item = createItem(cursor.getString(0), cursor.getString(1));
 				list.add(item);
 				if (subscriber != null)
 					subscriber.onNext(item);
@@ -95,28 +94,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		closeDb();
 		return list;
 	}
-
-	/**
-	 * @param db
-	 */
-	/*
-	 * public void testNbEntries(SQLiteDatabase db) { // on récupère le nombre
-	 * d'entrées dans la base int nbEntries = countEntries(db); Boolean filter =
-	 * false;
-	 * 
-	 * if (nbEntries == NB_LIST_LAST_MEDIA) { // BOF : pour les tests int
-	 * lastentry = lastEntry(db); lastentry += 1;
-	 * 
-	 * // addMedia(lastentry, "NomFichier"+lastentry, "Remarque"+lastentry, //
-	 * filter, db); addMedia(Constants.PATH_IMAGE + "/picture01.jpg", "Remarque"
-	 * + lastentry, filter, db); // EOF : pour les tests } else { if (nbEntries
-	 * > NB_LIST_LAST_MEDIA) { // on a plus de X entrées, on les supprime toutes
-	 * db.delete(MediasDb.TABLE_NAME, null, null); } if (!(nbEntries <
-	 * NB_LIST_LAST_MEDIA && nbEntries > 0)) { // puis on en rajoute X pour les
-	 * test for (int i = 0; i < 10; i++) { // addMedia(i, "NomFichier"+i,
-	 * "Remarque"+i, filter, db); addMedia(Constants.PATH_IMAGE +
-	 * "/picture01.jpg", "Remarque" + i, filter, db); } } } }
-	 */
 
 	/**
 	 * @param pathFileName
@@ -214,32 +191,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		int lastEntry = cursorLast.getInt(0);
 		cursorLast.close();
 		return lastEntry;
-	}
-
-	/**
-	 * Fill the arraylist for the ListView
-	 * 
-	 * @param db
-	 * @return
-	 */
-	private ArrayList<Map<String, String>> buildData(SQLiteDatabase db)
-	{
-
-		ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
-
-		Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
-
-		if (cursor.moveToFirst())
-		{
-			do
-			{
-				list.add(createItem(cursor.getString(0), cursor.getString(1)));
-			} while (cursor.moveToNext());
-		}
-
-		db.close();
-
-		return list;
 	}
 
 	/**

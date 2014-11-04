@@ -11,9 +11,7 @@ import rx.schedulers.Schedulers;
 import android.os.Bundle;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class ListMediaActivity extends ParentMenuActivity
