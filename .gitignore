@@ -1,6 +1,11 @@
 .classpath
+.factorypath
 .project
 .settings/
 bin/
 gen/
+<<<<<<< HEAD
 /.apt_generated/
+=======
+.apt_generated/
+>>>>>>> 194df9f4db256e78eca7ac90aae35e3902574e49
