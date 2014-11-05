@@ -13,6 +13,7 @@
     <string name="play_song">Play the sound recorded</string>
     <string name="save_media">Save media</string>
     <string name="black_and_white">Black and White</string>
+    <string name="comment">Comment</string>
     
     <string name="stop_audio_record_button_text">Stop recording</string>
     <string name="start_audio_record_button_text">Start recording</string>
@@ -40,6 +41,8 @@
     <string name="followedsList">Followeds list</string>
     <string name="infoAccount">Save info</string>
     <string name="infoSaved">Infos updated</string>
+    <string name="oneFieldIsEmpty">One field at least is empty</string>
+    
     
     <string name="title_activity_list_media">List of the last medias</string>
 </resources>

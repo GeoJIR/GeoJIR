@@ -4,35 +4,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import rx.Observable;
+import rx.Subscriber;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.geojir.ListMediaContract.MediasDb;
 
 //Database for list media
-public class ListMediaDb extends SQLiteOpenHelper
+public class ListMediaDb extends SQLiteOpenHelper implements
+		Observable.OnSubscribe<Map<String, String>>
 {
-	
 	// DATABASE
 	protected SQLiteDatabase db;
 	
 	private static final int DATABASE_VERSION = 1;
 	private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
 	private static final int NB_LIST_LAST_MEDIA = 10;
-	
-//	private static final String _ID = "_id";
-	private static final String _ID = "id";
-	private static final String KEY_FILE_NAME = "Filename";
-	private static final String KEY_REMARK = "Remark";
-	private static final String KEY_FILTER = "Filter";
-	
-	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE "
-			+ LISTMEDIA_TABLE_NAME + " (" 
-			+ _ID +" integer primary key , "
-			+ KEY_FILE_NAME + " TEXT, "
-			+ KEY_REMARK + " TEXT, " 
-			+ KEY_FILTER + " NUMERIC)" + ";";
 	
 	private static final String LISTMEDIA_SELECT_ENTRIES = "SELECT * FROM "
 			+ LISTMEDIA_TABLE_NAME;
@@ -46,29 +38,43 @@ public class ListMediaDb extends SQLiteOpenHelper
 	private static final String LISTMEDIA_DROP_TABLE = "DROP TABLE "
 			+ LISTMEDIA_TABLE_NAME;
 	
+	protected Subscriber<? super Map<String, String>> subscriber;
+
+	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE "
+			+ MediasDb.TABLE_NAME + " (" + MediasDb._ID
+			+ " INTEGER PRIMARY KEY," + MediasDb.FILE_NAME_COLUMN + " TEXT, "
+			+ MediasDb.REMARK_COLUMN + " TEXT, " + MediasDb.FILTER_COLUMN
+			+ " NUMERIC)" + ";";
+
+	private static final String SQL_SELECT_ENTRIES = "SELECT * FROM "
+			+ MediasDb.TABLE_NAME;
+
+	private static final String SQL_COUNT_TABLE = "SELECT COUNT(*) FROM "
+			+ MediasDb.TABLE_NAME;
+
 	public ListMediaDb(Context context)
 	{
-		super(context, LISTMEDIA_TABLE_NAME, null, DATABASE_VERSION);
+		super(context, MediasDb.DATABASE_NAME, null, MediasDb.DATABASE_VERSION);
 	}
-	
+
 	protected void openDb()
 	{
 		db = this.getWritableDatabase();
 	}
-	
+
 	protected void closeDb()
 	{
 		if (db != null)
 			db.close();
 	}
-	
+
 	@Override
 	public void onCreate(SQLiteDatabase newDb)
 	{
 		db = newDb;
 		db.execSQL(LISTMEDIA_TABLE_CREATE);
 	}
-	
+
 	@Override
 	public void onUpgrade(SQLiteDatabase newDb, int oldVersion, int newVersion)
 	{
@@ -76,7 +82,33 @@ public class ListMediaDb extends SQLiteOpenHelper
 		db.execSQL(LISTMEDIA_DROP_TABLE);
 		onCreate(db);
 	}
-		
+
+	/**
+	 * @param db
+	 * @return
+	 */
+	public ArrayList<Map<String, String>> getAllMedias()
+	{
+		openDb();
+		ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
+
+		Cursor cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
+
+		if (cursor.moveToFirst())
+		{
+			do
+			{
+				HashMap<String, String> item = createItem(cursor.getString(0), cursor.getString(1));
+				list.add(item);
+				if (subscriber != null)
+					subscriber.onNext(item);
+			} while (cursor.moveToNext());
+		}
+
+		closeDb();
+		return list;
+	}
+
 	/**
 	 * @param pathFileName
 	 * @param remark
@@ -89,7 +121,7 @@ public class ListMediaDb extends SQLiteOpenHelper
 		
 		// return datebase's count entries
 		int nbEntries = countEntries();
-		
+
 		if (nbEntries == NB_LIST_LAST_MEDIA || nbEntries < NB_LIST_LAST_MEDIA)
 		{
 			if (nbEntries == NB_LIST_LAST_MEDIA)
@@ -105,10 +137,10 @@ public class ListMediaDb extends SQLiteOpenHelper
 		
 		// add a new entry then delete the first entry of the database
 		addEntry(pathFileName, remark, filter);
-		
+
 		closeDb();
 	}
-	
+
 	/**
 	 * @param db
 	 */
@@ -117,12 +149,13 @@ public class ListMediaDb extends SQLiteOpenHelper
 		Cursor cursor = db.rawQuery(LISTMEDIA_SELECT_ENTRIES, null);
 		if (cursor.moveToFirst())
 		{
-			int key = cursor.getInt(0);
-			db.delete(LISTMEDIA_TABLE_NAME, _ID +" = " + key, null);
+			String whereClause = "'" + MediasDb._ID + "'=?";
+			String[] whereArgs = new String[] { String.valueOf(cursor.getInt(0)) };
+			db.delete(MediasDb.TABLE_NAME, whereClause, whereArgs);
 		}
 		cursor.close();
 	}
-	
+
 	/**
 	 * Adding a new entry is based on auto-increment
 	 * 
@@ -133,12 +166,15 @@ public class ListMediaDb extends SQLiteOpenHelper
 	private void addEntry(String pathFileName, String remark, Boolean filter)
 	{
 		ContentValues values = new ContentValues();
-		values.put(KEY_FILE_NAME, pathFileName);
-		values.put(KEY_REMARK, remark);
-		values.put(KEY_FILTER, filter);
-		db.insert(LISTMEDIA_TABLE_NAME, null, values);
+
+		// values.put(MediasDb._ID, id);
+
+		values.put(MediasDb.FILE_NAME_COLUMN, pathFileName);
+		values.put(MediasDb.REMARK_COLUMN, remark);
+		values.put(MediasDb.FILTER_COLUMN, filter);
+		db.insert(MediasDb.TABLE_NAME, null, values);
 	}
-	
+
 	/**
 	 * @param db
 	 * @return
@@ -152,35 +188,22 @@ public class ListMediaDb extends SQLiteOpenHelper
 		
 		return nbEntries;
 	}
-	
+
 	/**
 	 * Fill the arraylist for the ListView
 	 * 
 	 * @param db
 	 * @return
 	 */
-	public ArrayList<Map<String, String>> getAllMedias()
+	private int lastEntry(SQLiteDatabase db)
 	{
-		openDb();
-		
-		ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		
-		Cursor cursor = db.rawQuery(LISTMEDIA_SELECT_ENTRIES, null);
-		
-		if (cursor.moveToFirst())
-		{
-			do
-			{
-				list.add(putData(cursor.getString(1), cursor.getString(2)));
-			}
-			while (cursor.moveToNext());
-		}
-		
-		closeDb();	
-		
-		return list;
+		Cursor cursorLast = db.rawQuery(SQL_SELECT_ENTRIES, null);
+		cursorLast.moveToLast();
+		int lastEntry = cursorLast.getInt(0);
+		cursorLast.close();
+		return lastEntry;
 	}
-	
+
 	/**
 	 * Add 1 entry in the arraylist for the ListView
 	 * 
@@ -188,11 +211,19 @@ public class ListMediaDb extends SQLiteOpenHelper
 	 * @param remark
 	 * @return
 	 */
-	private HashMap<String, String> putData(String pathFileName, String remark)
+	private HashMap<String, String> createItem(String pathFileName,	String remark)
 	{
 		HashMap<String, String> item = new HashMap<String, String>();
 		item.put("pathFileName", pathFileName);
 		item.put("remark", remark);
 		return item;
 	}
+
+	@Override
+	public void call(Subscriber<? super Map<String, String>> newSubscriber)
+	{
+		subscriber = newSubscriber;
+		getAllMedias();
+	}
+
 }
