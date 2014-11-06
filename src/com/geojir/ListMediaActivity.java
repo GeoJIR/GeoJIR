@@ -1,39 +1,72 @@
 package com.geojir;
 
-import static com.geojir.Constants.*;
+import java.util.ArrayList;
+import java.util.Map;
 
-import java.io.IOException;
-
-import android.app.Activity;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
-public class ListMediaActivity extends Activity {
-
+public class ListMediaActivity extends ParentMenuActivity
+{
+	
+	ArrayList<Map<String, String>> values;
+	ListView vue;
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
 		
-//		File file = getFilesDir();
-		try {
-			Constants.initConstants();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// database instantiate
+		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
 		
-		Log.i("Test", "test variable : " + PATH_GEOJIR);
+		// last X entries
+		values = new ArrayList<Map<String, String>>();
 		
-		//lecture du fichier de liste des medias
+		Observable.create(listeMedia)
+			.map(new Func1<Map<String, String>, Map<String, String>>()
+			{
+				@Override
+				public Map<String, String> call(Map<String, String> item)
+				{
+					values.add(item);
+					return item;
+				}
+			})
+			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(new Action1<Map<String, String>>()
+			{
+				@Override
+				public void call(Map<String, String> item)
+				{
+					displayList();
+				}
+			});
+	}
+
+	protected void displayList()
+	{
+		ListAdapter adapterSimple = new SimpleAdapter(this, values,
+				R.layout.list_item, new String[] { "pathFileName", "remark" },
+				new int[] {R.id.pathFileName, R.id.remark}
+				// new int[] { R.id.icon, R.id.remark }
+		);
 		
-		
-		//si fichier inexistant, on le cree
-		
-		//on met le contenu dans un array
-		
-		// on r�cup�re les 10 dernieres entrees 
-		
-		//on affiche les 10 dernieres entrees dans un label.
+		// Get ListView object from xml
+		vue = (ListView) findViewById(R.id.listViewMedias);
+		// Clear old items
+		vue.setAdapter(null);
+		// Display new item list
+		vue.setAdapter(adapterSimple);
 	}
 }

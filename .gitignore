@@ -1,5 +1,8 @@
 .classpath
+.factorypath
 .project
 .settings/
 bin/
 gen/
+.apt_generated/
+
