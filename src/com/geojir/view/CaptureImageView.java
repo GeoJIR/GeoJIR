@@ -1,6 +1,7 @@
 package com.geojir.view;
 
 import java.io.File;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.geojir.Constants;
+import com.geojir.R;
 import com.geojir.medias.Photo;
 
 public class CaptureImageView extends ImageView
