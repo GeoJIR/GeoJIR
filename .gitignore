@@ -4,6 +4,6 @@
 .settings/
 bin/
 gen/
-
+project.properties
 .apt_generated/
 

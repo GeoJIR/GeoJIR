@@ -18,7 +18,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.InjectViews;
@@ -177,6 +176,7 @@ public class CaptureActivity extends ParentMenuActivity
 			@Override
 			protected Object doInBackground(Object... params)
 			{
+				Boolean monochrome = currentMedia == Constants.TYPE_IMAGE && filterMonochrome.isChecked();
 				// Get current media
 				Media mediaTemp = null;
 				if (currentMedia == Constants.TYPE_IMAGE)
@@ -189,7 +189,7 @@ public class CaptureActivity extends ParentMenuActivity
 				{
 					try
 					{
-						mediaTemp.save(editComment.getText().toString());
+						mediaTemp.save(editComment.getText().toString(), monochrome);
 					}
 					catch (InstantiationException | IllegalAccessException
 							| IOException e)
