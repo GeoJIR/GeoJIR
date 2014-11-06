@@ -85,12 +85,13 @@ public class ListMediaActivity extends ParentMenuActivity
 						// MEGA Boilerplate parce que pas le temp
 						
 						// Get the dimensions of the View
+						int fixSize = (int) (getResources().getDisplayMetrics().density * 120f + 0.5f);
 						int targetW = imageView.getWidth();
 						int targetH = imageView.getHeight();
 						if (targetW < 1)
-							targetW = 1;
+							targetW = fixSize;
 						if (targetH < 1)
-							targetH = 1;
+							targetH = fixSize;
 						
 						// Get the dimensions of the bitmap
 						BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -100,7 +101,7 @@ public class ListMediaActivity extends ParentMenuActivity
 						int photoH = bmOptions.outHeight;
 
 						// Determine how much to scale down the image
-						int scaleFactor = Math.min(photoW / targetW * 3, photoH / targetH * 3);
+						int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
 						// Decode the image file into a Bitmap sized to fill the View
 						bmOptions.inJustDecodeBounds = false;
