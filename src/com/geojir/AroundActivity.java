@@ -39,7 +39,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
 
 		Marker marker = mMap.addMarker(new MarkerOptions()
 				.position(new LatLng(43.6109200, 3.8772300))
-				.title("Hello world").draggable(true));
+				.title(getString(R.string.geojir_here)).draggable(true));
 		// Changed my mind, not draggable after all
 		marker.setDraggable(false);
 		// Properties are: Position (required), Anchor, Alpha, Title,

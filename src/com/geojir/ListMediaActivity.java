@@ -17,9 +17,11 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnItemClick;
 
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.db.ListMediaDb;
+import com.geojir.view.CustomImageView;
 
 public class ListMediaActivity extends ParentMenuActivity
 {
@@ -57,12 +59,15 @@ public class ListMediaActivity extends ParentMenuActivity
 			listeMedia.getCursorMedias();
 	}
 	
+	@OnItemClick(R.id.listViewMedias) void onItemClick(int position)
+	{
+		View rowView = listView.getChildAt(position);
+		CustomImageView iconView = (CustomImageView) rowView.findViewById(R.id.imageIcon);
+	}
+	
 	// Create custom adapter
 	protected void createAdapter(Cursor cursor)
 	{
-		// get icon's dimension
-		final int thumbnailSize = getResources().getDimensionPixelOffset(R.dimen.thumbnailSize);
-		
 		// Display image and comment
 		cursorAdapter = new SimpleCursorAdapter(this,
 				R.layout.list_item,
@@ -81,42 +86,16 @@ public class ListMediaActivity extends ParentMenuActivity
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex)
 			{
-				if (view instanceof ImageView)
+				if (view instanceof CustomImageView)
 				{
-					ImageView imageView = (ImageView) view;
+					CustomImageView imageView = (CustomImageView) view;
 					
 					// Path of media
 					String path = cursor.getString(columnIndex);
 					File file = new File(path);
 					// display image if exist
 					if (path.endsWith(Constants.EXT_IMAGE) && file.exists())
-					{
-						/////////////////////////////////////////
-						// MEGA Boilerplate parce que pas le temp
-						
-						// Get the dimensions of the View
-						int targetW = thumbnailSize;
-						int targetH = thumbnailSize;
-						
-						// Get the dimensions of the bitmap
-						BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-						bmOptions.inJustDecodeBounds = true;
-						BitmapFactory.decodeFile(file.getPath(), bmOptions);
-						int photoW = bmOptions.outWidth;
-						int photoH = bmOptions.outHeight;
-
-						// Determine how much to scale down the image
-						int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-						// Decode the image file into a Bitmap sized to fill the View
-						bmOptions.inJustDecodeBounds = false;
-						bmOptions.inSampleSize = scaleFactor;
-						
-						// Load resized image
-						Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), bmOptions);
-						imageView.setImageBitmap(bitmap);
-						/////////////////////////////////////////
-					}
+						imageView.setImageFile(file);
 					else if (path.endsWith(Constants.EXT_AUDIO) && file.exists())
 						// else display default
 						imageView.setImageResource(R.drawable.ic_music);
