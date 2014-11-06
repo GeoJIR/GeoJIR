@@ -11,6 +11,7 @@ import rx.schedulers.Schedulers;
 import android.location.Location;
 import android.os.Bundle;
 
+import com.geojir.db.ListMediaDb;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.maps.CameraUpdate;

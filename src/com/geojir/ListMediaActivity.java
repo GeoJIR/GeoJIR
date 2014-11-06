@@ -17,7 +17,8 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.geojir.ListMediaContract.MediasDb;
+import com.geojir.db.ListMediaDb;
+import com.geojir.db.ListMediaContract.MediasDb;
 
 public class ListMediaActivity extends ParentMenuActivity
 {
