@@ -17,7 +17,7 @@ public class MediaContentProvider extends ContentProvider
 
 	// URI de notre content provider, elle sera utilisé pour accéder au
 	// ContentProvider
-	public static final Uri CONTENT_URI = Uri.parse("content://com.geojir.db");
+	public static final Uri CONTENT_URI = Uri.parse("content://com.geojir.db.mediacontentprovider");
 	// Le Mime de notre content provider, la premiére partie est toujours
 	// identique
 	public static final String CONTENT_PROVIDER_MIME = "vnd.android.cursor.item/vnd.com.geojir.db.MediasDb";
@@ -33,7 +33,21 @@ public class MediaContentProvider extends ContentProvider
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder)
 	{
-		return null;
+		long id = getId(uri);
+		SQLiteDatabase db = database.getReadableDatabase();
+		if (id < 0)
+		{
+			return db
+					.query(MediasDb.TABLE_NAME,
+							projection, selection, selectionArgs, null, null,
+							sortOrder);
+		} else
+		{
+			return db.query(MediasDb.TABLE_NAME,
+					projection, MediasDb._ID + "=" + id, null, null, null,
+					null);
+		}
+
 	}
 
 	@Override
@@ -48,9 +62,7 @@ public class MediaContentProvider extends ContentProvider
 		SQLiteDatabase db = database.getWritableDatabase();
 		try
 		{
-			long id = db.insertOrThrow(
-					MediasDb.TABLE_NAME, null,
-					values);
+			long id = db.insertOrThrow(MediasDb.TABLE_NAME, null, values);
 
 			if (id == -1)
 			{
@@ -71,14 +83,40 @@ public class MediaContentProvider extends ContentProvider
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs)
 	{
-		return 0;
+		long id = getId(uri);
+		SQLiteDatabase db = database.getWritableDatabase();
+		try
+		{
+			if (id < 0)
+				return db.delete(MediasDb.TABLE_NAME, selection, selectionArgs);
+			else
+				return db.delete(MediasDb.TABLE_NAME, MediasDb._ID + "=" + id,
+						selectionArgs);
+		} finally
+		{
+			db.close();
+		}
 	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs)
 	{
-		return 0;
+		long id = getId(uri);
+		SQLiteDatabase db = database.getWritableDatabase();
+
+		try
+		{
+			if (id < 0)
+				return db.update(MediasDb.TABLE_NAME, values, selection,
+						selectionArgs);
+			else
+				return db.update(MediasDb.TABLE_NAME, values, MediasDb._ID
+						+ "=" + id, null);
+		} finally
+		{
+			db.close();
+		}
 	}
 
 	private long getId(Uri uri)

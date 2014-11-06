@@ -1,11 +1,8 @@
 package com.geojir;
 
-import java.io.File;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -17,7 +14,7 @@ import butterknife.InjectView;
 import butterknife.OnItemClick;
 
 import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.db.ListMediaDb;
+import com.geojir.db.MediaContentProvider;
 import com.geojir.view.CustomImageView;
 
 public class ListMediaActivity extends ParentMenuActivity
@@ -34,26 +31,28 @@ public class ListMediaActivity extends ParentMenuActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
 		ButterKnife.inject(this);
-		updateChildrenVisibility();
-		
+
+		/*
 		// database instantiate
 		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
-		
+
 		// Create observation of sql request
-		Observable.create(listeMedia)
-			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(new Action1<Cursor>()
-			{
-				@Override
-				public void call(Cursor cursor)
+		Observable.create(listeMedia).observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Action1<Cursor>()
 				{
-					// display results
-					createAdapter(cursor);
-					displayList();
-				}
-			});
-			
-			listeMedia.getCursorMedias();
+					@Override
+					public void call(Cursor cursor)
+					{
+						// display results
+						createAdapter(cursor);
+						displayList();
+					}
+				});
+
+		listeMedia.getCursorMedias();
+		*/
+		
+		displayContentProvider();
 	}
 	
 	@OnItemClick(R.id.listViewMedias) void onItemClick(int position)
@@ -95,7 +94,6 @@ public class ListMediaActivity extends ParentMenuActivity
 					
 					return true;
 				}
-				
 				return false;
 			}
 			
@@ -123,4 +121,18 @@ public class ListMediaActivity extends ParentMenuActivity
 		// Display new item list
 		listView.setAdapter(cursorAdapter);
 	}
+	
+	// CONTEN PROVIDER
+	private void displayContentProvider()
+	{
+		String columns[] = new String[] { MediasDb._ID, MediasDb.FILE_NAME_COLUMN,
+				MediasDb.REMARK_COLUMN };
+		Uri mContacts = MediaContentProvider.CONTENT_URI;
+		Cursor cur =  getContentResolver().query(mContacts, columns, null, null, null);
+		
+		createAdapter(cur);
+		displayList();
+
+	}
+	
 }
