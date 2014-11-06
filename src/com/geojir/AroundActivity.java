@@ -13,7 +13,6 @@ import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,8 +59,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
 		// last X entries
 		values = new ArrayList<Map<String, String>>();
 
-		Observable.create(listeMedia)
-				.map(new Func1<Map<String, String>, Map<String, String>>()
+		Observable.create(listeMedia).map(new Func1<Map<String, String>, Map<String, String>>()
 				{
 					@Override
 					public Map<String, String> call(Map<String, String> item)
