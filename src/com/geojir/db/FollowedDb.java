@@ -1,8 +1,6 @@
-package com.geojir;
+package com.geojir.db;
 
 import java.util.ArrayList;
-
-import com.geojir.FollowerContract.FollowDb;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,11 +8,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.geojir.db.FollowerContract.FollowDb;
 
 public class FollowedDb extends SQLiteOpenHelper
 {
-
-	private static final int DATABASE_VERSION = 1;
 
 	public FollowedDb(Context context, String name, CursorFactory factory,
 			int version)
@@ -142,7 +141,5 @@ public class FollowedDb extends SQLiteOpenHelper
 		
 		// on récupère le nombre d'entrées dans la base
 		//int nbEntries = countEntries(db);
-		
-
 	}
 }

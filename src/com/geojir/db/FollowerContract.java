@@ -1,4 +1,4 @@
-package com.geojir;
+package com.geojir.db;
 
 import android.provider.BaseColumns;
 

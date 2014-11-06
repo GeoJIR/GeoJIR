@@ -13,19 +13,11 @@ import java.util.Locale;
 import android.os.Environment;
 
 import com.geojir.Constants;
-import com.geojir.ListMediaDb;
 import com.geojir.ParentMenuActivity;
+import com.geojir.db.ListMediaDb;
 import com.geojir.interfaces.IFiles;
 import com.geojir.override.OneLineArrayList;
 
-/**
- * @author HumanBooster
- *
- */
-/**
- * @author HumanBooster
- *
- */
 public abstract class Media implements IFiles
 {
 	// Comment of the media
