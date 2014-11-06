@@ -2,14 +2,13 @@ package com.geojir;
 
 import java.io.File;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.util.Log;
 
-public class Constants extends Activity {
+public class Constants {
 	
 	//Directories URL
     public static String PATH_GEOJIR = "GeoJIR";
@@ -50,6 +49,16 @@ public class Constants extends Activity {
 	public static final String PREF_DEFAULT_ACCOUNT_FOLLOWED = "";
 	public static final String PREF_ACCOUNT_FOLLOWERS = "";
 	public static final String PREF_DEFAULT_ACCOUNT_FOLLOWERS = "";
+	
+	//BDD
+	public static final int DATABASE_VERSION = 1;
+	public static final String DATABASE_NAME = "GeoJIR.db";
+	
+	//Google Map
+	public static final float GM_MPL_LATITUDE = (float) 43.600;
+	public static final float GM_MPL_LONGITUDE = (float) 3.883;
+	public static final int GM_DEFAULT_ZOOM = 25;
+
 
 	/************************ METHODS ******************/
 	/*

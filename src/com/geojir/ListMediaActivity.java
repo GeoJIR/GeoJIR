@@ -14,15 +14,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.geojir.ListMediaContract.MediasDb;
+import com.geojir.db.ListMediaContract.MediasDb;
+import com.geojir.db.ListMediaDb;
 
 public class ListMediaActivity extends ParentMenuActivity
 {
+	@InjectView(R.id.emptyListTextView)
+	protected TextView emptyListTextView;
 	@InjectView(R.id.listViewMedias)
-	protected ListView vue;
+	protected ListView listView;
 	protected SimpleCursorAdapter cursorAdapter;
 	
 	@Override
@@ -31,6 +35,7 @@ public class ListMediaActivity extends ParentMenuActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
 		ButterKnife.inject(this);
+		updateChildrenVisibility();
 		
 		// database instantiate
 		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
@@ -55,6 +60,9 @@ public class ListMediaActivity extends ParentMenuActivity
 	// Create custom adapter
 	protected void createAdapter(Cursor cursor)
 	{
+		// get icon's dimension
+		final int thumbnailSize = getResources().getDimensionPixelOffset(R.dimen.thumbnailSize);
+		
 		// Display image and comment
 		cursorAdapter = new SimpleCursorAdapter(this,
 				R.layout.list_item,
@@ -63,6 +71,8 @@ public class ListMediaActivity extends ParentMenuActivity
 				new int[] {R.id.imageIcon, R.id.remark}
 				, 0
 		);
+		
+		updateChildrenVisibility();
 		
 		// Convert String to image for ImageView
 		cursorAdapter.setViewBinder(new ViewBinder()
@@ -85,12 +95,8 @@ public class ListMediaActivity extends ParentMenuActivity
 						// MEGA Boilerplate parce que pas le temp
 						
 						// Get the dimensions of the View
-						int targetW = imageView.getWidth();
-						int targetH = imageView.getHeight();
-						if (targetW < 1)
-							targetW = 1;
-						if (targetH < 1)
-							targetH = 1;
+						int targetW = thumbnailSize;
+						int targetH = thumbnailSize;
 						
 						// Get the dimensions of the bitmap
 						BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -100,7 +106,7 @@ public class ListMediaActivity extends ParentMenuActivity
 						int photoH = bmOptions.outHeight;
 
 						// Determine how much to scale down the image
-						int scaleFactor = Math.min(photoW / targetW * 3, photoH / targetH * 3);
+						int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
 						// Decode the image file into a Bitmap sized to fill the View
 						bmOptions.inJustDecodeBounds = false;
@@ -111,6 +117,10 @@ public class ListMediaActivity extends ParentMenuActivity
 						imageView.setImageBitmap(bitmap);
 						/////////////////////////////////////////
 					}
+					else if (path.endsWith(Constants.EXT_AUDIO) && file.exists())
+						// else display default
+//						imageView.setImageResource(R.drawable.ic_music);
+						imageView.setImageResource(R.drawable.ic_medias);
 					else
 						// else display default
 						imageView.setImageResource(R.drawable.ic_medias);
@@ -123,12 +133,26 @@ public class ListMediaActivity extends ParentMenuActivity
 			
 		});
 	}
+	
+	protected void updateChildrenVisibility()
+	{
+		if (cursorAdapter == null || cursorAdapter.isEmpty())
+		{
+			listView.setVisibility(View.INVISIBLE);
+			emptyListTextView.setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			listView.setVisibility(View.VISIBLE);
+			emptyListTextView.setVisibility(View.INVISIBLE);
+		}
+	}
 
 	protected void displayList()
 	{
 		// Clear old items
-		vue.setAdapter(null);
+		listView.setAdapter(null);
 		// Display new item list
-		vue.setAdapter(cursorAdapter);
+		listView.setAdapter(cursorAdapter);
 	}
 }

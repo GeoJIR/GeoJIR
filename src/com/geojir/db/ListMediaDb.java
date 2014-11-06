@@ -1,4 +1,4 @@
-package com.geojir;
+package com.geojir.db;
 
 import java.util.Map;
 
@@ -9,8 +9,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
-import com.geojir.ListMediaContract.MediasDb;
+import com.geojir.Constants;
+import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.memory.DBMemory;
 
 //Database for list media
@@ -51,7 +53,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 
 	public ListMediaDb(Context context)
 	{
-		super(context, MediasDb.DATABASE_NAME, null, MediasDb.DATABASE_VERSION);
+		super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
 	}
 
 	@Override

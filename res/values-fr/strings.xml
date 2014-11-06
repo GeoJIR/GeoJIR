@@ -39,8 +39,8 @@
     <string name="yourname">"Votre nom"</string>
     <string name="email">Courriel</string>
     <string name="youremail">Votre courriel</string>
-    <string name="followersList">Liste de vos followers</string>
-    <string name="followedsList">Liste de vos followeds</string>
+    <string name="followersList">Liste de ceux qui vous suivent</string>
+    <string name="followedsList">Liste de ceux que vous suivez</string>
     <string name="infoAccount">Enregistrer les infos</string>
     <string name="infoSaved">Infos mises à jour</string>
     <string name="oneFieldIsEmpty">Un champ au moins est vide</string>
@@ -48,5 +48,10 @@
     <string name="title_activity_list_media">Liste des derniers médias</string>
     
     <string name="geojir_here">GeoJIR est ici</string>
+    <string name="media_icon">Icone du média</string>
+    <string name="empty_list">La liste est vide</string>
+    
+    <string name="GM_NotReached">Google Map non joignable</string>
+    <string name="GM_NoPosition">Google Map ne renvoie pas votre position</string>
     
 </resources>
