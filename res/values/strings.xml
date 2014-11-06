@@ -49,5 +49,7 @@
     <string name="title_activity_list_media">List of the last medias</string>
     
     <string name="geojir_here">GeoJIR is here</string>
+    <string name="media_icon">Media icon</string>
+    <string name="empty_list">List is empty</string>
     
 </resources>
