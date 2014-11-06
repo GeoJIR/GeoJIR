@@ -1,7 +1,6 @@
 package com.geojir;
 
 import android.os.Bundle;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -95,6 +94,23 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	public void onDisconnected()
 	{
 		// TODO Auto-generated method stub
+/*		
+		mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
 		
+		map = mapFragment.getMap();
+		if (map != null)
+		{
+			map.addMarker(new MarkerOptions()
+				.position(new LatLng(43.619273, 3.913608))
+				.title(getString(R.string.geojir_here))
+				.draggable(true)
+			);
+			
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+					new LatLng(43.619273, 3.913608), 15);
+			
+			map.animateCamera(cameraUpdate);
+		}
+*/		
 	}
 }

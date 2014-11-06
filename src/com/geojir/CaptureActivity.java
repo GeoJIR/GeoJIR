@@ -102,8 +102,8 @@ public class CaptureActivity extends ParentMenuActivity
 		else
 			playAudioButton.setEnabled(false);
 		
-		//on cache la barre de progression
-		progressBar.setAlpha(0f);
+		// Hide loading bar
+		progressBar.setVisibility(View.INVISIBLE);
 	}
 
 	// Restore medias
@@ -151,7 +151,58 @@ public class CaptureActivity extends ParentMenuActivity
 	@OnClick(R.id.saveMediaButton)
 	public void clickOnSaveMedia(View view)
 	{
-		// On lance la tâche asynchrone
+		class SaveAsynchrone extends AsyncTask<Object, Object, Object>
+		{
+
+			// Before execute async task
+			@Override
+			protected void onPreExecute()
+			{
+				super.onPreExecute();
+				progressBar.setVisibility(View.VISIBLE);
+				toast(R.string.start_save_media_toast);
+			}
+
+			// After execute async task
+			@Override
+			protected void onPostExecute(Object result)
+			{
+				super.onPostExecute(result);
+				
+				// Reload view
+				onCreate(null);
+				toast(R.string.stop_save_media_toast);
+			}
+
+			@Override
+			protected Object doInBackground(Object... params)
+			{
+				// Get current media
+				Media mediaTemp = null;
+				if (currentMedia == Constants.TYPE_IMAGE)
+					mediaTemp = photo;
+				else if (currentMedia == Constants.TYPE_AUDIO)
+					mediaTemp = sound;
+				
+				// Save current media
+				if (mediaTemp != null)
+				{
+					try
+					{
+						mediaTemp.save(editComment.getText().toString());
+					}
+					catch (InstantiationException | IllegalAccessException
+							| IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				
+				return null;
+			}
+		}
+		
+		// Lauch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
 
@@ -321,93 +372,6 @@ public class CaptureActivity extends ParentMenuActivity
 			savedInstanceState.putString(PHOTO_ON_RESTORE, photo.getPath());
 		if (sound != null)
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
-	}
-
-	/**
-	 **
-	 * Tâche asynchrone à exécuter lors de l'appui sur le bouton Le premier
-	 * paramètre de généricité (Void) représente le type de paramètre à passer
-	 * dans la méthode doInBackground Le second paramètre de généricité
-	 * (Integer) représente le type de paramètre à passer à la méthode
-	 * onProgressUpdate Le troisième paramètre de généricité (Void) représente
-	 * le type de paramètre à passer à la méthode onPostExecute
-	 */
-	private class SaveAsynchrone extends AsyncTask
-	{
-
-		// Méthode exécutée au début de l'execution de la tâche asynchrone
-		@Override
-		protected void onPreExecute()
-		{
-			super.onPreExecute();
-			progressBar.setAlpha(1f);
-			Toast.makeText(getApplicationContext(),
-					"Début de l'enregistrement", Toast.LENGTH_SHORT).show();
-		}
-
-		@Override
-		protected void onProgressUpdate(Object... values)
-		{
-			// TODO Auto-generated method stub
-			super.onProgressUpdate(values);
-			// Mise à jour de la ProgressBar
-			//onProgressUpdateInt((int)values[0]);
-			//progressBar.setProgress( values[0]);
-		}
-		
-		
-
-		// Méthode exécutée à la fin de l'execution de la tâche asynchrone
-		@Override
-		protected void onPostExecute(Object result)
-		{
-			
-			super.onPostExecute(result);
-			progressBar.setAlpha(0f);
-			Toast.makeText(getApplicationContext(),
-					"L'enregistrement est terminé", Toast.LENGTH_SHORT).show();
-			
-			//on recrée l'application pour vider tous les champs
-			onCreate(null);
-		}
-
-		@Override
-		protected Object doInBackground(Object... params)
-		{
-			Media mediaTemp = null;
-			if (currentMedia == Constants.TYPE_IMAGE)
-				mediaTemp = photo;
-			else if (currentMedia == Constants.TYPE_AUDIO)
-				mediaTemp = sound;
-
-			if (mediaTemp != null)
-			{
-				try
-				{
-					mediaTemp.save(editComment.getText().toString());
-				} catch (InstantiationException | IllegalAccessException
-						| IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-
-			int progress = 0;
-			for (progress = 0; progress < 10; progress++)
-			{
-				for (int i = 0; i < 1000; i++)
-				{
-					// Ne fait rien mais fait juste passer du temps
-				}
-
-				// publishProgress met à jour l'interface en invoquant la
-				// méthode onProgressUpdate
-				progress++;
-				publishProgress(progress);
-			}
-
-			return null;
-		}
 	}
 
 }

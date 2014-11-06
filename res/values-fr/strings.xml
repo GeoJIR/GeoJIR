@@ -12,6 +12,8 @@
     <string name="save_song">Enregistrer</string>
     <string name="play_song">Jouer le son enregistré</string>
     <string name="save_media">Enregistrer le média</string>
+    <string name="start_save_media_toast">Enregistrement du media...</string>
+    <string name="stop_save_media_toast">Media enregistré</string>
     <string name="black_and_white">Noir et Blanc</string>
     <string name="comment">Commentaire</string>
     
@@ -44,4 +46,7 @@
     <string name="oneFieldIsEmpty">Un champ au moins est vide</string>
     
     <string name="title_activity_list_media">Liste des derniers médias</string>
+    
+    <string name="geojir_here">GeoJIR est ici</string>
+    
 </resources>
