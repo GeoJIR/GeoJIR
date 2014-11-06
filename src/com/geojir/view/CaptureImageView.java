@@ -85,7 +85,7 @@ public class CaptureImageView extends CustomImageView
 	// Display image file on this
 	private void display(File file)
 	{
-		loadFile(file);
+		setImagePath(file.getPath());
 	}
 	
 	// load temporary image

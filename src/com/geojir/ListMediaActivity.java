@@ -6,11 +6,8 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
@@ -63,6 +60,7 @@ public class ListMediaActivity extends ParentMenuActivity
 	{
 		View rowView = listView.getChildAt(position);
 		CustomImageView iconView = (CustomImageView) rowView.findViewById(R.id.imageIcon);
+		iconView.playMedia();
 	}
 	
 	// Create custom adapter
@@ -92,16 +90,8 @@ public class ListMediaActivity extends ParentMenuActivity
 					
 					// Path of media
 					String path = cursor.getString(columnIndex);
-					File file = new File(path);
-					// display image if exist
-					if (path.endsWith(Constants.EXT_IMAGE) && file.exists())
-						imageView.setImageFile(file);
-					else if (path.endsWith(Constants.EXT_AUDIO) && file.exists())
-						// else display default
-						imageView.setImageResource(R.drawable.ic_music);
-					else
-						// else display default
-						imageView.setImageResource(R.drawable.ic_medias);
+					// display image depend on path and file existence
+					imageView.setImagePath(path);
 					
 					return true;
 				}
