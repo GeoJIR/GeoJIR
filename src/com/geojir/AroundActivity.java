@@ -59,6 +59,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
 		// last X entries
 		values = new ArrayList<Map<String, String>>();
 
+		/*
 		Observable.create(listeMedia).map(new Func1<Map<String, String>, Map<String, String>>()
 				{
 					@Override
@@ -78,6 +79,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
 					}
 				});
 
+	 	*/
 		// on va trouver notre location pour pouvoir se centrer dessus
 		mMap.setMyLocationEnabled(true);
 		Location location = mMap.getMyLocation();
