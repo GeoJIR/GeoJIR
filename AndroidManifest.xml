@@ -7,20 +7,31 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="21" />
     
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
     
-    <uses-feature android:name="android.hardware.camera"  
-        android:installLocation="preferExternal" />
+    <uses-feature 
+        android:name="android.hardware.camera"  
+        android:installLocation="preferExternal"
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <meta-data     	
+            android:name="com.google.android.gms.version" 
+    		android:value="@integer/google_play_services_version" 
+ 		/>
         <activity
             android:name=".CaptureActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:windowSoftInputMode="stateUnchanged"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,9 +56,12 @@
 
         <activity
             android:name=".AccountActivity"
-            android:label="@string/title_activity_account" >
+            android:label="@string/title_activity_account" 
+            android:windowSoftInputMode="stateUnchanged"
+            >
         </activity>
-        
-    </application>
+        <meta-data android:name="com.google.android.maps.v2.API_KEY"
+    	android:value="AIzaSyCx4HS62vm3bcT7ul-gRh8w6J4dCrzIGGs" />
+        </application>
 
 </manifest>

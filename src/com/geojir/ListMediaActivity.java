@@ -11,26 +11,37 @@ import rx.schedulers.Schedulers;
 import android.os.Bundle;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class ListMediaActivity extends ParentMenuActivity
 {
-	
+
 	ArrayList<Map<String, String>> values;
 	ListView vue;
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
-		
+
 		// database instantiate
 		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
-		
+
+		// last X entries
+		values = listeMedia.getAllMedias();
+
+		// Get ListView object from xml
+		vue = (ListView) findViewById(R.id.listViewMedias);
+
+		ListAdapter adapterSimple = new SimpleAdapter(this, values,
+				R.layout.list_item, new String[]
+				{ "pathFileName", "remark" },
+				// new int[] {R.id.pathFileName, R.id.remark}
+				new int[]
+				{ R.id.icon, R.id.remark });
+
 		// last X entries
 		values = new ArrayList<Map<String, String>>();
 		
