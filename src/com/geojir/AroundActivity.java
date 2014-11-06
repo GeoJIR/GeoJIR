@@ -3,11 +3,6 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import android.location.Location;
 import android.os.Bundle;
 
