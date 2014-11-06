@@ -78,6 +78,10 @@
 		<meta-data
 		    android:name="com.google.android.maps.v2.API_KEY"
 		    android:value="AIzaSyCx4HS62vm3bcT7ul-gRh8w6J4dCrzIGGs"/>
+		
+		 <provider android:name="com.geojir.db.MediaContentProvider"
+			android:authorities="com.geojir.db.mediacontentprovider" />
+		
         
     </application>
 
