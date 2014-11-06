@@ -6,22 +6,17 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ColorFilter;
-import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.geojir.Constants;
 import com.geojir.R;
 import com.geojir.medias.Photo;
 
-public class CaptureImageView extends ImageView
+public class CaptureImageView extends CustomImageView
 {
 	// Constructors required
 	public CaptureImageView(Context context)
@@ -90,31 +85,7 @@ public class CaptureImageView extends ImageView
 	// Display image file on this
 	private void display(File file)
 	{
-		// Get the dimensions of the View
-		int targetW = this.getWidth();
-		int targetH = this.getHeight();
-		if (targetW < 1)
-			targetW = 1;
-		if (targetH < 1)
-			targetH = 1;
-
-		// Get the dimensions of the bitmap
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(file.getPath(), bmOptions);
-		int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-
-		// Determine how much to scale down the image
-		int scaleFactor = Math.min(photoW / targetW * 3, photoH / targetH * 3);
-
-		// Decode the image file into a Bitmap sized to fill the View
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
-		
-		// Load resized image
-		Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), bmOptions);
-		this.setImageBitmap(bitmap);
+		setImagePath(file.getPath());
 	}
 	
 	// load temporary image
@@ -137,25 +108,5 @@ public class CaptureImageView extends ImageView
 		// Display default icon otherwise
 		else
 			this.setImageResource(R.drawable.ic_medias);
-	}
-	
-	// Enable/disable black and white filter
-	public void blackAndWhiteMode(Boolean enable)
-	{
-		if (enable)
-		{
-			float[] colorMatrix =
-			{ 
-			     0.33f, 0.33f, 0.33f, 0, 0, //red
-			     0.33f, 0.33f, 0.33f, 0, 0, //green
-			     0.33f, 0.33f, 0.33f, 0, 0, //blue
-			     0, 0, 0, 1, 0    //alpha    
-			};
-		     
-		    ColorFilter colorFilter = new ColorMatrixColorFilter(colorMatrix);
-		    this.setColorFilter(colorFilter);  
-		}
-		else
-			this.clearColorFilter();
 	}
 }

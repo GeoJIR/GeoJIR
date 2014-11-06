@@ -4,19 +4,11 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.transform.Source;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import android.location.Location;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.geojir.db.ListMediaDb;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,10 +16,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.location.Location;
-import android.os.Bundle;
-import android.widget.Toast;
 
 
 public class AroundActivity extends ParentMenuActivity  {

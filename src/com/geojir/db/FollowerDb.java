@@ -1,10 +1,6 @@
 package com.geojir.db;
 
 import java.util.ArrayList;
-import java.util.Map;
-
-import com.geojir.db.FollowerContract.FollowDb;
-import com.geojir.db.ListMediaContract.MediasDb;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.geojir.db.FollowerContract.FollowDb;
 
 public class FollowerDb extends SQLiteOpenHelper
 {

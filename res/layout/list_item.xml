@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp" >
 
-    <ImageView
+    <com.geojir.view.CustomImageView
         android:id="@+id/imageIcon"
         android:layout_width="@dimen/thumbnailSize"
         android:layout_height="@dimen/thumbnailSize"

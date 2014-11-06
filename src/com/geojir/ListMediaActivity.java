@@ -1,25 +1,21 @@
 package com.geojir;
 
-import java.io.File;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnItemClick;
 
 import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.db.ListMediaDb;
+import com.geojir.db.MediaContentProvider;
+import com.geojir.view.CustomImageView;
 
 public class ListMediaActivity extends ParentMenuActivity
 {
@@ -35,34 +31,40 @@ public class ListMediaActivity extends ParentMenuActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
 		ButterKnife.inject(this);
-		updateChildrenVisibility();
-		
+
+		/*
 		// database instantiate
 		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
-		
+
 		// Create observation of sql request
-		Observable.create(listeMedia)
-			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(new Action1<Cursor>()
-			{
-				@Override
-				public void call(Cursor cursor)
+		Observable.create(listeMedia).observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Action1<Cursor>()
 				{
-					// display results
-					createAdapter(cursor);
-					displayList();
-				}
-			});
-			
-			listeMedia.getCursorMedias();
+					@Override
+					public void call(Cursor cursor)
+					{
+						// display results
+						createAdapter(cursor);
+						displayList();
+					}
+				});
+
+		listeMedia.getCursorMedias();
+		*/
+		
+		displayContentProvider();
+	}
+	
+	@OnItemClick(R.id.listViewMedias) void onItemClick(int position)
+	{
+		View rowView = listView.getChildAt(position);
+		CustomImageView iconView = (CustomImageView) rowView.findViewById(R.id.imageIcon);
+		iconView.playMedia();
 	}
 	
 	// Create custom adapter
 	protected void createAdapter(Cursor cursor)
 	{
-		// get icon's dimension
-		final int thumbnailSize = getResources().getDimensionPixelOffset(R.dimen.thumbnailSize);
-		
 		// Display image and comment
 		cursorAdapter = new SimpleCursorAdapter(this,
 				R.layout.list_item,
@@ -81,53 +83,17 @@ public class ListMediaActivity extends ParentMenuActivity
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex)
 			{
-				if (view instanceof ImageView)
+				if (view instanceof CustomImageView)
 				{
-					ImageView imageView = (ImageView) view;
+					CustomImageView imageView = (CustomImageView) view;
 					
 					// Path of media
 					String path = cursor.getString(columnIndex);
-					File file = new File(path);
-					// display image if exist
-					if (path.endsWith(Constants.EXT_IMAGE) && file.exists())
-					{
-						/////////////////////////////////////////
-						// MEGA Boilerplate parce que pas le temp
-						
-						// Get the dimensions of the View
-						int targetW = thumbnailSize;
-						int targetH = thumbnailSize;
-						
-						// Get the dimensions of the bitmap
-						BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-						bmOptions.inJustDecodeBounds = true;
-						BitmapFactory.decodeFile(file.getPath(), bmOptions);
-						int photoW = bmOptions.outWidth;
-						int photoH = bmOptions.outHeight;
-
-						// Determine how much to scale down the image
-						int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-						// Decode the image file into a Bitmap sized to fill the View
-						bmOptions.inJustDecodeBounds = false;
-						bmOptions.inSampleSize = scaleFactor;
-						
-						// Load resized image
-						Bitmap bitmap = BitmapFactory.decodeFile(file.getPath(), bmOptions);
-						imageView.setImageBitmap(bitmap);
-						/////////////////////////////////////////
-					}
-					else if (path.endsWith(Constants.EXT_AUDIO) && file.exists())
-						// else display default
-//						imageView.setImageResource(R.drawable.ic_music);
-						imageView.setImageResource(R.drawable.ic_medias);
-					else
-						// else display default
-						imageView.setImageResource(R.drawable.ic_medias);
+					// display image depend on path and file existence
+					imageView.setImagePath(path);
 					
 					return true;
 				}
-				
 				return false;
 			}
 			
@@ -155,4 +121,18 @@ public class ListMediaActivity extends ParentMenuActivity
 		// Display new item list
 		listView.setAdapter(cursorAdapter);
 	}
+	
+	// CONTEN PROVIDER
+	private void displayContentProvider()
+	{
+		String columns[] = new String[] { MediasDb._ID, MediasDb.FILE_NAME_COLUMN,
+				MediasDb.REMARK_COLUMN };
+		Uri mContacts = MediaContentProvider.CONTENT_URI;
+		Cursor cur =  getContentResolver().query(mContacts, columns, null, null, null);
+		
+		createAdapter(cur);
+		displayList();
+
+	}
+	
 }
