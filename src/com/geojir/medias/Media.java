@@ -18,20 +18,18 @@ import com.geojir.db.ListMediaDb;
 import com.geojir.interfaces.IFiles;
 import com.geojir.override.OneLineArrayList;
 
-/**
- * @author HumanBooster
- *
- */
-/**
- * @author HumanBooster
- *
- */
 public abstract class Media implements IFiles
 {
 	// Comment of the media
 	public String comment = "";
 	
 	protected File file;
+	
+	public Media()
+	{
+		// create master folder if not exist
+		Constants.initConstants(ParentMenuActivity.CONTEXT);
+	}
 	
 	// Create File with unique path
 	protected void createFile()
@@ -125,6 +123,8 @@ public abstract class Media implements IFiles
 	// Restore media if needed (screen rotate)
 	public void restore(String restoreURI)
 	{
+		// create master folder if not exist
+		Constants.initConstants(ParentMenuActivity.CONTEXT);
 		if (restoreURI != getTempPath())
 			file = new File(restoreURI);
 	}

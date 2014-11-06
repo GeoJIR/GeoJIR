@@ -145,8 +145,9 @@ public class ListMediaActivity extends ParentMenuActivity
 		String columns[] = new String[] { MediasDb._ID, MediasDb.FILE_NAME_COLUMN,
 				MediasDb.REMARK_COLUMN };
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
-		Cursor cur = managedQuery(mContacts, columns, null, null, null);
-		Toast.makeText(ListMediaActivity.this,
+		Cursor cur =  getContentResolver().query(mContacts, columns, null, null, null);
+		
+		/*Toast.makeText(ListMediaActivity.this,
 				cur.getCount() + "", Toast.LENGTH_LONG).show();
 
 		if (cur.moveToFirst())
@@ -160,7 +161,11 @@ public class ListMediaActivity extends ParentMenuActivity
 						+ cur.getString(cur.getColumnIndex(MediasDb.REMARK_COLUMN));
 				Toast.makeText(this, name + " ", Toast.LENGTH_LONG).show();
 			} while (cur.moveToNext());
-		}
+		}*/
+		
+		
+		createAdapter(cur);
+		displayList();
 
 	}
 

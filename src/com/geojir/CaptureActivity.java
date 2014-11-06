@@ -259,18 +259,6 @@ public class CaptureActivity extends ParentMenuActivity
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
 
-	// Shorts methods for toast
-	protected void toast(int idString)
-	{
-		toast(getString(idString));
-	}
-
-	protected void toast(String message)
-	{
-		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
-				.show();
-	}
-
 	// Change text and avaibility of audio button and display toast
 	protected void changeAudioButtonState()
 	{

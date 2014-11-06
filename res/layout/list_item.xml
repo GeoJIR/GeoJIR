@@ -4,27 +4,22 @@
     android:layout_height="wrap_content"
     android:padding="16dp" >
 
-    <ImageView
+    <com.geojir.view.CustomImageView
         android:id="@+id/imageIcon"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_width="@dimen/thumbnailSize"
+        android:layout_height="@dimen/thumbnailSize"
         android:layout_marginLeft="6dp"
-        android:layout_marginStart="6dp" />
+        android:layout_marginStart="6dp"
+        android:contentDescription="@string/media_icon" />
 
     <TextView
         android:id="@+id/remark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/pathFileName"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageIcon"
-        android:lines="4"
-        android:paddingLeft="16dp"
-        android:text="Remarque"
+        android:lines="3"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/comment"
         android:textSize="16sp" />
 
 </LinearLayout>
