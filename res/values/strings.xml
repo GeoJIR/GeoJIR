@@ -31,9 +31,9 @@
     <string name="drawable_follow">Medias of my followers</string>
     <string name="drawable_account">My account</string>
     <string name="drawable_historic">Lasts Medias</string>
-    <string name="title_activity_around">AroundActivity</string>
+    <string name="title_activity_around">Medias close to me</string>
     <string name="title_activity_follow">FollowActivity</string>
-    <string name="title_activity_account">AccountActivity</string>
+    <string name="title_activity_account">My account</string>
 
     <string name="username">"User name"</string>
     <string name="yourname">"Your name"</string>
@@ -53,6 +53,7 @@
     <string name="empty_list">List is empty</string>
     
     <string name="GM_NotReached">Google Map not reached</string>
-    <string name="GM_NoPosition">Google Map no position return</string>
+    <string name="GM_NoLocation">Unable to fetch the current location</string>
+    <string name="GM_WaitLocation">Searching your location</string>
     
 </resources>

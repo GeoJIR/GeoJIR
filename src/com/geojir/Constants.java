@@ -57,7 +57,7 @@ public class Constants {
 	//Google Map
 	public static final float GM_MPL_LATITUDE = (float) 43.600;
 	public static final float GM_MPL_LONGITUDE = (float) 3.883;
-	public static final int GM_DEFAULT_ZOOM = 25;
+	public static final int GM_DEFAULT_ZOOM = 12;
 
 
 	/************************ METHODS ******************/

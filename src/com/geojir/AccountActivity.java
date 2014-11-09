@@ -58,8 +58,7 @@ public class AccountActivity extends ParentMenuActivity
 			@Override
 			public void call(String s)
 			{
-				Toast.makeText(AccountActivity.this, message,
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(AccountActivity.this, message, Toast.LENGTH_SHORT).show();
 			}
 		};
 
