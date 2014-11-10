@@ -2,6 +2,8 @@ package com.geojir;
 
 import java.io.File;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -49,16 +51,21 @@ public class Constants {
 	public static final String PREF_DEFAULT_ACCOUNT_FOLLOWED = "";
 	public static final String PREF_ACCOUNT_FOLLOWERS = "";
 	public static final String PREF_DEFAULT_ACCOUNT_FOLLOWERS = "";
-	
+
+	public static final String PREF_LOCATION = "pref_location";
+	public static final String PREF_LOCATION_LATITUDE = "pref_location_latitude";
+	public static final String PREF_LOCATION_LONGITUDE = "pref_location_longitude";
+
 	//BDD
 	public static final int DATABASE_VERSION = 1;
 	public static final String DATABASE_NAME = "GeoJIR.db";
 	
 	//Google Map
-	public static final float GM_MPL_LATITUDE = (float) 43.600;
-	public static final float GM_MPL_LONGITUDE = (float) 3.883;
+	public static final float GM_MPL_LATITUDE = 43.600f;
+	public static final float GM_MPL_LONGITUDE = 3.883f;
 	public static final int GM_DEFAULT_ZOOM = 12;
-
+	public static final float GM_DEFAULT_DISTANCE = 10.0f;
+	
 
 	/************************ METHODS ******************/
 	/*

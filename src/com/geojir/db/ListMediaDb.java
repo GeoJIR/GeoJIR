@@ -6,10 +6,12 @@ import rx.Observable;
 import rx.Subscriber;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 
 import com.geojir.Constants;
 import com.geojir.db.ListMediaContract.MediasDb;
@@ -40,11 +42,15 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 			+ LISTMEDIA_TABLE_NAME;
 	
 	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE "
-			+ MediasDb.TABLE_NAME + " (" + MediasDb._ID
-			+ " INTEGER PRIMARY KEY," + MediasDb.FILE_NAME_COLUMN + " TEXT, "
-			+ MediasDb.REMARK_COLUMN + " TEXT, " + MediasDb.FILTER_COLUMN
-			+ " NUMERIC)" + ";";
-
+			+ MediasDb.TABLE_NAME 
+			+ " (" + MediasDb._ID + " INTEGER PRIMARY KEY," 
+			+ MediasDb.FILE_NAME_COLUMN + " TEXT, "
+			+ MediasDb.REMARK_COLUMN + " TEXT, " 
+			+ MediasDb.FILTER_COLUMN + " NUMERIC," 
+			+ MediasDb.LATITUDE_COLUMN + " REAL," 
+			+ MediasDb.LONGITUDE_COLUMN + " REAL" 
+			+ ");";
+	
 	private static final String SQL_SELECT_ENTRIES = "SELECT * FROM "
 			+ MediasDb.TABLE_NAME;
 
@@ -129,12 +135,19 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 	private void addEntry(String pathFileName, String remark, Boolean filter)
 	{
 		ContentValues values = new ContentValues();
-
+		
 		// values.put(MediasDb._ID, id);
+		// TODO : .... resolve next problem
+//		float savedLatitude = preferences.getFloat(Constants.PREF_LOCATION_LATITUDE,0.0f);
+//		float savedLongitude = preferences.getFloat(Constants.PREF_LOCATION_LONGITUDE,0.0f);
+		float savedLatitude = 43.0f;
+		float savedLongitude = 3.5f;
 
 		values.put(MediasDb.FILE_NAME_COLUMN, pathFileName);
 		values.put(MediasDb.REMARK_COLUMN, remark);
 		values.put(MediasDb.FILTER_COLUMN, filter);
+		values.put(MediasDb.LATITUDE_COLUMN, savedLatitude);
+		values.put(MediasDb.LONGITUDE_COLUMN, savedLongitude);
 		db.insert(MediasDb.TABLE_NAME, null, values);
 	}
 

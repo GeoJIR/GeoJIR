@@ -24,7 +24,7 @@ public class AccountActivity extends ParentMenuActivity
 	private Button saveButton;
 
 	// shared preferences
-	SharedPreferences preferences;
+	protected SharedPreferences preferences;
 
 	/*
 	 * (non-Javadoc)
@@ -43,8 +43,8 @@ public class AccountActivity extends ParentMenuActivity
 		username = (EditText) findViewById(R.id.acountcreation_email);
 		mail = (EditText) findViewById(R.id.acountcreation_password);
 
-		username.setText(getAccountName(preferences));
-		mail.setText(getAccountEmail(preferences));
+		username.setText(getAccountName());
+		mail.setText(getAccountEmail());
 
 		// Observable sur le bouton
 		final String message = getString(R.string.infoSaved);
@@ -81,8 +81,8 @@ public class AccountActivity extends ParentMenuActivity
 				}
 				else
 				{
-					setAccountName(preferences, username.getText().toString().trim());
-					setAccountEmail(preferences, mail.getText().toString().trim());
+					setAccountName(username.getText().toString().trim());
+					setAccountEmail(mail.getText().toString().trim());
 	
 					// on informe l'observable
 					onSubscribe.onClick();
@@ -93,54 +93,54 @@ public class AccountActivity extends ParentMenuActivity
 	}
 
 	// SET preferences element
-	public void setAccountName(SharedPreferences preferences, String value)
+	public void setAccountName(String value)
 	{
 		Editor editor = preferences.edit();
 		editor.putString(Constants.PREF_ACCOUNT_NAME, value);
 		editor.commit();
 	}
 
-	public void setAccountEmail(SharedPreferences preferences, String value)
+	public void setAccountEmail(String value)
 	{
 		Editor editor = preferences.edit();
 		editor.putString(Constants.PREF_ACCOUNT_EMAIL, value);
 		editor.commit();
 	}
 
-	public void setAccountFollowed(SharedPreferences preferences, String value)
+	public void setAccountFollowed(String value)
 	{
-		// TODO en fait...il faut gérer une liste multi selections
+		// TODO en fait...il faut gérer une liste multi selections => Bdd
 		Editor editor = preferences.edit();
 		editor.putString(Constants.PREF_ACCOUNT_FOLLOWED, value);
 		editor.commit();
 	}
 
-	public void setAccountFollowers(SharedPreferences preferences, String value)
+	public void setAccountFollowers(String value)
 	{
-		// TODO en fait...il faut gérer une liste multi selections
+		// TODO en fait...il faut gérer une liste multi selections => Bdd
 		Editor editor = preferences.edit();
 		editor.putString(Constants.PREF_ACCOUNT_FOLLOWERS, value);
 		editor.commit();
 	}
 
 	// GET preferences element
-	public String getAccountName(SharedPreferences preferences)
+	public String getAccountName()
 	{
 		return preferences.getString(Constants.PREF_ACCOUNT_NAME, null);
 	}
 
-	public String getAccountEmail(SharedPreferences preferences)
+	public String getAccountEmail()
 	{
 		return preferences.getString(Constants.PREF_ACCOUNT_EMAIL, null);
 	}
 
-	public String getAccountFollowed(SharedPreferences preferences)
+	public String getAccountFollowed()
 	{
 		return preferences.getString(Constants.PREF_ACCOUNT_FOLLOWED,
 				Constants.PREF_DEFAULT_ACCOUNT_FOLLOWED);
 	}
 
-	public String getAccountFollowers(SharedPreferences preferences)
+	public String getAccountFollowers()
 	{
 		return preferences.getString(Constants.PREF_ACCOUNT_FOLLOWERS,
 				Constants.PREF_DEFAULT_ACCOUNT_FOLLOWERS);

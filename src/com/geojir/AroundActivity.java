@@ -3,6 +3,8 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -22,7 +24,7 @@ public class AroundActivity extends ParentMenuActivity
 {
 
 	protected GoogleMap mMap;
-	protected Location location;
+	protected Location mylastlocation = null;;
 	protected CameraUpdate cameraUpdate;
 	protected ArrayList<Map<String, String>> values;
 	protected Marker markerLocation;
@@ -40,20 +42,21 @@ public class AroundActivity extends ParentMenuActivity
 	protected float currentTilt;
 	protected float currentBearing;
 
+	// shared preferences
+	protected SharedPreferences preferences;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around);
 
+		preferences = getSharedPreferences(Constants.PREF_LOCATION, Context.MODE_PRIVATE);
+
 		restoreState(savedInstanceState);
 		
-//		markerLocation.setIcon(icon);	//set a particular icon location (color ?? else)
+		initMap(savedInstanceState);
 		
-		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-				.getMap();
-		mMap.setMyLocationEnabled(true);
-
 		if (mMap != null)
 		{
 			mMap.setOnMyLocationChangeListener(myLocationChangeListener);
@@ -102,68 +105,91 @@ public class AroundActivity extends ParentMenuActivity
         // Creating an instance of MarkerOptions
         MarkerOptions markerOptions = new MarkerOptions();
  
-        // Setting latitude and longitude for the marker
-        markerOptions.position(point);
- 
-        // Setting a title for this marker
-        markerOptions.title(remark);
+        // Setting latitude, longitude and title for the marker
+        markerOptions.position(point).title(remark);
  
         // Adding marker on the Google Map
         mMap.addMarker(markerOptions);
  
     }
-	    
+    
+	private void initMap(Bundle savedInstanceState)
+	{
+		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+		mMap.setMyLocationEnabled(true);
+
+		if (savedInstanceState == null)
+		{
+			float saveLatitude = preferences.getFloat(Constants.PREF_LOCATION_LATITUDE,0.0f);
+			float saveLongitude = preferences.getFloat(Constants.PREF_LOCATION_LONGITUDE,0.0f);
+	
+			//if saveLatitude && saveLongitude, move Cam to the location
+			if(saveLatitude != 0.0f && saveLongitude != 0.0f)
+			{
+				LatLng myLatLng = new LatLng(saveLatitude, saveLongitude);
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, currentZoom));
+				Toast.makeText(getApplicationContext(), R.string.GM_WaitLocation, Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+				//move camera to country
+			}
+		}
+	}
+	
 	private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener()
 	{
 		@Override
 		public void onMyLocationChange(Location location)
 		{
 			LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+// Pour les tests			
+//	        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
+//	        Toast.makeText(AroundActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
 
-			if (myLocation != null)
+			//markerLocation not null => marker has been already placed 
+			if(markerLocation != null)
 			{
-				//delete last marker and memorize the level of the zoom
-				if (setFirstMarker == true)
+		        if (mMap.getCameraPosition().zoom != currentZoom)
+		        {
+		        	// get zoom level
+		        	currentZoom = mMap.getCameraPosition().zoom;  
+		        }
+				
+				//if difference between new location and last location is less than GM_DEFAULT_DISTANCE meters  
+				if(mylastlocation != null && mylastlocation.distanceTo(location)> Constants.GM_DEFAULT_DISTANCE)
 				{
 					markerLocation.remove();
-			        if (mMap.getCameraPosition().zoom != currentZoom)
-			        {
-			        	// get zoom level
-			        	currentZoom = mMap.getCameraPosition().zoom;  
-			        }
-				} 
-				else
-				{
-					setFirstMarker = true;
-				}
-				markerLocation = mMap.addMarker(new MarkerOptions().position(myLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-				if (mMap != null)
-				{
-					if(currentZoom == com.geojir.Constants.GM_DEFAULT_ZOOM)
-					{
-						mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, currentZoom));
-						markerMedia();
-					}
-			        else
-			        {
-						CameraPosition myCameraPosition = new CameraPosition(myLocation, currentZoom, currentTilt, currentBearing);
-			 		    mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-						mMap.moveCamera(CameraUpdateFactory.newCameraPosition(myCameraPosition));
-			        }
-				}
-				else
-				{
-					Toast.makeText(getApplicationContext(), R.string.GM_NotReached, Toast.LENGTH_SHORT).show();
+					markerLocation = mMap.addMarker(new MarkerOptions().
+							position(myLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 				}
 			}
 			else
 			{
-				// TODO : code mort ?????
-				Toast.makeText(getApplicationContext(), R.string.GM_NoLocation,	Toast.LENGTH_SHORT).show();
-
+				markerLocation = mMap.addMarker(new MarkerOptions().
+						position(myLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 			}
 
+			if (mMap != null)
+			{
+				if(currentZoom == com.geojir.Constants.GM_DEFAULT_ZOOM)
+				{
+					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, currentZoom));
+					markerMedia();
+				}
+		        else
+		        {
+					CameraPosition myCameraPosition = new CameraPosition(myLocation, currentZoom, currentTilt, currentBearing);
+//		 		    mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+					mMap.moveCamera(CameraUpdateFactory.newCameraPosition(myCameraPosition));
+		        }
+			}
+			else
+			{
+				Toast.makeText(getApplicationContext(), R.string.GM_NotReached, Toast.LENGTH_SHORT).show();
+			}
+			//we save new location
+			mylastlocation = location;
 		}
 	};
 	
@@ -194,10 +220,6 @@ public class AroundActivity extends ParentMenuActivity
                 }
             }
 
-		}
-		else
-		{
-			Toast.makeText(getApplicationContext(), R.string.GM_WaitLocation, Toast.LENGTH_SHORT).show();
 		}
 	}
 
