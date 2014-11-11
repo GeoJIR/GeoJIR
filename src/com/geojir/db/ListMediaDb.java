@@ -1,17 +1,12 @@
 package com.geojir.db;
 
-import java.util.Map;
-
 import rx.Observable;
 import rx.Subscriber;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
-import android.preference.PreferenceManager;
 
 import com.geojir.Constants;
 import com.geojir.db.ListMediaContract.MediasDb;
@@ -25,7 +20,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 	
 	protected SQLiteDatabase db;
 	
-	private static final int DATABASE_VERSION = 1;
 	private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
 	private static final int NB_LIST_LAST_MEDIA = 10;
 	
