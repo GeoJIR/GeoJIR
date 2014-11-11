@@ -10,7 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
 import com.geojir.Constants;
 import com.geojir.ParentMenuActivity;

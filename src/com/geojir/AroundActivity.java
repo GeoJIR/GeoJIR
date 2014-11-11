@@ -3,12 +3,17 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
-import android.content.Context;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.geojir.db.ListMediaDb;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -51,8 +56,6 @@ public class AroundActivity extends ParentMenuActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around);
 
-		preferences = getSharedPreferences(Constants.PREF_LOCATION, Context.MODE_PRIVATE);
-
 		restoreState(savedInstanceState);
 		
 		initMap(savedInstanceState);
@@ -61,24 +64,26 @@ public class AroundActivity extends ParentMenuActivity
 		{
 			mMap.setOnMyLocationChangeListener(myLocationChangeListener);
 
-			/*
-			 * // recuperation de donnée dans la BDD // database instantiate
-			 * ListMediaDb listeMedia = new
-			 * ListMediaDb(getApplicationContext());
-			 * 
-			 * // last X entries values = new ArrayList<Map<String, String>>();
-			 * Observable.create(listeMedia).map(new Func1<Map<String, String>,
-			 * Map<String, String>>() {
-			 * 
-			 * @Override public Map<String, String> call(Map<String, String>
-			 * item) { values.add(item); return item; }
-			 * }).subscribeOn(Schedulers.io())
-			 * .observeOn(AndroidSchedulers.mainThread()) .subscribe(new
-			 * Action1<Map<String, String>>() {
-			 * 
-			 * @Override public void call(Map<String, String> item) {
-			 * //markerMedia(); } });
-			 */
+			
+			// recuperation de donnée dans la BDD // database instantiate
+			ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
+/*			 
+			// last X entries values = new ArrayList<Map<String, String>>();
+			Observable.create(listeMedia).map(new Func1<Map<String, String>, Map<String, String>>() {
+			 
+				@Override 
+				public Map<String, String> call(Map<String, String>	item) { 
+					values.add(item); 
+					return item; 
+				}
+			}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Map<String, String>>() {
+			 
+				@Override public void call(Map<String, String> item) 
+				{
+					markerMedia(); 
+				} 
+			});
+*/			 
 		} 
 		else
 		{
@@ -120,20 +125,9 @@ public class AroundActivity extends ParentMenuActivity
 
 		if (savedInstanceState == null)
 		{
-			float saveLatitude = preferences.getFloat(Constants.PREF_LOCATION_LATITUDE,0.0f);
-			float saveLongitude = preferences.getFloat(Constants.PREF_LOCATION_LONGITUDE,0.0f);
-	
-			//if saveLatitude && saveLongitude, move Cam to the location
-			if(saveLatitude != 0.0f && saveLongitude != 0.0f)
-			{
-				LatLng myLatLng = new LatLng(saveLatitude, saveLongitude);
-				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, currentZoom));
-				Toast.makeText(getApplicationContext(), R.string.GM_WaitLocation, Toast.LENGTH_SHORT).show();
-			}
-			else
-			{
-				//move camera to country
-			}
+			LatLng myLatLng = new LatLng(Constants.GM_LATITUDE, Constants.GM_LONGITUDE);
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, currentZoom));
+			Toast.makeText(getApplicationContext(), R.string.GM_WaitLocation, Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -157,7 +151,8 @@ public class AroundActivity extends ParentMenuActivity
 		        }
 				
 				//if difference between new location and last location is less than GM_DEFAULT_DISTANCE meters  
-				if(mylastlocation != null && mylastlocation.distanceTo(location)> Constants.GM_DEFAULT_DISTANCE)
+		        float distance = mylastlocation.distanceTo(location);
+				if(mylastlocation != null && distance > Constants.GM_DEFAULT_DISTANCE)
 				{
 					markerLocation.remove();
 					markerLocation = mMap.addMarker(new MarkerOptions().
@@ -180,7 +175,6 @@ public class AroundActivity extends ParentMenuActivity
 		        else
 		        {
 					CameraPosition myCameraPosition = new CameraPosition(myLocation, currentZoom, currentTilt, currentBearing);
-//		 		    mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 					mMap.moveCamera(CameraUpdateFactory.newCameraPosition(myCameraPosition));
 		        }
 			}
@@ -188,7 +182,7 @@ public class AroundActivity extends ParentMenuActivity
 			{
 				Toast.makeText(getApplicationContext(), R.string.GM_NotReached, Toast.LENGTH_SHORT).show();
 			}
-			//we save new location
+			//save (new) location in mylastlocation variable
 			mylastlocation = location;
 		}
 	};

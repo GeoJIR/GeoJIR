@@ -29,18 +29,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 	private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
 	private static final int NB_LIST_LAST_MEDIA = 10;
 	
-	private static final String LISTMEDIA_SELECT_ENTRIES = "SELECT * FROM "
-			+ LISTMEDIA_TABLE_NAME;
-	
-	private static final String LISTMEDIA_DELETE_ENTRIES = "DELETE FROM "
-			+ LISTMEDIA_TABLE_NAME;
-	
-	private static final String LISTMEDIA_COUNT_TABLE = "SELECT COUNT(*) FROM "
-			+ LISTMEDIA_TABLE_NAME;
-	
-	private static final String LISTMEDIA_DROP_TABLE = "DROP TABLE "
-			+ LISTMEDIA_TABLE_NAME;
-	
 	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE "
 			+ MediasDb.TABLE_NAME 
 			+ " (" + MediasDb._ID + " INTEGER PRIMARY KEY," 
@@ -51,12 +39,21 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 			+ MediasDb.LONGITUDE_COLUMN + " REAL" 
 			+ ");";
 	
-	private static final String SQL_SELECT_ENTRIES = "SELECT * FROM "
+	private static final String LISTMEDIA_SELECT_ENTRIES = "SELECT * FROM "
 			+ MediasDb.TABLE_NAME;
 
-	private static final String SQL_COUNT_TABLE = "SELECT COUNT(*) FROM "
+	private static final String LISTMEDIA_SELECT_LAST_ENTRIES = "SELECT * FROM "
+			+ MediasDb.TABLE_NAME + " ORDER BY _id DESC LIMIT " + NB_LIST_LAST_MEDIA;
+
+	private static final String LISTMEDIA_COUNT_TABLE = "SELECT COUNT(*) FROM "
 			+ MediasDb.TABLE_NAME;
 
+	private static final String LISTMEDIA_DELETE_ENTRIES = "DELETE FROM "
+			+  MediasDb.TABLE_NAME;
+	
+	private static final String LISTMEDIA_DROP_TABLE = "DROP TABLE "
+			+  MediasDb.TABLE_NAME;
+	
 	public ListMediaDb(Context context)
 	{
 		super(context, Constants.DATABASE_NAME, null, Constants.DATABASE_VERSION);
@@ -84,7 +81,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 		{
 			db = DBMemory.setDb(CURSOR_MEMORY, this);
 			
-			cursor = db.rawQuery(SQL_SELECT_ENTRIES, null);
+			cursor = db.rawQuery(LISTMEDIA_SELECT_ENTRIES, null);
 			
 			DBMemory.setCursor(CURSOR_MEMORY, cursor);
 		}
@@ -98,6 +95,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 		DBMemory.closeDb(CURSOR_MEMORY);
 		db = DBMemory.setDb(CURSOR_MEMORY, this);
 
+/*	ON NE SUPPRIME PAS LA PREMIERE ENTREE CAR POUR LA LISTE DES DERNIERES ON FERA UNE REQUETE DE TYPE LIMIT
 		// return datebase's count entries
 		int nbEntries = countEntries();
 
@@ -113,7 +111,7 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 			// deleting all entries
 			db.execSQL(LISTMEDIA_DELETE_ENTRIES);
 		}
-		
+*/		
 		// add a new entry then delete the first entry of the database
 		addEntry(pathFileName, remark, filter);
 
@@ -137,17 +135,11 @@ public class ListMediaDb extends SQLiteOpenHelper implements Observable.OnSubscr
 		ContentValues values = new ContentValues();
 		
 		// values.put(MediasDb._ID, id);
-		// TODO : .... resolve next problem
-//		float savedLatitude = preferences.getFloat(Constants.PREF_LOCATION_LATITUDE,0.0f);
-//		float savedLongitude = preferences.getFloat(Constants.PREF_LOCATION_LONGITUDE,0.0f);
-		float savedLatitude = 43.0f;
-		float savedLongitude = 3.5f;
-
 		values.put(MediasDb.FILE_NAME_COLUMN, pathFileName);
 		values.put(MediasDb.REMARK_COLUMN, remark);
 		values.put(MediasDb.FILTER_COLUMN, filter);
-		values.put(MediasDb.LATITUDE_COLUMN, savedLatitude);
-		values.put(MediasDb.LONGITUDE_COLUMN, savedLongitude);
+		values.put(MediasDb.LATITUDE_COLUMN, Constants.GM_LATITUDE);
+		values.put(MediasDb.LONGITUDE_COLUMN, Constants.GM_LONGITUDE);
 		db.insert(MediasDb.TABLE_NAME, null, values);
 	}
 

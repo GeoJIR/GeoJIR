@@ -103,8 +103,6 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
 		
-		preferences = getSharedPreferences(Constants.PREF_LOCATION,	Context.MODE_PRIVATE);
-		
 		restoreState(savedInstanceState);
 		
 		//initialize the location manager
@@ -426,11 +424,8 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 //        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
 //        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
 
-        //Update preferences location
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putFloat(Constants.PREF_LOCATION_LATITUDE,(float)myLocation.latitude);
-        editor.putFloat(Constants.PREF_LOCATION_LONGITUDE,(float)myLocation.longitude);
-        editor.commit();
+        Constants.GM_LATITUDE = (float)myLocation.latitude;
+        Constants.GM_LONGITUDE = (float)myLocation.longitude;
 	}
 
 	@Override
