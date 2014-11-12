@@ -16,8 +16,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     
     <!-- Geoloc permission -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
     
     <!-- Camera access -->
     <uses-feature android:name="android.hardware.camera"  

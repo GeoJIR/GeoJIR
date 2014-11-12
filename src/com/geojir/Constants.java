@@ -2,11 +2,7 @@ package com.geojir;
 
 import java.io.File;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.util.Log;
 
@@ -57,6 +53,8 @@ public class Constants {
 	public static float GM_LONGITUDE = GM_MPL_LONGITUDE;
 	public static final int GM_DEFAULT_ZOOM = 12;
 	public static final float GM_DEFAULT_DISTANCE = 10.0f;
+	public static final int GM_UPDATE_INTERVAL = 20000;	//in ms
+	public static final int GM_FASTEST_INTERVAL = 10000;	//in ms
 	
 
 	/************************ METHODS ******************/

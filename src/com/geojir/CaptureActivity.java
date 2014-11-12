@@ -12,10 +12,7 @@ import rx.functions.Action1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.InjectViews;
@@ -36,9 +34,14 @@ import com.geojir.medias.Sound;
 import com.geojir.menus.TabImageMenu;
 import com.geojir.override.OneLineArrayList;
 import com.geojir.view.CaptureImageView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
-public class CaptureActivity extends ParentMenuActivity implements LocationListener
+public class CaptureActivity extends ParentMenuActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener
 {
 	// Butterknife injectViews
 	@InjectView(R.id.captureImageView)
@@ -84,8 +87,9 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 	protected TabImageMenu menu = new TabImageMenu();
 	
 	//Localization
-	LocationManager locationManager;
-	String locationProvider;
+	LocationRequest locationRequest;
+	LocationListener locationListener;
+	LocationClient mLocationClient;
 
 	// shared preferences
 	SharedPreferences preferences;
@@ -103,7 +107,32 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 		restoreState(savedInstanceState);
 		
 		//initialize the location manager
-		this.initializeLocationManager();
+		locationRequest = LocationRequest.create();
+		// Use highest accuracy
+		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+		// Set the update interval in ms
+		locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
+		// Set the fastest update interval in ms
+		locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
+
+		locationListener = new LocationListener()
+		{
+			
+			@Override
+			public void onLocationChanged(Location location)
+			{
+				LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+				
+//Used in debug to verify geolocalization values
+//		        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
+//		        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
+
+		        Constants.GM_LATITUDE = (float)myLocation.latitude;
+		        Constants.GM_LONGITUDE = (float)myLocation.longitude;
+			}
+		};
+		mLocationClient = new LocationClient(this, this, this);
 		
 		saveMediaButton.requestFocus();
 
@@ -381,70 +410,42 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
 	}
 
-	//-------------------------------------------
-	// Summary: initialize location manager
-	//-------------------------------------------
-	private void initializeLocationManager() {
-		//get the location manager
-		this.locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+	/*
+	 * Called by Google Location Services when the request to connect the
+	 * client finishes successfully. At this point, you can
+	 * request the current location or start periodic updates
+	 */
 
-		//define the location manager criteria
-        Criteria criteres = new Criteria();
-        criteres.setAccuracy(Criteria.ACCURACY_COARSE);
-        criteres.setPowerRequirement(Criteria.POWER_LOW);
-        criteres.setAltitudeRequired(false);
-        criteres.setCostAllowed(true);
-
-        //do not work correctly on network......
-//        String bestLocationProvider = this.locationManager.getBestProvider(criteres, true);
-//        this.locationManager.requestLocationUpdates(bestLocationProvider, 10000, 5.0f, this);
- 
-        //works with GPS.....
-        this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5.0f, this);
-        
-    	this.locationProvider = locationManager.getBestProvider(criteres, false);
-        
-		Location location = locationManager.getLastKnownLocation(locationProvider);
-
-		//initialize the location
-		if(location != null) {
-			onLocationChanged(location);
-		}
+	public void onConnected(Bundle dataBundle)
+	{
+		mLocationClient.requestLocationUpdates(locationRequest, locationListener);
 	}
 
 	@Override
-	public void onLocationChanged(Location location)
+	public void onConnectionFailed(ConnectionResult arg0)
 	{
-		// TODO Auto-generated method stub
-		LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-		
-        //Utilisé en débug pour vérifier les valeur de géolocalisation
-//        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
-//        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
-
-        Constants.GM_LATITUDE = (float)myLocation.latitude;
-        Constants.GM_LONGITUDE = (float)myLocation.longitude;
 	}
 
 	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras)
+	public void onDisconnected()
 	{
-		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
-	public void onProviderEnabled(String provider)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderDisabled(String provider)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
+	/* Called when the Activity becomes visible.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Connect the client.
+        mLocationClient.connect();
+    }
+    
+    /* Called when the Activity is no longer visible.
+     */
+    @Override
+    protected void onStop() {
+        // Disconnecting the client invalidates it.
+        mLocationClient.disconnect();
+        super.onStop();
+    }
 }
