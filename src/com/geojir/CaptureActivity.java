@@ -38,8 +38,6 @@ import com.geojir.override.OneLineArrayList;
 import com.geojir.view.CaptureImageView;
 import com.google.android.gms.maps.model.LatLng;
 
-import android.app.PendingIntent;
-
 public class CaptureActivity extends ParentMenuActivity implements LocationListener
 {
 	// Butterknife injectViews

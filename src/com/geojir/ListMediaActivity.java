@@ -92,7 +92,8 @@ public class ListMediaActivity extends ParentMenuActivity
 					// display image depend on path and file existence
 					imageView.setImagePath(path);
 					
-					if (cursor.getInt(columnIndex+2) == 1)
+					int filterInt = cursor.getColumnIndex(MediasDb.FILTER_COLUMN);
+					if (cursor.getInt(filterInt) == 1)
 						imageView.blackAndWhiteMode(true);
 					
 					return true;
