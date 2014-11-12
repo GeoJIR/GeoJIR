@@ -10,7 +10,7 @@ public class ListMediaContract {
 
 
     /* Inner class that defines the table contents */
-    public static abstract class MediasDb implements BaseColumns {
+	public static abstract class MediasDb implements BaseColumns {
     	
         public static final String TABLE_NAME = "ListMedia";
         

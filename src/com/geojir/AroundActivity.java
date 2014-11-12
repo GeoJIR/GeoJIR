@@ -3,30 +3,31 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SimpleCursorAdapter.ViewBinder;
 
+import com.geojir.adapter.AppConfig;
+import com.geojir.adapter.ImageLoader;
+import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.db.ListMediaDb;
 import com.geojir.db.MediaContentProvider;
-import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.view.CustomImageView;
+import com.geojir.medias.Callback;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -43,8 +44,9 @@ public class AroundActivity extends ParentMenuActivity
 	protected Marker markerLocation;
 	protected boolean setFirstMarker = false;
 	protected MapView mGoogleMapView;
+
 	protected ArrayList<LatLng> pointsList = new ArrayList<LatLng>();
-	
+
 	protected SimpleCursorAdapter cursorAdapter;
 
 	protected final static String ZOOM_ON_RESTORE = "zoomOnRestore";
@@ -69,6 +71,9 @@ public class AroundActivity extends ParentMenuActivity
 		restoreState(savedInstanceState);
 
 		initMap(savedInstanceState);
+
+		// on creer le content provider
+		displayContentProvider();
 
 		if (mMap != null)
 		{
@@ -102,23 +107,46 @@ public class AroundActivity extends ParentMenuActivity
 	 */
 	public void markerMedia()
 	{
-		for (int i = 1; i < 10; i++)
-		{ // traitement de creation et d'ajout des marker
-			LatLng point = new LatLng(43.6109200 + i / 4, 3.8772300 + i / 4);
-			drawMarker(point, String.valueOf(i));
-			// add point in pointsList
-			pointsList.add(point);
+		Cursor cur = cursorAdapter.getCursor();
+		if (cur.getCount() != 0)
+		{
+			cur.moveToFirst();
+			do
+			{
+				// on recupere les infos du medias pour créer son point
+				// geolocaliser
+				int lati_index = cur.getColumnIndex(MediasDb.LATITUDE_COLUMN);
+				int longi_index = cur.getColumnIndex(MediasDb.LONGITUDE_COLUMN);
+				float lati = cur.getFloat(lati_index);
+				float longi = cur.getFloat(longi_index);
+
+				int remark_index = cur.getColumnIndex(MediasDb.REMARK_COLUMN);
+				String remark = cur.getString(remark_index);
+
+				int path_index = cur.getColumnIndex(MediasDb.FILE_NAME_COLUMN);
+				String path = cur.getString(path_index);
+
+				LatLng point = new LatLng(lati + Math.random(), longi
+						+ Math.random());
+				drawMarker(point, remark, path);
+				// add point in pointsList
+				pointsList.add(point);
+
+			} while (cur.moveToNext() != false);
+
 		}
+
 	}
 
 	// Draw a marker at the "point"
-	private void drawMarker(LatLng point, String remark)
+	private void drawMarker(LatLng point, String remark, String path)
 	{
 		// Creating an instance of MarkerOptions
 		MarkerOptions markerOptions = new MarkerOptions();
 
 		// Setting latitude, longitude and title for the marker
-		markerOptions.position(point).title(remark);
+		markerOptions.position(point).title(remark)
+				.icon(BitmapDescriptorFactory.fromPath(path));
 
 		// Adding marker on the Google Map
 		mMap.addMarker(markerOptions);
@@ -245,7 +273,8 @@ public class AroundActivity extends ParentMenuActivity
 				{
 					for (int i = 0; i < pointsList.size(); i++)
 					{
-						drawMarker(pointsList.get(i), String.valueOf(i));
+						// TODO mettre le path en sauvegarde
+						drawMarker(pointsList.get(i), String.valueOf(i), null);
 					}
 				}
 			}
@@ -274,58 +303,123 @@ public class AroundActivity extends ParentMenuActivity
 		savedInstanceState.putParcelableArrayList("points", pointsList);
 	}
 
-	
 	// Create custom adapter
-		protected void createAdapter(Cursor cursor)
-		{
-			// Display image and comment
-			cursorAdapter = new SimpleCursorAdapter(this,
-					R.layout.list_item,
-					cursor,
-					new String[] { MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
-					new int[] {R.id.imageIcon, R.id.remark}
-					, 0
-			);
-			
-			// Convert String to image for ImageView
-			cursorAdapter.setViewBinder(new ViewBinder()
-			{
-				@Override
-				public boolean setViewValue(View view, Cursor cursor,
-						int columnIndex)
-				{
-					if (view instanceof CustomImageView)
-					{
-						CustomImageView imageView = (CustomImageView) view;
-						
-						// Path of media
-						String path = cursor.getString(columnIndex);
-						// display image depend on path and file existence
-						imageView.setImagePath(path);
-						
-						int filterInt = cursor.getColumnIndex(MediasDb.FILTER_COLUMN);
-						if (cursor.getInt(filterInt) == 1)
-							imageView.blackAndWhiteMode(true);
-						
-						return true;
-					}
-					return false;
-				}
-				
-			});
-		}
-	
+	protected void createAdapter(Cursor cursor)
+	{
+		// Display image and comment
+		cursorAdapter = new SimpleCursorAdapter(this, R.layout.list_item,
+				cursor, new String[] { MediasDb.FILE_NAME_COLUMN,
+						MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
+				new int[] { R.id.imageIcon, R.id.remark }, 0);
+
+		// Convert String to image for ImageView
+		/*
+		 * cursorAdapter.setViewBinder(new ViewBinder() {
+		 * 
+		 * @Override public boolean setViewValue(View view, Cursor cursor, int
+		 * columnIndex) { if (view instanceof CustomImageView) { CustomImageView
+		 * imageView = (CustomImageView) view;
+		 * 
+		 * // Path of media String path = cursor.getString(columnIndex); //
+		 * display image depend on path and file existence
+		 * imageView.setImagePath(path);
+		 * 
+		 * int filterInt = cursor .getColumnIndex(MediasDb.FILTER_COLUMN); if
+		 * (cursor.getInt(filterInt) == 1) imageView.blackAndWhiteMode(true);
+		 * 
+		 * return true; } return false; }
+		 * 
+		 * });
+		 */
+	}
+
 	// CONTENT PROVIDER
 	private void displayContentProvider()
 	{
 		String columns[] = new String[] { MediasDb._ID,
 				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
-				MediasDb.FILTER_COLUMN };
+				MediasDb.FILTER_COLUMN, MediasDb.LATITUDE_COLUMN,
+				MediasDb.LONGITUDE_COLUMN };
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
 		Cursor cur = getContentResolver().query(mContacts, columns, null, null,
-				null);
+				"_id DESC LIMIT 2");
 
 		createAdapter(cur);
+
+	}
+
+	
+	//customisation du marker
+	public class MediaWindowAdapterMarker implements InfoWindowAdapter
+	{
+
+		private Marker markerShowingInfoWindow;
+		private Context mContext;
+
+		public MediaWindowAdapterMarker(Context context)
+		{
+			mContext = context;
+		}
+
+		@Override
+		public View getInfoContents(Marker marker)
+		{
+
+			markerShowingInfoWindow = marker;
+
+			LayoutInflater inflater = (LayoutInflater) mContext
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			// Getting view from the layout file info_window_layout
+			View popUp = inflater.inflate(R.layout.layout_popup, null);
+
+			TextView popUpTitle = (TextView) popUp
+					.findViewById(R.id.popup_title);
+			TextView popUpContent = (TextView) popUp
+					.findViewById(R.id.popup_content);
+			ImageView popUpImage = (ImageView) popUp
+					.findViewById(R.id.popup_image);
+
+			popUpTitle.setText(marker.getTitle());
+			popUpContent.setText(marker.getSnippet());
+
+			// Load the image thumbnail
+			final String imagePath = markers.get(marker.getId());
+			ImageLoader imageLoader = ((AppConfig) mContext
+					.getApplicationContext()).getImageLoader();
+			imageLoader.loadBitmap(imagePath, popUpImage, 0, 0, onImageLoaded);
+
+			// Returning the view containing InfoWindow contents
+			return popUp;
+		}
+
+		@Override
+		public View getInfoWindow(Marker marker)
+		{
+
+			return null;
+		}
+
+		/**
+		 * This method is called after the bitmap has been loaded. It checks if
+		 * the currently displayed info window is the same info window which has
+		 * been saved. If it is, then refresh the window to display the newly
+		 * loaded image.
+		 */
+		private Callback onImageLoaded = new Callback()
+		{
+
+			@Override
+			public void execute(String result)
+			{
+				if (markerShowingInfoWindow != null
+						&& markerShowingInfoWindow.isInfoWindowShown())
+				{
+					markerShowingInfoWindow.hideInfoWindow();
+					markerShowingInfoWindow.showInfoWindow();
+				}
+			}
+		};
 
 	}
 }

@@ -25,6 +25,9 @@ public abstract class Media implements IFiles
 	
 	protected File file;
 	
+	protected float lati;
+	protected float longi;
+	
 	public Media()
 	{
 		// create master folder if not exist
