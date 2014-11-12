@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.geojir.medias.Media;
 
@@ -164,5 +165,18 @@ public class ParentMenuActivity extends Activity
 
 		return super.onOptionsItemSelected(item);
 	}
+	
+	// Shorts methods for toast
+	protected void toast(int idString)
+	{
+		toast(getString(idString));
+	}
+
+	protected void toast(String message)
+	{
+		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
+				.show();
+	}
+
 
 }

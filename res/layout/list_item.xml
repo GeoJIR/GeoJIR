@@ -1,39 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="wrap_content"
     android:padding="16dp" >
 
-    <ImageView
+    <com.geojir.view.CustomImageView
         android:id="@+id/imageIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_width="@dimen/thumbnailSize"
+        android:layout_height="@dimen/thumbnailSize"
         android:layout_marginLeft="6dp"
-        android:minHeight="80dp"
-        android:minWidth="48dp" />
-
-    <TextView
-        android:id="@+id/pathFileName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/icon"
-        android:lines="3"
-        android:text="Path"
-        android:textSize="16sp" />
+        android:layout_marginStart="6dp"
+        android:contentDescription="@string/media_icon" />
 
     <TextView
         android:id="@+id/remark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/pathFileName"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/pathFileName"
-        android:paddingLeft="16dp"
-        android:text="Remarque"
+        android:lines="3"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/comment"
         android:textSize="16sp" />
 
-</RelativeLayout>
+</LinearLayout>

@@ -9,7 +9,13 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +24,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.InjectViews;
@@ -31,8 +36,9 @@ import com.geojir.medias.Sound;
 import com.geojir.menus.TabImageMenu;
 import com.geojir.override.OneLineArrayList;
 import com.geojir.view.CaptureImageView;
+import com.google.android.gms.maps.model.LatLng;
 
-public class CaptureActivity extends ParentMenuActivity
+public class CaptureActivity extends ParentMenuActivity implements LocationListener
 {
 	// Butterknife injectViews
 	@InjectView(R.id.captureImageView)
@@ -76,7 +82,15 @@ public class CaptureActivity extends ParentMenuActivity
 	protected Photo photo;
 
 	protected TabImageMenu menu = new TabImageMenu();
+	
+	//Localization
+	LocationManager locationManager;
+	String locationProvider;
 
+	// shared preferences
+	SharedPreferences preferences;
+	public static Context contextOfApplication;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -85,8 +99,12 @@ public class CaptureActivity extends ParentMenuActivity
 		setContentView(R.layout.activity_capture);
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
-
+		
 		restoreState(savedInstanceState);
+		
+		//initialize the location manager
+		this.initializeLocationManager();
+		
 		saveMediaButton.requestFocus();
 
 		// Create tab menu images
@@ -102,8 +120,8 @@ public class CaptureActivity extends ParentMenuActivity
 		else
 			playAudioButton.setEnabled(false);
 		
-		//on cache la barre de progression
-		progressBar.setAlpha(0f);
+		// Hide loading bar
+		progressBar.setVisibility(View.INVISIBLE);
 	}
 
 	// Restore medias
@@ -151,7 +169,59 @@ public class CaptureActivity extends ParentMenuActivity
 	@OnClick(R.id.saveMediaButton)
 	public void clickOnSaveMedia(View view)
 	{
-		// On lance la tâche asynchrone
+		class SaveAsynchrone extends AsyncTask<Object, Object, Object>
+		{
+
+			// Before execute async task
+			@Override
+			protected void onPreExecute()
+			{
+				super.onPreExecute();
+				progressBar.setVisibility(View.VISIBLE);
+				toast(R.string.start_save_media_toast);
+			}
+
+			// After execute async task
+			@Override
+			protected void onPostExecute(Object result)
+			{
+				super.onPostExecute(result);
+				
+				// Reload view
+				onCreate(null);
+				toast(R.string.stop_save_media_toast);
+			}
+
+			@Override
+			protected Object doInBackground(Object... params)
+			{
+				Boolean monochrome = currentMedia == Constants.TYPE_IMAGE && filterMonochrome.isChecked();
+				// Get current media
+				Media mediaTemp = null;
+				if (currentMedia == Constants.TYPE_IMAGE)
+					mediaTemp = photo;
+				else if (currentMedia == Constants.TYPE_AUDIO)
+					mediaTemp = sound;
+				
+				// Save current media
+				if (mediaTemp != null)
+				{
+					try
+					{
+						mediaTemp.save(editComment.getText().toString(), monochrome);
+					}
+					catch (InstantiationException | IllegalAccessException
+							| IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				
+				return null;
+			}
+		}
+		
+		// Lauch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
 
@@ -206,18 +276,6 @@ public class CaptureActivity extends ParentMenuActivity
 			photo.restore(restoreString);
 		captureImageView.load();
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
-	}
-
-	// Shorts methods for toast
-	protected void toast(int idString)
-	{
-		toast(getString(idString));
-	}
-
-	protected void toast(String message)
-	{
-		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
-				.show();
 	}
 
 	// Change text and avaibility of audio button and display toast
@@ -323,91 +381,70 @@ public class CaptureActivity extends ParentMenuActivity
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
 	}
 
-	/**
-	 **
-	 * Tâche asynchrone à exécuter lors de l'appui sur le bouton Le premier
-	 * paramètre de généricité (Void) représente le type de paramètre à passer
-	 * dans la méthode doInBackground Le second paramètre de généricité
-	 * (Integer) représente le type de paramètre à passer à la méthode
-	 * onProgressUpdate Le troisième paramètre de généricité (Void) représente
-	 * le type de paramètre à passer à la méthode onPostExecute
-	 */
-	private class SaveAsynchrone extends AsyncTask
+	//-------------------------------------------
+	// Summary: initialize location manager
+	//-------------------------------------------
+	private void initializeLocationManager() {
+		//get the location manager
+		this.locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+		//define the location manager criteria
+        Criteria criteres = new Criteria();
+        criteres.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteres.setPowerRequirement(Criteria.POWER_LOW);
+        criteres.setAltitudeRequired(false);
+        criteres.setCostAllowed(true);
+
+        //do not work correctly on network......
+//        String bestLocationProvider = this.locationManager.getBestProvider(criteres, true);
+//        this.locationManager.requestLocationUpdates(bestLocationProvider, 10000, 5.0f, this);
+ 
+        //works with GPS.....
+        this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5.0f, this);
+        
+    	this.locationProvider = locationManager.getBestProvider(criteres, false);
+        
+		Location location = locationManager.getLastKnownLocation(locationProvider);
+
+		//initialize the location
+		if(location != null) {
+			onLocationChanged(location);
+		}
+	}
+
+	@Override
+	public void onLocationChanged(Location location)
 	{
-
-		// Méthode exécutée au début de l'execution de la tâche asynchrone
-		@Override
-		protected void onPreExecute()
-		{
-			super.onPreExecute();
-			progressBar.setAlpha(1f);
-			Toast.makeText(getApplicationContext(),
-					"Début de l'enregistrement", Toast.LENGTH_SHORT).show();
-		}
-
-		@Override
-		protected void onProgressUpdate(Object... values)
-		{
-			// TODO Auto-generated method stub
-			super.onProgressUpdate(values);
-			// Mise à jour de la ProgressBar
-			//onProgressUpdateInt((int)values[0]);
-			//progressBar.setProgress( values[0]);
-		}
+		// TODO Auto-generated method stub
+		LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 		
+        //Utilisé en débug pour vérifier les valeur de géolocalisation
+//        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
+//        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
+
+        Constants.GM_LATITUDE = (float)myLocation.latitude;
+        Constants.GM_LONGITUDE = (float)myLocation.longitude;
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras)
+	{
+		// TODO Auto-generated method stub
 		
+	}
 
-		// Méthode exécutée à la fin de l'execution de la tâche asynchrone
-		@Override
-		protected void onPostExecute(Object result)
-		{
-			
-			super.onPostExecute(result);
-			progressBar.setAlpha(0f);
-			Toast.makeText(getApplicationContext(),
-					"L'enregistrement est terminé", Toast.LENGTH_SHORT).show();
-			
-			//on recrée l'application pour vider tous les champs
-			onCreate(null);
-		}
+	@Override
+	public void onProviderEnabled(String provider)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
-		@Override
-		protected Object doInBackground(Object... params)
-		{
-			Media mediaTemp = null;
-			if (currentMedia == Constants.TYPE_IMAGE)
-				mediaTemp = photo;
-			else if (currentMedia == Constants.TYPE_AUDIO)
-				mediaTemp = sound;
-
-			if (mediaTemp != null)
-			{
-				try
-				{
-					mediaTemp.save(editComment.getText().toString());
-				} catch (InstantiationException | IllegalAccessException
-						| IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-
-			int progress = 0;
-			for (progress = 0; progress < 10; progress++)
-			{
-				for (int i = 0; i < 1000; i++)
-				{
-					// Ne fait rien mais fait juste passer du temps
-				}
-
-				// publishProgress met à jour l'interface en invoquant la
-				// méthode onProgressUpdate
-				progress++;
-				publishProgress(progress);
-			}
-
-			return null;
-		}
+	@Override
+	public void onProviderDisabled(String provider)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

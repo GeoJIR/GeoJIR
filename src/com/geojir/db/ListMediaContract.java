@@ -1,4 +1,4 @@
-package com.geojir;
+package com.geojir.db;
 
 import android.provider.BaseColumns;
 
@@ -11,11 +11,14 @@ public class ListMediaContract {
 
     /* Inner class that defines the table contents */
     public static abstract class MediasDb implements BaseColumns {
+    	
         public static final String TABLE_NAME = "ListMedia";
         
         public static final String FILE_NAME_COLUMN = "Filename";
         public static final String REMARK_COLUMN = "Remark";
         public static final String FILTER_COLUMN = "Filter";
+        public static final String LATITUDE_COLUMN = "Latitude";
+        public static final String LONGITUDE_COLUMN = "Longitude";
     }
 
 }

@@ -13,25 +13,23 @@ import java.util.Locale;
 import android.os.Environment;
 
 import com.geojir.Constants;
-import com.geojir.ListMediaDb;
 import com.geojir.ParentMenuActivity;
+import com.geojir.db.ListMediaDb;
 import com.geojir.interfaces.IFiles;
 import com.geojir.override.OneLineArrayList;
 
-/**
- * @author HumanBooster
- *
- */
-/**
- * @author HumanBooster
- *
- */
 public abstract class Media implements IFiles
 {
 	// Comment of the media
 	public String comment = "";
 	
 	protected File file;
+	
+	public Media()
+	{
+		// create master folder if not exist
+		Constants.initConstants(ParentMenuActivity.CONTEXT);
+	}
 	
 	// Create File with unique path
 	protected void createFile()
@@ -104,6 +102,12 @@ public abstract class Media implements IFiles
 	// Create file from temp file and save comment
 	public void save(String commentary) throws IOException, InstantiationException, IllegalAccessException
 	{
+		save(commentary, false);
+	}
+	
+	// Create file from temp file and save comment
+	public void save(String commentary, Boolean monochrome) throws IOException, InstantiationException, IllegalAccessException
+	{
 		if (file == null)
 		{
 			createFile();
@@ -112,19 +116,21 @@ public abstract class Media implements IFiles
 		
 		comment = commentary;
 		deleteTempFile();
-		callToDataBase();
+		callToDataBase(monochrome);
 	}
 	
 	// Call save to Database
-	protected void callToDataBase()
+	protected void callToDataBase(Boolean monochrome)
 	{
 		ListMediaDb listMedia = new ListMediaDb(ParentMenuActivity.CONTEXT);
-		listMedia.addMedia(getPath(), comment, false);
+		listMedia.addMedia(getPath(), comment, monochrome);
 	}
 	
 	// Restore media if needed (screen rotate)
 	public void restore(String restoreURI)
 	{
+		// create master folder if not exist
+		Constants.initConstants(ParentMenuActivity.CONTEXT);
 		if (restoreURI != getTempPath())
 			file = new File(restoreURI);
 	}
