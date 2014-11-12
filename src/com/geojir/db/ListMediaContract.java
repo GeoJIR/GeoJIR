@@ -17,6 +17,8 @@ public class ListMediaContract {
         public static final String FILE_NAME_COLUMN = "Filename";
         public static final String REMARK_COLUMN = "Remark";
         public static final String FILTER_COLUMN = "Filter";
+        public static final String LATITUDE_COLUMN = "Latitude";
+        public static final String LONGITUDE_COLUMN = "Longitude";
     }
 
 }

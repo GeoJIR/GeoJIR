@@ -9,7 +9,13 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -30,8 +36,11 @@ import com.geojir.medias.Sound;
 import com.geojir.menus.TabImageMenu;
 import com.geojir.override.OneLineArrayList;
 import com.geojir.view.CaptureImageView;
+import com.google.android.gms.maps.model.LatLng;
 
-public class CaptureActivity extends ParentMenuActivity
+import android.app.PendingIntent;
+
+public class CaptureActivity extends ParentMenuActivity implements LocationListener
 {
 	// Butterknife injectViews
 	@InjectView(R.id.captureImageView)
@@ -75,7 +84,15 @@ public class CaptureActivity extends ParentMenuActivity
 	protected Photo photo;
 
 	protected TabImageMenu menu = new TabImageMenu();
+	
+	//Localization
+	LocationManager locationManager;
+	String locationProvider;
 
+	// shared preferences
+	SharedPreferences preferences;
+	public static Context contextOfApplication;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -84,8 +101,12 @@ public class CaptureActivity extends ParentMenuActivity
 		setContentView(R.layout.activity_capture);
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
-
+		
 		restoreState(savedInstanceState);
+		
+		//initialize the location manager
+		this.initializeLocationManager();
+		
 		saveMediaButton.requestFocus();
 
 		// Create tab menu images
@@ -360,6 +381,72 @@ public class CaptureActivity extends ParentMenuActivity
 			savedInstanceState.putString(PHOTO_ON_RESTORE, photo.getPath());
 		if (sound != null)
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
+	}
+
+	//-------------------------------------------
+	// Summary: initialize location manager
+	//-------------------------------------------
+	private void initializeLocationManager() {
+		//get the location manager
+		this.locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+		//define the location manager criteria
+        Criteria criteres = new Criteria();
+        criteres.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteres.setPowerRequirement(Criteria.POWER_LOW);
+        criteres.setAltitudeRequired(false);
+        criteres.setCostAllowed(true);
+
+        //do not work correctly on network......
+//        String bestLocationProvider = this.locationManager.getBestProvider(criteres, true);
+//        this.locationManager.requestLocationUpdates(bestLocationProvider, 10000, 5.0f, this);
+ 
+        //works with GPS.....
+        this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5.0f, this);
+        
+    	this.locationProvider = locationManager.getBestProvider(criteres, false);
+        
+		Location location = locationManager.getLastKnownLocation(locationProvider);
+
+		//initialize the location
+		if(location != null) {
+			onLocationChanged(location);
+		}
+	}
+
+	@Override
+	public void onLocationChanged(Location location)
+	{
+		// TODO Auto-generated method stub
+		LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+		
+        //Utilisé en débug pour vérifier les valeur de géolocalisation
+//        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
+//        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
+
+        Constants.GM_LATITUDE = (float)myLocation.latitude;
+        Constants.GM_LONGITUDE = (float)myLocation.longitude;
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -69,7 +69,7 @@ public class ListMediaActivity extends ParentMenuActivity
 		cursorAdapter = new SimpleCursorAdapter(this,
 				R.layout.list_item,
 				cursor,
-				new String[] { MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN },
+				new String[] { MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
 				new int[] {R.id.imageIcon, R.id.remark}
 				, 0
 		);
@@ -91,6 +91,9 @@ public class ListMediaActivity extends ParentMenuActivity
 					String path = cursor.getString(columnIndex);
 					// display image depend on path and file existence
 					imageView.setImagePath(path);
+					
+					if (cursor.getInt(columnIndex+2) == 1)
+						imageView.blackAndWhiteMode(true);
 					
 					return true;
 				}
@@ -126,7 +129,7 @@ public class ListMediaActivity extends ParentMenuActivity
 	private void displayContentProvider()
 	{
 		String columns[] = new String[] { MediasDb._ID, MediasDb.FILE_NAME_COLUMN,
-				MediasDb.REMARK_COLUMN };
+				MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN };
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
 		Cursor cur =  getContentResolver().query(mContacts, columns, null, null, null);
 		

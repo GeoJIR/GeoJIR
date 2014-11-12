@@ -36,24 +36,6 @@
 		        android:contentDescription="@string/ic_micro_description"
 		        android:src="@drawable/ic_micro" />
 		
-	        <!--
-		    <ImageView
-		        android:id="@+id/imageCamera"
-		        android:layout_width="0dp"
-		        android:layout_weight="1"
-		        android:layout_height="wrap_content"
-		        android:contentDescription="@string/ic_camera_description"
-		        android:src="@drawable/ic_camera" />
-		
-		    <ImageView
-		        android:id="@+id/imageMedias"
-		        android:layout_width="0dp"
-		        android:layout_weight="1"
-		        android:layout_height="wrap_content"
-		        android:contentDescription="@string/ic_medias_description"
-		        android:src="@drawable/ic_medias" />
-		        -->
-	
 	    </LinearLayout>
 	
 	    <LinearLayout
