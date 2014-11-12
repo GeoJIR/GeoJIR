@@ -33,6 +33,7 @@ public class ListMediaActivity extends ParentMenuActivity
 		ButterKnife.inject(this);
 
 		/*
+		ancienne version pour afficher les medias sans le content provider
 		// database instantiate
 		ListMediaDb listeMedia = new ListMediaDb(getApplicationContext());
 
@@ -126,12 +127,13 @@ public class ListMediaActivity extends ParentMenuActivity
 		listView.setAdapter(cursorAdapter);
 	}
 	
-	// CONTEN PROVIDER
+	// CONTENT PROVIDER
 	private void displayContentProvider()
 	{
 		String columns[] = new String[] { MediasDb._ID, MediasDb.FILE_NAME_COLUMN,
 				MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN };
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
+		//Cursor cur =  getContentResolver().query(mContacts, columns, null, null, null);
 		Cursor cur =  getContentResolver().query(mContacts, columns, null, null, null);
 		
 		createAdapter(cur);
