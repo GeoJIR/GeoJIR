@@ -75,7 +75,9 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 	// Save instance constants
 	protected final static String PHOTO_ON_RESTORE = "photoOnRestore";
 	protected final static String AUDIO_ON_RESTORE = "audioOnRestore";
-	protected final static String MEDIA_ON_RESTORE = Constants.TYPE_IMAGE;
+	protected final static String MEDIA_ON_RESTORE = "mediaOnRestore";
+	protected final static String COMMENT_ON_RESTORE = "commentOnRestore";
+	protected final static String FILTER_ON_RESTORE = "filterOnRestore";
 
 	// Media variable
 	protected Sound sound;
@@ -148,6 +150,10 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 
 			// Restore current media
 			currentMedia = savedInstanceState.getString(MEDIA_ON_RESTORE);
+			// Restore comment
+			editComment.setText(savedInstanceState.getString(COMMENT_ON_RESTORE));
+			// Restore current monochrome
+			filterMonochrome.setChecked(savedInstanceState.getBoolean(FILTER_ON_RESTORE));
 		}
 	}
 
@@ -379,6 +385,9 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 			savedInstanceState.putString(PHOTO_ON_RESTORE, photo.getPath());
 		if (sound != null)
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
+		
+		savedInstanceState.putString(COMMENT_ON_RESTORE, editComment.getText().toString());
+		savedInstanceState.putBoolean(FILTER_ON_RESTORE, filterMonochrome.isChecked());
 	}
 
 	//-------------------------------------------
@@ -418,9 +427,9 @@ public class CaptureActivity extends ParentMenuActivity implements LocationListe
 		// TODO Auto-generated method stub
 		LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
 		
-        //Utilisé en débug pour vérifier les valeur de géolocalisation
-//        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
-//        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
+        // Utilisé en débug pour vérifier les valeur de géolocalisation
+		// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
+		// toast("Location update: " + mLatAndLongStr);
 
         Constants.GM_LATITUDE = (float)myLocation.latitude;
         Constants.GM_LONGITUDE = (float)myLocation.longitude;

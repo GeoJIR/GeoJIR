@@ -1,5 +1,6 @@
 package com.geojir;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -29,7 +30,7 @@ public class ParentMenuActivity extends Activity
 	//@InjectView(R.id.content_frame)
 	FrameLayout drawerContent;
 	
-	@Override
+	@SuppressLint("NewApi") @Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -59,6 +60,7 @@ public class ParentMenuActivity extends Activity
 		// Active actionBar
 		ActionBar actionBar = getActionBar();
 		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		
 		// Create listener for all menu item
 		for (int index = 0; index < lateralMenuLeft.getChildCount(); index++)
@@ -83,6 +85,7 @@ public class ParentMenuActivity extends Activity
 		Class<? extends ParentMenuActivity> startActivity = this.getClass();
 		Class<? extends ParentMenuActivity> endActivity = this.getClass();
 		
+		item.setBackgroundColor(getResources().getColor(R.color.wallet_holo_blue_light));
 		// Switch on item
 		switch (item.getId())
 		{
@@ -107,6 +110,7 @@ public class ParentMenuActivity extends Activity
 		if (startActivity != endActivity)
 		{
 			Intent intent = new Intent(this, endActivity);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivity(intent);
 		}
 	}

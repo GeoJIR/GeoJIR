@@ -3,11 +3,6 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -87,8 +82,7 @@ public class AroundActivity extends ParentMenuActivity
 		} 
 		else
 		{
-			Toast.makeText(getApplicationContext(), R.string.GM_NotReached,
-					Toast.LENGTH_SHORT).show();
+			toast(R.string.GM_NotReached);
 		}
 	}
 
@@ -127,7 +121,7 @@ public class AroundActivity extends ParentMenuActivity
 		{
 			LatLng myLatLng = new LatLng(Constants.GM_LATITUDE, Constants.GM_LONGITUDE);
 			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, currentZoom));
-			Toast.makeText(getApplicationContext(), R.string.GM_WaitLocation, Toast.LENGTH_SHORT).show();
+			toast(R.string.GM_WaitLocation);
 		}
 	}
 	
@@ -137,9 +131,9 @@ public class AroundActivity extends ParentMenuActivity
 		public void onMyLocationChange(Location location)
 		{
 			LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-// Pour les tests			
-//	        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
-//	        Toast.makeText(AroundActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
+			// Pour les tests
+			// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
+			// toast("Location update: " + mLatAndLongStr);
 
 			//markerLocation not null => marker has been already placed 
 			if(markerLocation != null)
@@ -180,7 +174,7 @@ public class AroundActivity extends ParentMenuActivity
 			}
 			else
 			{
-				Toast.makeText(getApplicationContext(), R.string.GM_NotReached, Toast.LENGTH_SHORT).show();
+				toast(R.string.GM_NotReached);
 			}
 			//save (new) location in mylastlocation variable
 			mylastlocation = location;
