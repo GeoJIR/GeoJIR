@@ -44,7 +44,7 @@
         
         <activity
             android:name=".CaptureActivity"
-            android:windowSoftInputMode="stateUnchanged"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,25 +55,25 @@
             
         <activity
             android:name=".ListMediaActivity"
-            android:windowSoftInputMode="stateUnchanged"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_list_media" >
         </activity>
         
         <activity
             android:name=".AroundActivity"
-            android:windowSoftInputMode="stateUnchanged"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_around" >
         </activity>
         
         <activity
             android:name=".FollowActivity"
-            android:windowSoftInputMode="stateUnchanged"
+            android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_follow" >
         </activity>
 
         <activity
             android:name=".AccountActivity"
-			android:windowSoftInputMode="stateUnchanged"
+			android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_account" >
         </activity>
         
