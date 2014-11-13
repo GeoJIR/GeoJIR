@@ -78,6 +78,9 @@ public class AroundActivity extends ParentMenuActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around);
 		
+		// on creer le content provider
+		displayContentProvider();
+		
 		restoreState(savedInstanceState);
 		
 		// initialize the location manager
@@ -339,7 +342,7 @@ public class AroundActivity extends ParentMenuActivity implements
 				MediasDb.LONGITUDE_COLUMN };
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
 		Cursor cur = getContentResolver().query(mContacts, columns, null, null,
-				"_id DESC LIMIT 2");
+				null);
 
 		createAdapter(cur);
 
