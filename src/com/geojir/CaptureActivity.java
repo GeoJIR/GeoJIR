@@ -175,7 +175,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 			{
 				createSound();
 				sound.restore(audioRestore);
-				createSoundObserver();
 			}
 			
 			// Restore current media
@@ -415,7 +414,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_TAKE_PHOTO)
+		if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK)
 			createPhoto();
 	}
 	
