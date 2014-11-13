@@ -59,7 +59,7 @@ public class AccountActivity extends ParentMenuActivity
 			@Override
 			public void call(String s)
 			{
-				Toast.makeText(AccountActivity.this, message, Toast.LENGTH_SHORT).show();
+				toast(message);
 			}
 		};
 
@@ -77,7 +77,7 @@ public class AccountActivity extends ParentMenuActivity
 				//verify if one field is empty
 				if( username.getText().toString().trim().isEmpty() ||  mail.getText().toString().trim().isEmpty() )
 				{
-					Toast.makeText(AccountActivity.this, R.string.oneFieldIsEmpty,Toast.LENGTH_SHORT).show();
+					toast(R.string.oneFieldIsEmpty);
 				}
 				else
 				{

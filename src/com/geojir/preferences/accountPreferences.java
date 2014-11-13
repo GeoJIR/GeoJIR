@@ -2,7 +2,6 @@ package com.geojir.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 
 import com.geojir.Constants;
 
