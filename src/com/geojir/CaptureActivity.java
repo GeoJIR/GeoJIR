@@ -21,7 +21,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.InjectViews;
@@ -41,7 +40,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
-public class CaptureActivity extends ParentMenuActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener
+public class CaptureActivity extends ParentMenuActivity implements
+		GooglePlayServicesClient.ConnectionCallbacks,
+		GooglePlayServicesClient.OnConnectionFailedListener
 {
 	// Butterknife injectViews
 	@InjectView(R.id.captureImageView)
@@ -60,37 +61,39 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 	List<ImageView> mediasIcons;
 	@InjectViews({ R.id.photoFrame, R.id.audioFrame })
 	List<View> mediasLayout;
-
+	
 	@InjectView(R.id.progressBar)
 	ProgressBar progressBar;
-
+	
 	// List of media
 	protected OneLineArrayList<String> mediasList = new OneLineArrayList<String>()
 			.put(Constants.TYPE_IMAGE).put(Constants.TYPE_AUDIO);
-
+	
 	// ////// WARNING ////////
 	// Order and size of mediasLayout, mediasIcons and mediasList have to be
 	// coherent
-
+	
 	// Memory of current media
 	protected String currentMedia = Constants.TYPE_IMAGE;
-
+	
 	// Save instance constants
 	protected final static String PHOTO_ON_RESTORE = "photoOnRestore";
 	protected final static String AUDIO_ON_RESTORE = "audioOnRestore";
-	protected final static String MEDIA_ON_RESTORE = Constants.TYPE_IMAGE;
-
+	protected final static String MEDIA_ON_RESTORE = "mediaOnRestore";
+	protected final static String COMMENT_ON_RESTORE = "commentOnRestore";
+	protected final static String FILTER_ON_RESTORE = "filterOnRestore";
+	
 	// Media variable
 	protected Sound sound;
 	protected Photo photo;
-
+	
 	protected TabImageMenu menu = new TabImageMenu();
 	
-	//Localization
+	// Localization
 	LocationRequest locationRequest;
 	LocationListener locationListener;
 	LocationClient mLocationClient;
-
+	
 	// shared preferences
 	SharedPreferences preferences;
 	public static Context contextOfApplication;
@@ -106,41 +109,43 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		
 		restoreState(savedInstanceState);
 		
-		//initialize the location manager
+		// initialize the location manager
 		locationRequest = LocationRequest.create();
 		// Use highest accuracy
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
+		
 		// Set the update interval in ms
 		locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
 		// Set the fastest update interval in ms
 		locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
-
-		locationListener = new LocationListener()
-		{
+		
+		locationListener = new LocationListener() {
 			
 			@Override
 			public void onLocationChanged(Location location)
 			{
-				LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+				LatLng myLocation = new LatLng(location.getLatitude(),
+						location.getLongitude());
 				
-//Used in debug to verify geolocalization values
-//		        String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f", myLocation.latitude,myLocation.longitude);
-//		        Toast.makeText(CaptureActivity.this, "Location update: " + mLatAndLongStr, Toast.LENGTH_LONG).show();
-
-		        Constants.GM_LATITUDE = (float)myLocation.latitude;
-		        Constants.GM_LONGITUDE = (float)myLocation.longitude;
+				// Used in debug to verify geolocalization values
+				// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f",
+				// myLocation.latitude,myLocation.longitude);
+				// Toast.makeText(CaptureActivity.this, "Location update: " +
+				// mLatAndLongStr, Toast.LENGTH_LONG).show();
+				
+				Constants.GM_LATITUDE = (float) myLocation.latitude;
+				Constants.GM_LONGITUDE = (float) myLocation.longitude;
 			}
 		};
 		mLocationClient = new LocationClient(this, this, this);
 		
 		saveMediaButton.requestFocus();
-
+		
 		// Create tab menu images
 		menu.addAll(mediasIcons, mediasLayout);
 		// Update screen
 		changeCaptureType();
-
+		
 		// Initialize Audio button
 		if (sound == null)
 			createSound();
@@ -152,7 +157,7 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		// Hide loading bar
 		progressBar.setVisibility(View.INVISIBLE);
 	}
-
+	
 	// Restore medias
 	protected void restoreState(Bundle savedInstanceState)
 	{
@@ -174,18 +179,23 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 				sound.restore(audioRestore);
 				createSoundObserver();
 			}
-
+			
 			// Restore current media
 			currentMedia = savedInstanceState.getString(MEDIA_ON_RESTORE);
+			// Restore comment
+			editComment.setText(savedInstanceState
+					.getString(COMMENT_ON_RESTORE));
+			// Restore current monochrome
+			filterMonochrome.setChecked(savedInstanceState
+					.getBoolean(FILTER_ON_RESTORE));
 		}
 	}
-
+	
 	// Create observer to detected sound state change
 	protected void createSoundObserver()
 	{
 		Observable.create(sound).observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Action1<String>()
-				{
+				.subscribe(new Action1<String>() {
 					@Override
 					public void call(String status)
 					{
@@ -193,14 +203,14 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 					}
 				});
 	}
-
+	
 	// Change current media when click on media icon
 	@OnClick(R.id.saveMediaButton)
 	public void clickOnSaveMedia(View view)
 	{
 		class SaveAsynchrone extends AsyncTask<Object, Object, Object>
 		{
-
+			
 			// Before execute async task
 			@Override
 			protected void onPreExecute()
@@ -209,7 +219,7 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 				progressBar.setVisibility(View.VISIBLE);
 				toast(R.string.start_save_media_toast);
 			}
-
+			
 			// After execute async task
 			@Override
 			protected void onPostExecute(Object result)
@@ -220,11 +230,12 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 				onCreate(null);
 				toast(R.string.stop_save_media_toast);
 			}
-
+			
 			@Override
 			protected Object doInBackground(Object... params)
 			{
-				Boolean monochrome = currentMedia == Constants.TYPE_IMAGE && filterMonochrome.isChecked();
+				Boolean monochrome = currentMedia == Constants.TYPE_IMAGE
+						&& filterMonochrome.isChecked();
 				// Get current media
 				Media mediaTemp = null;
 				if (currentMedia == Constants.TYPE_IMAGE)
@@ -237,9 +248,9 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 				{
 					try
 					{
-						mediaTemp.save(editComment.getText().toString(), monochrome);
-					}
-					catch (InstantiationException | IllegalAccessException
+						mediaTemp.save(editComment.getText().toString(),
+								monochrome);
+					} catch (InstantiationException | IllegalAccessException
 							| IOException e)
 					{
 						e.printStackTrace();
@@ -253,16 +264,16 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		// Lauch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
-
+		
 	}
-
+	
 	// Change current media when click on media icon
 	@OnClick(R.id.filterMonochrome)
 	public void clickOnMonochromeFilter(View view)
 	{
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
-
+	
 	// Change current media when click on media icon
 	@OnClick({ R.id.imagePhotos, R.id.imageMicro })
 	public void clickIconForChangeMedia(ImageView view)
@@ -273,7 +284,7 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		currentMedia = mediasList.get(index_temp);
 		changeCaptureType();
 	}
-
+	
 	@OnClick(R.id.recordAudioButton)
 	public void clickOnAudioRecord(View view)
 	{
@@ -286,18 +297,18 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		else
 			sound.stop();
 	}
-
+	
 	protected void createSound()
 	{
 		sound = new Sound();
 		createSoundObserver();
 	}
-
+	
 	protected void createPhoto()
 	{
 		createPhoto("");
 	}
-
+	
 	protected void createPhoto(String restoreString)
 	{
 		photo = new Photo();
@@ -306,13 +317,13 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		captureImageView.load();
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
-
+	
 	// Change text and avaibility of audio button and display toast
 	protected void changeAudioButtonState()
 	{
 		if (sound == null)
 			return;
-
+		
 		// Start record
 		if (sound.getState() == RecordableMedia.RECORD_STATE)
 		{
@@ -347,14 +358,14 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 			}
 		}
 	}
-
+	
 	@OnClick(R.id.playAudioButton)
 	public void clickOnAudioPlay(View view)
 	{
 		// Only if a sound exist
 		if (sound == null)
 			return;
-
+		
 		if (sound.getState() != RecordableMedia.PLAY_STATE)
 		{
 			try
@@ -367,24 +378,24 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		} else
 			sound.stop();
 	}
-
+	
 	// Display only current media
 	protected void changeCaptureType()
 	{
 		int index_temp = mediasList.indexOf(currentMedia);
 		menu.activeTab(mediasIcons.get(index_temp));
 	}
-
+	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus)
 	{
 		super.onWindowFocusChanged(hasFocus);
-
+		
 		// reload photo if captureImageView exists
 		if (captureImageView != null)
 			createPhoto();
 	}
-
+	
 	// When an another app send result
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -392,7 +403,7 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 		if (requestCode == REQUEST_TAKE_PHOTO)
 			createPhoto();
 	}
-
+	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
@@ -401,51 +412,60 @@ public class CaptureActivity extends ParentMenuActivity implements GooglePlaySer
 			sound.stop();
 		// Always call the superclass so it can save the view hierarchy state
 		super.onSaveInstanceState(savedInstanceState);
-
+		
 		savedInstanceState.putString(MEDIA_ON_RESTORE, currentMedia);
 		// Save the user's current medias
 		if (photo != null)
 			savedInstanceState.putString(PHOTO_ON_RESTORE, photo.getPath());
 		if (sound != null)
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
+		
+		savedInstanceState.putString(COMMENT_ON_RESTORE, editComment.getText()
+				.toString());
+		savedInstanceState.putBoolean(FILTER_ON_RESTORE,
+				filterMonochrome.isChecked());
 	}
-
+	
 	/*
-	 * Called by Google Location Services when the request to connect the
-	 * client finishes successfully. At this point, you can
-	 * request the current location or start periodic updates
+	 * Called by Google Location Services when the request to connect the client
+	 * finishes successfully. At this point, you can request the current
+	 * location or start periodic updates
 	 */
-
 	public void onConnected(Bundle dataBundle)
 	{
-		mLocationClient.requestLocationUpdates(locationRequest, locationListener);
+		mLocationClient.requestLocationUpdates(locationRequest,
+				locationListener);
 	}
-
+	
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0)
 	{
 	}
-
+	
 	@Override
 	public void onDisconnected()
 	{
 	}
-
-	/* Called when the Activity becomes visible.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Connect the client.
-        mLocationClient.connect();
-    }
-    
-    /* Called when the Activity is no longer visible.
-     */
-    @Override
-    protected void onStop() {
-        // Disconnecting the client invalidates it.
-        mLocationClient.disconnect();
-        super.onStop();
-    }
+	
+	/*
+	 * Called when the Activity becomes visible.
+	 */
+	@Override
+	protected void onStart()
+	{
+		super.onStart();
+		// Connect the client.
+		mLocationClient.connect();
+	}
+	
+	/*
+	 * Called when the Activity is no longer visible.
+	 */
+	@Override
+	protected void onStop()
+	{
+		// Disconnecting the client invalidates it.
+		mLocationClient.disconnect();
+		super.onStop();
+	}
 }
