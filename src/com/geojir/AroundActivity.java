@@ -3,23 +3,16 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.db.ListMediaDb;
 import com.geojir.db.MediaContentProvider;
-import com.geojir.medias.Callback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;

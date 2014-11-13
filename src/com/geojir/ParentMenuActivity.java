@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -71,10 +72,25 @@ public class ParentMenuActivity extends Activity
 				@Override
 				public void onClick(View v)
 				{
-					clickOnMenu(v);
+					final View item = v;
+					item.setBackgroundColor(getResources().getColor(R.color.wallet_holo_blue_light));
+					clickOnMenu(item);
+		            item.postDelayed(new Runnable()
+		            {
+		                @Override
+		                public void run()
+		                {
+		                	item.setBackgroundColor(Color.TRANSPARENT);
+		                }
+		            }, 1000);
 				}
 			});
 		}
+	}
+	
+	protected void clearFocus()
+	{
+		drawerContent.requestFocus();
 	}
 	
 	// Function call after an item click
@@ -85,7 +101,6 @@ public class ParentMenuActivity extends Activity
 		Class<? extends ParentMenuActivity> startActivity = this.getClass();
 		Class<? extends ParentMenuActivity> endActivity = this.getClass();
 		
-		item.setBackgroundColor(getResources().getColor(R.color.wallet_holo_blue_light));
 		// Switch on item
 		switch (item.getId())
 		{
