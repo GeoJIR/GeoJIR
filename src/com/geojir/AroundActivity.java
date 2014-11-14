@@ -1,10 +1,13 @@
 package com.geojir;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -12,15 +15,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.InjectView;
 
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.db.MediaContentProvider;
-import com.geojir.view.CaptureImageView;
+import com.geojir.medias.RecordableMedia;
 import com.geojir.view.CustomImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -172,6 +174,59 @@ public class AroundActivity extends ParentMenuActivity implements
 		mLocationClient = new LocationClient(this, this, this);
 
 		initMap();
+
+		//listenner lorsque l'on clique sur la popup du marker
+		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {          
+	        public void onInfoWindowClick(Marker marker) {
+	        	
+	        	//alertdialog suplementaire
+	            /*
+	        	String[] items={"onefunction","twofunction"};
+	            AlertDialog.Builder itemDilog = new AlertDialog.Builder(context);
+	            itemDilog.setTitle("");
+	            itemDilog.setCancelable(false);
+	            itemDilog.setItems(items, new DialogInterface.OnClickListener() {
+	                public void onClick(DialogInterface dialog, int which) {
+	                    switch(which){
+	                    case 0:{
+	                            //faire des trucs
+	                            }break;
+	                    case 1:{
+	                            //faire des trucs
+	                            }break; 
+	                    }
+
+	                }
+	            });
+	            itemDilog.show();
+	            */
+	            //fin alert dialog
+	            
+	            //lancer la musique ou mettre l'image en gros plan
+	            if(true) 
+	            {
+	            	//si c'est un son
+	            	// Only if a sound exist
+	            	/*
+	        		if (sound == null)
+	        			return;
+
+	        		if (sound.getState() != RecordableMedia.PLAY_STATE)
+	        		{
+	        			try
+	        			{
+	        				sound.play();
+	        			} catch (IllegalArgumentException | SecurityException
+	        					| IllegalStateException | IOException e)
+	        			{
+	        			}
+	        		} else
+	        			sound.stop();
+	        			*/
+	            }
+
+	        }
+	    });
 	}
 
 	protected void onResume()
