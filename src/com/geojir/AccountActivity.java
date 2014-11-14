@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.geojir.preferences.accountPreferences;
 
@@ -38,7 +37,6 @@ public class AccountActivity extends ParentMenuActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_account);
 
-//		preferences = getSharedPreferences(Constants.PREF_ACCOUNT, Context.MODE_PRIVATE);
 		preferences = new accountPreferences(getApplicationContext());
 
 		username = (EditText) findViewById(R.id.acountcreation_email);
@@ -49,11 +47,8 @@ public class AccountActivity extends ParentMenuActivity
 
 		// Observable sur le bouton
 		final String message = getString(R.string.infoSaved);
-
 		final OnClickTest onSubscribe = new OnClickTest(message);
-
 		final Observable<String> myObservable = Observable.create(onSubscribe);
-
 		final Action1<String> onNextAction = new Action1<String>()
 		{
 			@Override

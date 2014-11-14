@@ -7,9 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
-import com.geojir.CaptureActivity;
 import com.geojir.Constants;
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.memory.DBMemory;
