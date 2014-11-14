@@ -201,12 +201,12 @@ public class ParentMenuActivity extends Activity
 	}
 	
 	// Shorts methods for toast
-	protected void toast(int idString)
+	public void toast(int idString)
 	{
 		toast(getString(idString));
 	}
 	
-	protected void toast(String message)
+	public void toast(String message)
 	{
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
 				.show();

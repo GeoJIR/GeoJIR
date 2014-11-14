@@ -8,8 +8,9 @@
         android:id="@+id/progressBarPopup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#333"
         android:visibility="visible"
-        android:text="Chargement du média..."
+        android:text="@string/load_image_map"
          />
 
     <com.geojir.view.CustomImageView
@@ -23,7 +24,8 @@
         android:id="@+id/remark_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="remark_popup"
+        android:textColor="#333"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
          />
 
