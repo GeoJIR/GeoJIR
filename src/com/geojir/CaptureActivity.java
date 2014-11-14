@@ -186,6 +186,13 @@ public class CaptureActivity extends ParentMenuActivity implements
 			filterMonochrome.setChecked(savedInstanceState
 					.getBoolean(FILTER_ON_RESTORE));
 		}
+		else
+		{
+			photo = null;
+			sound = null;
+			editComment.setText("");
+			filterMonochrome.setChecked(false);
+		}
 	}
 	
 	// Create observer to detected sound state change
@@ -225,7 +232,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 				
 				// Reload view
 				onCreate(null);
-				clearFocus();
 				toast(R.string.stop_save_media_toast);
 			}
 			
@@ -255,7 +261,8 @@ public class CaptureActivity extends ParentMenuActivity implements
 			}
 		}
 		
-		// Lauch async media save
+		clearFocus();
+		// Launch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
 		

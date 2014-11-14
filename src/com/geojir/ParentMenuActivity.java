@@ -19,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -75,9 +76,9 @@ public class ParentMenuActivity extends Activity
 		for (int index = 0; index < lateralMenuLeft.getChildCount(); index++)
 		{
 			final View item = lateralMenuLeft.getChildAt(index);
-			ViewObservable.clicks(item)
-					.map(new Func1<OnClickEvent, OnClickEvent>()
-					{
+			ViewObservable
+					.clicks(item)
+					.map(new Func1<OnClickEvent, OnClickEvent>() {
 						@Override
 						public OnClickEvent call(OnClickEvent arg0)
 						{
@@ -86,11 +87,9 @@ public class ParentMenuActivity extends Activity
 							clickOnMenu(item);
 							return arg0;
 						}
-					})
-					.delay(1, TimeUnit.SECONDS)
+					}).delay(1, TimeUnit.SECONDS)
 					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(new Action1<OnClickEvent>()
-					{
+					.subscribe(new Action1<OnClickEvent>() {
 						@Override
 						public void call(OnClickEvent arg0)
 						{
@@ -100,9 +99,15 @@ public class ParentMenuActivity extends Activity
 		}
 	}
 	
+	// Clear focus and mask keyboard
 	protected void clearFocus()
 	{
+		// Set focus on root element
 		drawerContent.requestFocus();
+		// Mask keyboard
+		((InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE))
+				.hideSoftInputFromWindow(drawerContent.getWindowToken(), 0);
 	}
 	
 	// Function call after an item click
@@ -110,7 +115,6 @@ public class ParentMenuActivity extends Activity
 	{
 		drawerLayout.closeDrawer(GravityCompat.START);
 		
-		Class<? extends ParentMenuActivity> startActivity = this.getClass();
 		Class<? extends ParentMenuActivity> endActivity = this.getClass();
 		
 		// Switch on item
@@ -133,14 +137,11 @@ public class ParentMenuActivity extends Activity
 				break;
 		}
 		
-		// Change activity only if different
-		if (startActivity != endActivity)
-		{
-			Intent intent = new Intent(this, endActivity);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-			startActivity(intent);
-		}
+		// Change activity only if different or recall if exists
+		Intent intent = new Intent(this, endActivity);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(intent);
 	}
 	
 	@Override
