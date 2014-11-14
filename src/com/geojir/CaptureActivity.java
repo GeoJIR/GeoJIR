@@ -61,43 +61,43 @@ public class CaptureActivity extends ParentMenuActivity implements
 	List<ImageView> mediasIcons;
 	@InjectViews({ R.id.photoFrame, R.id.audioFrame })
 	List<View> mediasLayout;
-	
+
 	@InjectView(R.id.progressBar)
 	ProgressBar progressBar;
-	
+
 	// List of media
 	protected OneLineArrayList<String> mediasList = new OneLineArrayList<String>()
 			.put(Constants.TYPE_IMAGE).put(Constants.TYPE_AUDIO);
-	
+
 	// ////// WARNING ////////
 	// Order and size of mediasLayout, mediasIcons and mediasList have to be
 	// coherent
-	
+
 	// Memory of current media
 	protected String currentMedia = Constants.TYPE_IMAGE;
-	
+
 	// Save instance constants
 	protected final static String PHOTO_ON_RESTORE = "photoOnRestore";
 	protected final static String AUDIO_ON_RESTORE = "audioOnRestore";
 	protected final static String MEDIA_ON_RESTORE = "mediaOnRestore";
 	protected final static String COMMENT_ON_RESTORE = "commentOnRestore";
 	protected final static String FILTER_ON_RESTORE = "filterOnRestore";
-	
+
 	// Media variable
 	protected Sound sound;
 	protected Photo photo;
-	
+
 	protected TabImageMenu menu = new TabImageMenu();
-	
+
 	// Localization
 	LocationRequest locationRequest;
 	LocationListener locationListener;
 	LocationClient mLocationClient;
-	
+
 	// shared preferences
 	SharedPreferences preferences;
 	public static Context contextOfApplication;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -106,46 +106,47 @@ public class CaptureActivity extends ParentMenuActivity implements
 		setContentView(R.layout.activity_capture);
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
-		
+
 		restoreState(savedInstanceState);
-		
+
 		// initialize the location manager
 		locationRequest = LocationRequest.create();
 		// Use highest accuracy
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		
+
 		// Set the update interval in ms
 		locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
 		// Set the fastest update interval in ms
 		locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
-		
-		locationListener = new LocationListener() {
-			
+
+		locationListener = new LocationListener()
+		{
+
 			@Override
 			public void onLocationChanged(Location location)
 			{
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-				
+
 				// Used in debug to verify geolocalization values
 				// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f",
 				// myLocation.latitude,myLocation.longitude);
 				// Toast.makeText(CaptureActivity.this, "Location update: " +
 				// mLatAndLongStr, Toast.LENGTH_LONG).show();
-				
+
 				Constants.GM_LATITUDE = (float) myLocation.latitude;
 				Constants.GM_LONGITUDE = (float) myLocation.longitude;
 			}
 		};
 		mLocationClient = new LocationClient(this, this, this);
-		
+
 		saveMediaButton.requestFocus();
-		
+
 		// Create tab menu images
 		menu.addAll(mediasIcons, mediasLayout);
 		// Update screen
 		changeCaptureType();
-		
+
 		// Initialize Audio button
 		if (sound == null)
 			createSound();
@@ -153,11 +154,11 @@ public class CaptureActivity extends ParentMenuActivity implements
 			playAudioButton.setEnabled(true);
 		else
 			playAudioButton.setEnabled(false);
-		
+
 		// Hide loading bar
-		progressBar.setVisibility(View.INVISIBLE);
+		progressBar.setVisibility(View.GONE);
 	}
-	
+
 	// Restore medias
 	protected void restoreState(Bundle savedInstanceState)
 	{
@@ -179,7 +180,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 				sound.restore(audioRestore);
 				createSoundObserver();
 			}
-			
+
 			// Restore current media
 			currentMedia = savedInstanceState.getString(MEDIA_ON_RESTORE);
 			// Restore comment
@@ -190,12 +191,13 @@ public class CaptureActivity extends ParentMenuActivity implements
 					.getBoolean(FILTER_ON_RESTORE));
 		}
 	}
-	
+
 	// Create observer to detected sound state change
 	protected void createSoundObserver()
 	{
 		Observable.create(sound).observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Action1<String>() {
+				.subscribe(new Action1<String>()
+				{
 					@Override
 					public void call(String status)
 					{
@@ -203,14 +205,14 @@ public class CaptureActivity extends ParentMenuActivity implements
 					}
 				});
 	}
-	
+
 	// Change current media when click on media icon
 	@OnClick(R.id.saveMediaButton)
 	public void clickOnSaveMedia(View view)
 	{
 		class SaveAsynchrone extends AsyncTask<Object, Object, Object>
 		{
-			
+
 			// Before execute async task
 			@Override
 			protected void onPreExecute()
@@ -219,18 +221,18 @@ public class CaptureActivity extends ParentMenuActivity implements
 				progressBar.setVisibility(View.VISIBLE);
 				toast(R.string.start_save_media_toast);
 			}
-			
+
 			// After execute async task
 			@Override
 			protected void onPostExecute(Object result)
 			{
 				super.onPostExecute(result);
-				
+
 				// Reload view
 				onCreate(null);
 				toast(R.string.stop_save_media_toast);
 			}
-			
+
 			@Override
 			protected Object doInBackground(Object... params)
 			{
@@ -242,7 +244,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 					mediaTemp = photo;
 				else if (currentMedia == Constants.TYPE_AUDIO)
 					mediaTemp = sound;
-				
+
 				// Save current media
 				if (mediaTemp != null)
 				{
@@ -256,24 +258,24 @@ public class CaptureActivity extends ParentMenuActivity implements
 						e.printStackTrace();
 					}
 				}
-				
+
 				return null;
 			}
 		}
-		
+
 		// Lauch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
-		
+
 	}
-	
+
 	// Change current media when click on media icon
 	@OnClick(R.id.filterMonochrome)
 	public void clickOnMonochromeFilter(View view)
 	{
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
-	
+
 	// Change current media when click on media icon
 	@OnClick({ R.id.imagePhotos, R.id.imageMicro })
 	public void clickIconForChangeMedia(ImageView view)
@@ -284,7 +286,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 		currentMedia = mediasList.get(index_temp);
 		changeCaptureType();
 	}
-	
+
 	@OnClick(R.id.recordAudioButton)
 	public void clickOnAudioRecord(View view)
 	{
@@ -297,18 +299,18 @@ public class CaptureActivity extends ParentMenuActivity implements
 		else
 			sound.stop();
 	}
-	
+
 	protected void createSound()
 	{
 		sound = new Sound();
 		createSoundObserver();
 	}
-	
+
 	protected void createPhoto()
 	{
 		createPhoto("");
 	}
-	
+
 	protected void createPhoto(String restoreString)
 	{
 		photo = new Photo();
@@ -317,13 +319,13 @@ public class CaptureActivity extends ParentMenuActivity implements
 		captureImageView.load();
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 	}
-	
+
 	// Change text and avaibility of audio button and display toast
 	protected void changeAudioButtonState()
 	{
 		if (sound == null)
 			return;
-		
+
 		// Start record
 		if (sound.getState() == RecordableMedia.RECORD_STATE)
 		{
@@ -358,14 +360,14 @@ public class CaptureActivity extends ParentMenuActivity implements
 			}
 		}
 	}
-	
+
 	@OnClick(R.id.playAudioButton)
 	public void clickOnAudioPlay(View view)
 	{
 		// Only if a sound exist
 		if (sound == null)
 			return;
-		
+
 		if (sound.getState() != RecordableMedia.PLAY_STATE)
 		{
 			try
@@ -378,24 +380,24 @@ public class CaptureActivity extends ParentMenuActivity implements
 		} else
 			sound.stop();
 	}
-	
+
 	// Display only current media
 	protected void changeCaptureType()
 	{
 		int index_temp = mediasList.indexOf(currentMedia);
 		menu.activeTab(mediasIcons.get(index_temp));
 	}
-	
+
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus)
 	{
 		super.onWindowFocusChanged(hasFocus);
-		
+
 		// reload photo if captureImageView exists
 		if (captureImageView != null)
 			createPhoto();
 	}
-	
+
 	// When an another app send result
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -403,7 +405,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 		if (requestCode == REQUEST_TAKE_PHOTO)
 			createPhoto();
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
@@ -412,20 +414,20 @@ public class CaptureActivity extends ParentMenuActivity implements
 			sound.stop();
 		// Always call the superclass so it can save the view hierarchy state
 		super.onSaveInstanceState(savedInstanceState);
-		
+
 		savedInstanceState.putString(MEDIA_ON_RESTORE, currentMedia);
 		// Save the user's current medias
 		if (photo != null)
 			savedInstanceState.putString(PHOTO_ON_RESTORE, photo.getPath());
 		if (sound != null)
 			savedInstanceState.putString(AUDIO_ON_RESTORE, sound.getPath());
-		
+
 		savedInstanceState.putString(COMMENT_ON_RESTORE, editComment.getText()
 				.toString());
 		savedInstanceState.putBoolean(FILTER_ON_RESTORE,
 				filterMonochrome.isChecked());
 	}
-	
+
 	/*
 	 * Called by Google Location Services when the request to connect the client
 	 * finishes successfully. At this point, you can request the current
@@ -436,17 +438,17 @@ public class CaptureActivity extends ParentMenuActivity implements
 		mLocationClient.requestLocationUpdates(locationRequest,
 				locationListener);
 	}
-	
+
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0)
 	{
 	}
-	
+
 	@Override
 	public void onDisconnected()
 	{
 	}
-	
+
 	/*
 	 * Called when the Activity becomes visible.
 	 */
@@ -457,7 +459,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 		// Connect the client.
 		mLocationClient.connect();
 	}
-	
+
 	/*
 	 * Called when the Activity is no longer visible.
 	 */
