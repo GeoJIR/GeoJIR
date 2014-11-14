@@ -48,6 +48,7 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 			state = STOP_STATE;
 		else
 			state = EMPTY_STATE;
+		changeState(state);
 	}
 	
 	// Configuration depend on media, see child class

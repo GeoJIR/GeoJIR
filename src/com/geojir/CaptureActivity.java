@@ -139,8 +139,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 		};
 		mLocationClient = new LocationClient(this, this, this);
 		
-		saveMediaButton.requestFocus();
-		
 		// Create tab menu images
 		menu.addAll(mediasIcons, mediasLayout);
 		// Update screen
@@ -177,7 +175,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 			{
 				createSound();
 				sound.restore(audioRestore);
-				createSoundObserver();
 			}
 			
 			// Restore current media
@@ -228,6 +225,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 				
 				// Reload view
 				onCreate(null);
+				clearFocus();
 				toast(R.string.stop_save_media_toast);
 			}
 			
@@ -237,11 +235,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 				Boolean monochrome = currentMedia == Constants.TYPE_IMAGE
 						&& filterMonochrome.isChecked();
 				// Get current media
-				Media mediaTemp = null;
-				if (currentMedia == Constants.TYPE_IMAGE)
-					mediaTemp = photo;
-				else if (currentMedia == Constants.TYPE_AUDIO)
-					mediaTemp = sound;
+				Media mediaTemp = getCurrentMedia();
 				
 				// Save current media
 				if (mediaTemp != null)
@@ -265,6 +259,18 @@ public class CaptureActivity extends ParentMenuActivity implements
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
 		
+	}
+
+	protected Media getCurrentMedia()
+	{
+		// Get current media
+		Media mediaTemp = null;
+		if (currentMedia == Constants.TYPE_IMAGE)
+			mediaTemp = photo;
+		else if (currentMedia == Constants.TYPE_AUDIO)
+			mediaTemp = sound;
+		
+		return mediaTemp;
 	}
 	
 	// Change current media when click on media icon
@@ -316,11 +322,17 @@ public class CaptureActivity extends ParentMenuActivity implements
 			photo.restore(restoreString);
 		captureImageView.load();
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
+		
+		// User can save Photo
+		saveMediaButton.setEnabled(true);
 	}
 	
 	// Change text and avaibility of audio button and display toast
 	protected void changeAudioButtonState()
 	{
+		// User can't save Sound in play or record state
+		saveMediaButton.setEnabled(false);
+		
 		if (sound == null)
 			return;
 		
@@ -356,6 +368,9 @@ public class CaptureActivity extends ParentMenuActivity implements
 				playAudioButton.setText(R.string.start_audio_play_button_text);
 				toast(R.string.stop_audio_play_toast);
 			}
+			
+			// User can save Sound
+			saveMediaButton.setEnabled(true);
 		}
 	}
 	
@@ -382,25 +397,24 @@ public class CaptureActivity extends ParentMenuActivity implements
 	// Display only current media
 	protected void changeCaptureType()
 	{
+		// Change menu
 		int index_temp = mediasList.indexOf(currentMedia);
 		menu.activeTab(mediasIcons.get(index_temp));
-	}
-	
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus)
-	{
-		super.onWindowFocusChanged(hasFocus);
 		
-		// reload photo if captureImageView exists
-		if (captureImageView != null)
-			createPhoto();
+		// Check media existence
+		Media curMedia = getCurrentMedia();
+		Boolean bool = curMedia != null;
+		if (bool && curMedia instanceof RecordableMedia)
+			bool = ((RecordableMedia) curMedia).getState() != RecordableMedia.EMPTY_STATE;
+		// Active save button only if media exists
+		saveMediaButton.setEnabled(bool);
 	}
 	
 	// When an another app send result
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_TAKE_PHOTO)
+		if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK)
 			createPhoto();
 	}
 	

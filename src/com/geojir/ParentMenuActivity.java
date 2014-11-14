@@ -1,9 +1,17 @@
 package com.geojir;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.android.events.OnClickEvent;
+import rx.android.observables.ViewObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,15 +30,15 @@ public class ParentMenuActivity extends Activity
 	public static Context CONTEXT;
 	public static Boolean firstLaunch = true;
 	
-	//@InjectView(R.id.drawer_layout)
+	// @InjectView(R.id.drawer_layout)
 	DrawerLayout drawerLayout;
-	//@InjectView(R.id.lateral_menu_left)
+	// @InjectView(R.id.lateral_menu_left)
 	ViewGroup lateralMenuLeft;
-	//@InjectView(R.id.content_frame)
+	// @InjectView(R.id.content_frame)
 	FrameLayout drawerContent;
 	
 	@Override
-	//@SuppressLint("NewApi")
+	// @SuppressLint("NewApi")
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -45,14 +53,15 @@ public class ParentMenuActivity extends Activity
 			try
 			{
 				Media.deleteTempFile();
+			} catch (InstantiationException | IllegalAccessException e)
+			{
 			}
-			catch (InstantiationException | IllegalAccessException e) {}
 			
 			firstLaunch = false;
 		}
 		
 		// Manual ButterKnife injections for skip child injections
-		//ButterKnife.inject(this);
+		// ButterKnife.inject(this);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		lateralMenuLeft = (ViewGroup) findViewById(R.id.lateral_menu_left);
 		drawerContent = (FrameLayout) findViewById(R.id.content_frame);
@@ -65,27 +74,45 @@ public class ParentMenuActivity extends Activity
 		// Create listener for all menu item
 		for (int index = 0; index < lateralMenuLeft.getChildCount(); index++)
 		{
-			View item = lateralMenuLeft.getChildAt(index);
-			item.setOnClickListener(new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View v)
-				{
-					clickOnMenu(v);
-				}
-			});
+			final View item = lateralMenuLeft.getChildAt(index);
+			ViewObservable.clicks(item)
+					.map(new Func1<OnClickEvent, OnClickEvent>()
+					{
+						@Override
+						public OnClickEvent call(OnClickEvent arg0)
+						{
+							item.setBackgroundColor(getResources().getColor(
+									R.color.wallet_holo_blue_light));
+							clickOnMenu(item);
+							return arg0;
+						}
+					})
+					.delay(1, TimeUnit.SECONDS)
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(new Action1<OnClickEvent>()
+					{
+						@Override
+						public void call(OnClickEvent arg0)
+						{
+							item.setBackgroundColor(Color.TRANSPARENT);
+						}
+					});
 		}
+	}
+	
+	protected void clearFocus()
+	{
+		drawerContent.requestFocus();
 	}
 	
 	// Function call after an item click
 	protected void clickOnMenu(View item)
 	{
 		drawerLayout.closeDrawer(GravityCompat.START);
-
+		
 		Class<? extends ParentMenuActivity> startActivity = this.getClass();
 		Class<? extends ParentMenuActivity> endActivity = this.getClass();
 		
-		item.setBackgroundColor(getResources().getColor(R.color.wallet_holo_blue_light));
 		// Switch on item
 		switch (item.getId())
 		{
@@ -110,11 +137,12 @@ public class ParentMenuActivity extends Activity
 		if (startActivity != endActivity)
 		{
 			Intent intent = new Intent(this, endActivity);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivity(intent);
 		}
 	}
-
+	
 	@Override
 	// setContent activity in content Frame
 	public void setContentView(int activity)
@@ -122,7 +150,7 @@ public class ParentMenuActivity extends Activity
 		getLayoutInflater().inflate(activity, drawerContent);
 	}
 	
-	// force initial setContent 
+	// force initial setContent
 	public void setContentView(int activity, Boolean original)
 	{
 		if (original)
@@ -138,7 +166,8 @@ public class ParentMenuActivity extends Activity
 		
 		// Inflate new menu
 		ViewGroup parent = (ViewGroup) lateralMenuLeft.getParent();
-		View lateral_temp = getLayoutInflater().inflate(activity_menu, parent, false);
+		View lateral_temp = getLayoutInflater().inflate(activity_menu, parent,
+				false);
 		
 		// Stop method if inflate fail
 		if (!(lateral_temp instanceof ViewGroup))
@@ -151,7 +180,7 @@ public class ParentMenuActivity extends Activity
 		lateralMenuLeft = (ViewGroup) lateral_temp;
 		parent.addView(lateralMenuLeft, index);
 	}
-
+	
 	@Override
 	// Open/Close drawer on click home
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -163,10 +192,10 @@ public class ParentMenuActivity extends Activity
 				drawerLayout.closeDrawer(GravityCompat.START);
 			else
 				drawerLayout.openDrawer(GravityCompat.START);
-
+			
 			return true;
 		}
-
+		
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -175,11 +204,11 @@ public class ParentMenuActivity extends Activity
 	{
 		toast(getString(idString));
 	}
-
+	
 	protected void toast(String message)
 	{
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
 				.show();
 	}
-
+	
 }
