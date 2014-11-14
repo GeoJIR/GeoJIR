@@ -58,12 +58,12 @@ public class Constants {
 	
 	//Retrofit
 	public static final String RETRO_PROJECT = "geojir_wbs";
-	public static final String RETRO_URL_TEST = "http://localhost:8888/geojir_wbs";
+	public static final String RETRO_URL_TEST = "http://localhost:8888";
 	public static final String GOOGLE_PROJETC_ID = "tribal-mapper-763";
 	public static final String RETRO_URL_GOOGLE = "http://" + GOOGLE_PROJETC_ID + ".appspot.com";
 	
-	public static final String RETRO_URL_SERVLET = RETRO_URL_TEST;
-//	public static final String RETRO_URL_SERVLET = RETRO_URL_GOOGLE;
+//	public static final String RETRO_URL_SERVLET = RETRO_URL_TEST;
+	public static final String RETRO_URL_SERVLET = RETRO_URL_GOOGLE;
 
 	/************************ METHODS ******************/
 	/*

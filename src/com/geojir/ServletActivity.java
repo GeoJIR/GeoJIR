@@ -4,23 +4,24 @@ import retrofit.RestAdapter;
 import retrofit.RestAdapter.Builder;
 import retrofit.http.GET;
 import retrofit.http.POST;
-import retrofit.http.Path;
-import rx.Observable;
 import rx.Subscriber;
+import rx.android.events.OnClickEvent;
+import rx.android.observables.ViewObservable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 public class ServletActivity extends ParentMenuActivity
 {
 	protected Subscriber<? super Cursor> subscriber;
-	private EditText affichage;
+	private TextView affichage;
 	private Button getButton;
 	private Button postButton;
 
@@ -29,69 +30,77 @@ public class ServletActivity extends ParentMenuActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_servlet);
-/*
 
-		affichage = (EditText) findViewById(R.id.get_servlet_response);
+		affichage = (TextView) findViewById(R.id.get_servlet_response);
 		getButton = (Button) findViewById(R.id.getServlet);
 		postButton = (Button) findViewById(R.id.postServlet);
+		
 		Builder builder = new RestAdapter.Builder();
 		builder.setEndpoint(Constants.RETRO_URL_SERVLET); // Root URL of the server
 		RestAdapter build = builder.build();
-		
-		OnClickGet stringGetHello = build.create(OnClickGet.class);
-		OnClickPost stringPostHello = build.create(OnClickPost.class);
-*/		
-		//GET
-/*		Account observable = service.getAccount("12345");
-		final OnClickGet onSubscribeGet = new OnClickGet(affichage);
-		final Observable<String> myObservableGet = Observable.create(onSubscribeGet);
-		final Action1<String> onNextActionGet = new Action1<String>()
+		final HelloGetService serviceGet = build.create(HelloGetService.class);
+		final HelloPostService servicePost = build.create(HelloPostService.class);
+
+		ViewObservable.clicks(getButton)
+		.observeOn(Schedulers.io())	//pour gérer le résultat du click (accès réseau) dans un thread autre que le mainThread
+		.map(new Func1<OnClickEvent, String>()
+		{
+			@Override
+			public String call(OnClickEvent arg0)
+			{
+				String observable = serviceGet.getHello();
+				return observable;
+			}
+		})
+		.observeOn(AndroidSchedulers.mainThread())
+		.subscribe(new Action1<String>()
 		{
 			@Override
 			public void call(String message)
 			{
 				affichage.setText(message);
 			}
-		};
-		myObservableGet.subscribe(onNextActionGet);
-*/		
-		//POST
-/*		final OnClickPost onSubscribePost = new OnClickPost(message);
-		final Observable<String> myObservablePost = Observable.create(onSubscribePost);
-		final Action1<String> onNextActionPost = new Action1<String>()
+		});
+
+		ViewObservable.clicks(postButton)
+		.observeOn(Schedulers.io())	//pour gérer le résultat du click (accès réseau) dans un thread autre que le mainThread
+		.map(new Func1<OnClickEvent, String>()
 		{
 			@Override
-			public void call(String s)
+			public String call(OnClickEvent arg0)
 			{
-				affichage.setText(s);
+				String observable = servicePost.postHello();
+				return observable;
 			}
-		};
-		myObservablePost.subscribe(onNextActionPost);
-*/
-/*
-		getButton.setOnClickListener(new OnClickListener()
+		})
+		.observeOn(AndroidSchedulers.mainThread())
+		.subscribe(new Action1<String>()
 		{
 			@Override
-			public void onClick(View v)
+			public void call(String message)
 			{
-//				@GET(Constants.RETRO_URL_SERVLET) String getHello(@Path("") String getString);
-				// on informe l'observable
-//				onSubscribeGet.onClick(message);
+				affichage.setText(message);
 			}
 		});
 
-		postButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-//				@POST(Constants.RETRO_URL_SERVLET) String postHello(@Path("testing") String postString);
-				// on informe l'observable
-//				onSubscribePost.onClick(message);
-			}
-		});
+		//POST
+/*
+				@POST(Constants.RETRO_URL_SERVLET) String postHello(@Path("testing") String postString);
 */
 	}
+
+	public interface HelloPostService 
+	{
+		@POST("/"+Constants.RETRO_PROJECT) // only the “relative” part of the URL
+		String postHello();
+	}
+	
+	public interface HelloGetService 
+	{
+		@GET("/"+Constants.RETRO_PROJECT) // only the “relative” part of the URL
+		String getHello();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -113,52 +122,4 @@ public class ServletActivity extends ParentMenuActivity
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-/*
-	private final class OnClickGet implements Observable.OnSubscribe<String>
-	{
-		private final String message;
-		private Subscriber<? super String> subscriber;
-
-		private OnClickGet(String message)
-		{
-			this.message = message;
-		}
-
-		@Override
-		public void call(Subscriber<? super String> subscriber)
-		{
-			this.subscriber = subscriber;
-
-		}
-
-		public void onClick()
-		{
-			this.subscriber.onNext(message);
-		}
-	}
-
-	private final class OnClickPost implements Observable.OnSubscribe<String>
-	{
-		private final String message;
-		private Subscriber<? super String> subscriber;
-
-		private OnClickPost(String message)
-		{
-			this.message = message;
-		}
-
-		@Override
-		public void call(Subscriber<? super String> subscriber)
-		{
-			this.subscriber = subscriber;
-
-		}
-
-		public void onClick()
-		{
-			this.subscriber.onNext(message);
-		}
-	}
-*/	
 }

@@ -28,6 +28,7 @@
     <string name="drawable_follow">Medias of my followers</string>
     <string name="drawable_account">My account</string>
     <string name="drawable_historic">Lasts Medias</string>
+    <string name="drawable_servlet">Servlet</string>
     <string name="title_activity_around">Medias close to me</string>
     <string name="title_activity_follow">FollowActivity</string>
     <string name="title_activity_account">My account</string>
