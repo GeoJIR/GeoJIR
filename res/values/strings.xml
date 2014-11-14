@@ -55,12 +55,6 @@
     <string name="GM_NoLocation">Unable to fetch the current location</string>
     <string name="GM_WaitLocation">Searching your location</string>
     
-    <string-array name="drawer_list_items">
-        <item>@string/drawable_capture</item>
-        <item>@string/drawable_around</item>
-        <item>@string/drawable_follow</item>
-        <item>@string/drawable_account</item>
-        <item>@string/drawable_historic</item>
-        </string-array>
+    <string name="load_image_map">Load media...</string>
     
 </resources>

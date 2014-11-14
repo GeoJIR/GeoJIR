@@ -3,6 +3,7 @@ package com.geojir;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geojir.adapter.MediaWindowAdapterMarker;
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.db.MediaContentProvider;
 import com.geojir.medias.RecordableMedia;
@@ -40,8 +42,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.picasso.Callback.EmptyCallback;
-import com.squareup.picasso.Picasso;
 
 public class AroundActivity extends ParentMenuActivity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
@@ -51,10 +51,10 @@ public class AroundActivity extends ParentMenuActivity implements
 	LocationRequest locationRequest;
 	LocationListener locationListener;
 	LocationClient mLocationClient;
-
+	
 	// Map
 	protected GoogleMap mMap;
-	protected Location mylastlocation = null;;
+	protected Location mylastlocation = null;
 	protected CameraUpdate cameraUpdate;
 	protected ArrayList<Map<String, String>> values;
 	protected Marker markerLocation;
@@ -258,15 +258,12 @@ public class AroundActivity extends ParentMenuActivity implements
 				int remark_index = cur.getColumnIndex(MediasDb.REMARK_COLUMN);
 				String remark = cur.getString(remark_index);
 
-				int path_index = cur.getColumnIndex(MediasDb.FILE_NAME_COLUMN);
-				String path = cur.getString(path_index);
-
 				int id_index = cur.getColumnIndex(MediasDb._ID);
 				String id = cur.getString(id_index);
 
 				// on créer le point avec les coordonées
-				LatLng point = new LatLng(lati + Math.random(), longi
-						+ Math.random());
+				LatLng point = new LatLng(lati + ((0.2 * Math.random()) - 0.1), longi
+						+ ((0.2 * Math.random()) - 0.1));
 				// drawMarker(point, remark, path);
 				drawMarker(point, remark, id);
 				// add point in pointsList
@@ -312,7 +309,7 @@ public class AroundActivity extends ParentMenuActivity implements
 
 		// on change le layout du popup
 		mMap.setInfoWindowAdapter(new MediaWindowAdapterMarker(
-				getApplicationContext()));
+				getApplicationContext(), cursorAdapter));
 	}
 
 	protected void restoreState(Bundle savedInstanceState)
@@ -400,132 +397,7 @@ public class AroundActivity extends ParentMenuActivity implements
 		createAdapter(cur);
 
 	}
-
-	// customisation du marker
-	public class MediaWindowAdapterMarker implements InfoWindowAdapter
-	{
-
-		private Marker markerShowingInfoWindow;
-		private Context popupContext;
-
-		public MediaWindowAdapterMarker(Context context)
-		{
-			popupContext = context;
-		}
-
-		// recupere les infos lorsque l'on clique sur le marker sur la map
-		@Override
-		public View getInfoContents(Marker marker)
-		{
-			markerShowingInfoWindow = marker;
-
-			LayoutInflater inflater = (LayoutInflater) popupContext
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-			// Getting view from the layout file info_window_layout
-			View popUp = inflater.inflate(R.layout.popup_gmap, null);
-
-			if (cursorAdapter != null && !cursorAdapter.isEmpty())
-			{
-				if (cursorAdapter.getCursor() != null)
-				{
-					Cursor cur = cursorAdapter.getCursor();
-
-					// cur.moveToFirst();
-					cur.moveToPosition(Integer.valueOf(marker.getSnippet()) - 1);
-
-					TextView popUpTitle = (TextView) popUp
-							.findViewById(R.id.remark_popup);
-					CustomImageView popUpImage = (CustomImageView) popUp
-							.findViewById(R.id.image_popup);
-					
-					progressbar_popup = (TextView) popUp
-							.findViewById(R.id.progressBarPopup);
-
-					int remark_index = cur
-							.getColumnIndex(MediasDb.REMARK_COLUMN);
-					String remark = cur.getString(remark_index);
-
-					if (remark != null && !remark.isEmpty())
-						popUpTitle.setText(remark);
-					else
-						popUpTitle.setText("Aucun commentaire");
-
-					int path_index = cur
-							.getColumnIndex(MediasDb.FILE_NAME_COLUMN);
-					String path = cur.getString(path_index);
-					File photo_marker = new File(path);
-
-					// Load the image thumbnail
-					if (path != null && !path.isEmpty())
-					{
-						Picasso.with(popupContext).load(photo_marker)
-								.resize(200, 100).centerCrop()
-								.into(popUpImage, new EmptyCallback()
-								{
-
-									@Override
-									public void onSuccess()
-									{
-										super.onSuccess();
-										if(progressbar_popup != null)
-										{
-											progressbar_popup.setVisibility(View.GONE);
-										}
-									}
-
-									@Override
-									public void onError()
-									{
-										super.onError();
-										if(progressbar_popup != null)
-										{
-											progressbar_popup.setVisibility(View.GONE);
-										}
-									}
-								});
-
-						int filter_index = cur
-								.getColumnIndex(MediasDb.FILTER_COLUMN);
-						int filter = cur.getInt(filter_index);
-
-						if (filter == 1)
-						{
-							popUpImage.blackAndWhiteMode(true);
-						}
-					}
-				}
-
-			}
-
-			// Returning the view containing InfoWindow contents
-			return popUp;
-		}
-
-		@Override
-		public View getInfoWindow(Marker marker)
-		{
-			return null;
-		}
-
-		/**
-		 * This method is called after the bitmap has been loaded. It checks if
-		 * the currently displayed info window is the same info window which has
-		 * been saved. If it is, then refresh the window to display the newly
-		 * loaded image.
-		 */
-		/*
-		 * private Callback onImageLoaded = new Callback() {
-		 * 
-		 * @Override public void execute(String result) { if
-		 * (markerShowingInfoWindow != null &&
-		 * markerShowingInfoWindow.isInfoWindowShown()) {
-		 * markerShowingInfoWindow.hideInfoWindow();
-		 * markerShowingInfoWindow.showInfoWindow(); } } };
-		 */
-
-	}
-
+	
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0)
 	{

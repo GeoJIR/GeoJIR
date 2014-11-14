@@ -55,4 +55,6 @@
     <string name="GM_NoLocation">Google Map ne renvoie pas votre position</string>
     <string name="GM_WaitLocation">Recherche de votre position</string>
     
+    <string name="load_image_map">Chargement du média...</string>
+    
 </resources>
