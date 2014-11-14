@@ -57,15 +57,8 @@ public class MediaWindowAdapterMarker implements InfoWindowAdapter
 				final Cursor cur = cursor.getCursor();
 				
 				int position = Integer.valueOf(marker.getSnippet());
-				//cur.moveToPosition(position - 1);
-				
-				// Debug index -1
 				cur.moveToFirst();
-				while (position > 1)
-				{
-					cur.moveToNext();
-					position--;
-				}
+				cur.moveToPosition(position - 1);
 				
 				TextView popUpTitle = (TextView) popUp
 						.findViewById(R.id.remark_popup);
