@@ -2,25 +2,31 @@ package com.geojir;
 
 import static com.geojir.Constants.REQUEST_TAKE_PHOTO;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.InjectViews;
@@ -33,6 +39,7 @@ import com.geojir.medias.Sound;
 import com.geojir.menus.TabImageMenu;
 import com.geojir.override.OneLineArrayList;
 import com.geojir.view.CaptureImageView;
+import com.geojir.view.CustomImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -55,15 +62,15 @@ public class CaptureActivity extends ParentMenuActivity implements
 	Button recordAudioButton;
 	@InjectView(R.id.commentText)
 	EditText editComment;
-	@InjectView(R.id.saveMediaButton)
-	Button saveMediaButton;
 	@InjectViews({ R.id.imagePhotos, R.id.imageMicro })
 	List<ImageView> mediasIcons;
 	@InjectViews({ R.id.photoFrame, R.id.audioFrame })
 	List<View> mediasLayout;
 
-	@InjectView(R.id.progressBar)
-	ProgressBar progressBar;
+	@InjectView(R.id.loadingCapture)
+	CustomImageView loadingCapture;
+	@InjectView(R.id.captureRootLayout)
+	LinearLayout rootLayout;
 
 	// List of media
 	protected OneLineArrayList<String> mediasList = new OneLineArrayList<String>()
@@ -86,7 +93,9 @@ public class CaptureActivity extends ParentMenuActivity implements
 	// Media variable
 	protected Sound sound;
 	protected Photo photo;
-
+	
+	protected Boolean savePermission = false;
+	protected Boolean onSave = false;
 	protected TabImageMenu menu = new TabImageMenu();
 
 	// Localization
@@ -107,6 +116,9 @@ public class CaptureActivity extends ParentMenuActivity implements
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
 		
+		// Hide loading bar
+		loadingCapture.setVisibility(View.GONE);
+		
 		restoreState(savedInstanceState);
 
 		// initialize the location manager
@@ -125,15 +137,19 @@ public class CaptureActivity extends ParentMenuActivity implements
 			@Override
 			public void onLocationChanged(Location location)
 			{
+				// Real using
+				/*
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-
-				// Used in debug to verify geolocalization values
-				// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f",
-				// myLocation.latitude,myLocation.longitude);
-				// Toast.makeText(CaptureActivity.this, "Location update: " +
-				// mLatAndLongStr, Toast.LENGTH_LONG).show();
-
+				/*/
+				// Debug mode
+				LatLng myLocation = new LatLng
+				(
+					location.getLatitude() + ((0.2 * Math.random()) - 0.1),
+					location.getLongitude() + ((0.2 * Math.random()) - 0.1)
+				);
+				//*/
+				
 				Constants.GM_LATITUDE = (float) myLocation.latitude;
 				Constants.GM_LONGITUDE = (float) myLocation.longitude;
 			}
@@ -142,19 +158,12 @@ public class CaptureActivity extends ParentMenuActivity implements
 		
 		// Create tab menu images
 		menu.addAll(mediasIcons, mediasLayout);
-		// Update screen
-		changeCaptureType();
 
 		// Initialize Audio button
-		if (sound == null)
-			createSound();
-		if (new File(sound.getPath()).exists())
-			playAudioButton.setEnabled(true);
-		else
-			playAudioButton.setEnabled(false);
-
-		// Hide loading bar
-		progressBar.setVisibility(View.GONE);
+		changeAudioButtonState();
+		
+		// Update screen
+		changeCaptureType();
 	}
 
 	// Restore medias
@@ -166,17 +175,12 @@ public class CaptureActivity extends ParentMenuActivity implements
 			String photoRestore = savedInstanceState
 					.getString(PHOTO_ON_RESTORE);
 			if (photoRestore != null && !photoRestore.isEmpty())
-			{
 				createPhoto(photoRestore);
-			}
 			// restore audio
 			String audioRestore = savedInstanceState
 					.getString(AUDIO_ON_RESTORE);
 			if (audioRestore != null && !audioRestore.isEmpty())
-			{
-				createSound();
-				sound.restore(audioRestore);
-			}
+				createSound(audioRestore);
 
 			// Restore current media
 			currentMedia = savedInstanceState.getString(MEDIA_ON_RESTORE);
@@ -195,7 +199,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 			filterMonochrome.setChecked(false);
 		}
 	}
-
+	
 	// Create observer to detected sound state change
 	protected void createSoundObserver()
 	{
@@ -210,9 +214,8 @@ public class CaptureActivity extends ParentMenuActivity implements
 				});
 	}
 
-	// Change current media when click on media icon
-	@OnClick(R.id.saveMediaButton)
-	public void clickOnSaveMedia(View view)
+	// Save current media when click on actionBar icon
+	public void saveMedia()
 	{
 		class SaveAsynchrone extends AsyncTask<Object, Object, Object>
 		{
@@ -222,7 +225,10 @@ public class CaptureActivity extends ParentMenuActivity implements
 			protected void onPreExecute()
 			{
 				super.onPreExecute();
-				progressBar.setVisibility(View.VISIBLE);
+				// Clear display
+				savePermission = false;
+				clearFocus();
+				
 				toast(R.string.start_save_media_toast);
 			}
 
@@ -263,7 +269,12 @@ public class CaptureActivity extends ParentMenuActivity implements
 			}
 		}
 		
-		clearFocus();
+		// Display loading
+		loadingCapture.setImageDrawable(getResources().getDrawable(R.drawable.loading));
+		loadingCapture.setVisibility(View.VISIBLE);
+		// Mask everything else
+		rootLayout.setVisibility(View.GONE);
+		
 		// Launch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
@@ -315,7 +326,12 @@ public class CaptureActivity extends ParentMenuActivity implements
 
 	protected void createSound()
 	{
-		sound = new Sound();
+		createSound("");
+	}
+
+	protected void createSound(String path)
+	{
+		sound = new Sound(path);
 		createSoundObserver();
 	}
 
@@ -326,24 +342,28 @@ public class CaptureActivity extends ParentMenuActivity implements
 
 	protected void createPhoto(String restoreString)
 	{
-		photo = new Photo();
-		if (restoreString != "")
-			photo.restore(restoreString);
+		photo = new Photo(restoreString);
 		captureImageView.load();
 		captureImageView.blackAndWhiteMode(filterMonochrome.isChecked());
 		
 		// User can save Photo
-		saveMediaButton.setEnabled(true);
+		savePermission = true;
 	}
 
 	// Change text and avaibility of audio button and display toast
 	protected void changeAudioButtonState()
 	{
 		// User can't save Sound in play or record state
-		saveMediaButton.setEnabled(false);
+		savePermission = false;
 		
 		if (sound == null)
+		{
+			playAudioButton.setEnabled(false);
+			recordAudioButton.setEnabled(true);
+			recordAudioButton.setText(R.string.start_audio_record_button_text);
+			
 			return;
+		}
 
 		// Start record
 		if (sound.getState() == RecordableMedia.RECORD_STATE)
@@ -355,8 +375,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 		// Start play
 		if (sound.getState() == RecordableMedia.PLAY_STATE)
 		{
-			recordAudioButton.setEnabled(false);
-			playAudioButton.setText(R.string.stop_audio_play_button_text);
 			toast(R.string.start_audio_play_toast);
 		}
 		// Stop
@@ -370,16 +388,9 @@ public class CaptureActivity extends ParentMenuActivity implements
 						.setText(R.string.start_audio_record_button_text);
 				toast(R.string.stop_audio_record_toast);
 			}
-			// Stop playing
-			else if (!recordAudioButton.isEnabled())
-			{
-				recordAudioButton.setEnabled(true);
-				playAudioButton.setText(R.string.start_audio_play_button_text);
-				toast(R.string.stop_audio_play_toast);
-			}
 			
 			// User can save Sound
-			saveMediaButton.setEnabled(true);
+			savePermission = true;
 		}
 	}
 
@@ -413,12 +424,56 @@ public class CaptureActivity extends ParentMenuActivity implements
 		// Check media existence
 		Media curMedia = getCurrentMedia();
 		Boolean bool = curMedia != null;
-		if (bool && curMedia instanceof RecordableMedia)
-			bool = ((RecordableMedia) curMedia).getState() != RecordableMedia.EMPTY_STATE;
+		
 		// Active save button only if media exists
-		saveMediaButton.setEnabled(bool);
+		savePermission = bool;
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.capture, menu);
+	    
+	    return true;
+	}
+	
+	@Override
+	// Save with actionBar button
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		int id = item.getItemId();
+		if (id == R.id.actionBarSave)
+		{
+			if (savePermission)
+				saveMedia();
+			else
+			{
+				// If no media to save, create alert user
+				Builder builder = new Builder(CaptureActivity.this,
+						AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+				builder.setMessage(R.string.dialog_no_media)
+					.setTitle(R.string.dialog_error)
+					.setNeutralButton(R.string.dialog_ok, new OnClickListener()
+					{	
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							// if this button is clicked, just close
+							// the dialog box and do nothing
+							dialog.cancel();
+						}
+					});
+				// display alert
+				builder.create().show();
+			}
+			
+			return true;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}	
+	
 	// When an another app send result
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
