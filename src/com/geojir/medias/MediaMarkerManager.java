@@ -1,7 +1,6 @@
 package com.geojir.medias;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -100,51 +99,56 @@ public class MediaMarkerManager
 			popUpTitle.setText("Aucun commentaire");
 		
 		final File photo_marker = new File(filePath);
-				
-		EmptyCallback callback = new EmptyCallback()
-		{	
-			@Override
-			public void onSuccess()
-			{
-				super.onSuccess();
-				
-				popUpImage.blackAndWhiteMode(filter);
-				
-				if (firstLoad)
-				{
-					firstLoad = false;
-					if (marker.isInfoWindowShown())
-						marker.hideInfoWindow();
-					marker.showInfoWindow();
-				}
-				else
-					firstLoad = true;
-				
-				if (progressbarPopup != null)
-					progressbarPopup.setVisibility(View.GONE);
-			}
-			
-			@Override
-			public void onError()
-			{
-				super.onError();
-				if (progressbarPopup != null)
-				{
-					progressbarPopup.setText("Load error");
-				}
-			}
-		};
-
-				
-		// Load the image thumbnail
-		if (photo_marker.getPath().endsWith(Constants.EXT_IMAGE))
-			Picasso.with(context).load(photo_marker)
-				.resize(200, 100).centerInside()
-				.into(popUpImage, callback);
-		else
+						
+		// Load the image thumbnail for audio (not image)
+		if (!photo_marker.getPath().endsWith(Constants.EXT_IMAGE))
 			Picasso.with(context).load(R.drawable.ic_music)
 				.resize(200, 100).centerInside()
+				.into(popUpImage);
+		else
+		{
+			// Create callback for image load (b&w and refresh)
+			EmptyCallback callback = new EmptyCallback()
+			{	
+				@Override
+				public void onSuccess()
+				{
+					super.onSuccess();
+					
+					popUpImage.blackAndWhiteMode(filter);
+					
+					if (firstLoad)
+					{
+						firstLoad = false;
+						if (marker.isInfoWindowShown())
+							marker.hideInfoWindow();
+						marker.showInfoWindow();
+					}
+					else
+						firstLoad = true;
+					
+					if (progressbarPopup != null)
+						progressbarPopup.setVisibility(View.GONE);
+				}
+				
+				@Override
+				public void onError()
+				{
+					super.onError();
+					if (progressbarPopup != null)
+					{
+						progressbarPopup.setText("Load error");
+					}
+				}
+			};
+
+			
+			//Load with Picasso
+			Picasso.with(context).load(photo_marker)
+				.resize(200, 100).centerInside()
+				.placeholder(R.drawable.loading)
 				.into(popUpImage, callback);
+		}
 		
 		return popUp;
 	}

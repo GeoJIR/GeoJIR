@@ -6,6 +6,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -50,10 +53,47 @@ public class CustomImageView extends ImageView
 	{
 		setImagePath(path, false);
 	}
+	
+	// Override for autostart animated drawable
+	@Override
+	public void setImageDrawable(Drawable drawable)
+	{
+		super.setImageDrawable(drawable);
+		
+		// If animatable, start it
+		if (drawable != null && drawable instanceof Animatable)
+			((Animatable) drawable).start();
+		
+		// If multiple layout drawable
+		if (drawable != null && drawable instanceof LayerDrawable)
+		{
+			LayerDrawable layerDrawable = (LayerDrawable) drawable;
+			// Check all child for animate it if needed
+			for (int i=0; i<layerDrawable.getNumberOfLayers(); i++)
+			{
+				Drawable child = layerDrawable.getDrawable(i);
+				if (child instanceof Animatable)
+					((Animatable) child).start();
+			}
+		}
+	}
 
 	public void setImagePath(String path, Boolean monochrome)
 	{
 		fileMediaPath = path;
+		
+		// Check path format like *://*
+		// mathces need to be complete
+		if (!fileMediaPath.matches("(.+?)(://)(.+?)"))
+		{
+			if (fileMediaPath.startsWith("//"))
+				fileMediaPath = "file:"+fileMediaPath;
+			else if (fileMediaPath.startsWith("/"))
+				fileMediaPath = "file:/"+fileMediaPath;
+			else
+				fileMediaPath = "file://"+fileMediaPath;
+		}
+		
 		File file = new File(path);
 		// display image if exist
 		if (path.endsWith(Constants.EXT_IMAGE) && file.exists())

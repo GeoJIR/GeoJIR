@@ -7,7 +7,7 @@ import com.geojir.medias.MediaMarkerManager;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.model.Marker;
 
-// customisation du marker
+// Custom adapter for Google marker
 public class MediaWindowAdapterMarker implements InfoWindowAdapter
 {	
 	protected Marker markerShowingInfoWindow;
