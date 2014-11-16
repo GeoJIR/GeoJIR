@@ -36,7 +36,7 @@ public class TabImageMenu
 			if (value)
 				view.setVisibility(View.VISIBLE);
 			else
-				view.setVisibility(View.INVISIBLE);
+				view.setVisibility(View.GONE);
 
 			view.setEnabled(value);
 		}

@@ -185,9 +185,7 @@ public class AroundActivity extends ParentMenuActivity implements
 				// Get position
 				float lat = cur.getFloat(cur.getColumnIndex(MediasDb.LATITUDE_COLUMN));
 				float lng = cur.getFloat(cur.getColumnIndex(MediasDb.LONGITUDE_COLUMN));
-				// Random step
-				LatLng position = new LatLng(lat + ((0.2 * Math.random()) - 0.1), lng
-						+ ((0.2 * Math.random()) - 0.1));
+				LatLng position = new LatLng(lat, lng);
 
 				// Get comment
 				String remark = cur.getString(cur.getColumnIndex(MediasDb.REMARK_COLUMN));
