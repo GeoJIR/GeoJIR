@@ -106,7 +106,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 		setContentView(R.layout.activity_capture);
 		// Inject ButterKnife Views
 		ButterKnife.inject(this);
-
+		
 		restoreState(savedInstanceState);
 
 		// initialize the location manager

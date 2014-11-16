@@ -1,12 +1,9 @@
 package com.geojir.view;
 
 import java.io.File;
-import java.io.IOException;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Build;
@@ -14,8 +11,10 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.geojir.Constants;
+import com.geojir.ParentMenuActivity;
 import com.geojir.R;
-import com.geojir.medias.Sound;
+import com.geojir.medias.Media;
+import com.squareup.picasso.Picasso;
 
 public class CustomImageView extends ImageView
 {
@@ -82,7 +81,8 @@ public class CustomImageView extends ImageView
 			targetW = thumbnailSize;
 		if (targetH < 1)
 			targetH = thumbnailSize;
-
+		
+		/*
 		// Get the dimensions of the bitmap
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = true;
@@ -100,6 +100,12 @@ public class CustomImageView extends ImageView
 		// Load resized image
 		Bitmap bitmap = BitmapFactory.decodeFile(fileMediaPath, bmOptions);
 		this.setImageBitmap(bitmap);
+		*/
+		Picasso.with(ParentMenuActivity.CONTEXT).load(fileMediaPath)
+			.resize(targetW, targetH)
+			.centerInside()
+			.placeholder(R.drawable.loading)
+			.into(this);
 	}
 		
 	// Enable/disable black and white filter
@@ -125,22 +131,7 @@ public class CustomImageView extends ImageView
 
 	public void playMedia()
 	{
-		File file = new File(fileMediaPath);
-		if (fileMediaPath.endsWith(Constants.EXT_AUDIO) && file.exists())
-		{
-			Sound sound = new Sound();
-			sound.restore(fileMediaPath);
-			try
-			{
-				sound.play();
-			}
-			catch (IllegalArgumentException | SecurityException
-					| IllegalStateException | IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		else
-			blackAndWhiteMode(!isMonochrome);
+		if (fileMediaPath != "")
+			Media.launch(fileMediaPath, isMonochrome);
 	}
 }

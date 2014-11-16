@@ -7,9 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
-import com.geojir.CaptureActivity;
 import com.geojir.Constants;
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.memory.DBMemory;
@@ -23,7 +21,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 
 	protected SQLiteDatabase db;
 
-	private static final String LISTMEDIA_TABLE_NAME = "ListMedia";
 	public static final int NB_LIST_LAST_MEDIA = 10;
 
 	private static final String LISTMEDIA_TABLE_CREATE = "CREATE TABLE "
@@ -34,17 +31,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 			+ MediasDb.LONGITUDE_COLUMN + " REAL" + ");";
 
 	private static final String LISTMEDIA_SELECT_ENTRIES = "SELECT * FROM "
-			+ MediasDb.TABLE_NAME;
-
-	private static final String LISTMEDIA_SELECT_LAST_ENTRIES = "SELECT * FROM "
-			+ MediasDb.TABLE_NAME
-			+ " ORDER BY _id DESC LIMIT "
-			+ NB_LIST_LAST_MEDIA;
-
-	private static final String LISTMEDIA_COUNT_TABLE = "SELECT COUNT(*) FROM "
-			+ MediasDb.TABLE_NAME;
-
-	private static final String LISTMEDIA_DELETE_ENTRIES = "DELETE FROM "
 			+ MediasDb.TABLE_NAME;
 
 	private static final String LISTMEDIA_DROP_TABLE = "DROP TABLE "
@@ -109,19 +95,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		DBMemory.closeDb(CURSOR_MEMORY);
 	}
 
-	private void deleteFirstEntry()
-	{
-		Cursor cursor = db.rawQuery(LISTMEDIA_SELECT_ENTRIES, null);
-		if (cursor.moveToFirst())
-		{
-			String whereClause = "'" + MediasDb._ID + "'=?";
-			String[] whereArgs = new String[] { String
-					.valueOf(cursor.getInt(0)) };
-			db.delete(MediasDb.TABLE_NAME, whereClause, whereArgs);
-		}
-		cursor.close();
-	}
-
 	private void addEntry(String pathFileName, String remark, Boolean filter)
 	{
 		ContentValues values = new ContentValues();
@@ -133,16 +106,6 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		values.put(MediasDb.LATITUDE_COLUMN, Constants.GM_LATITUDE);
 		values.put(MediasDb.LONGITUDE_COLUMN, Constants.GM_LONGITUDE);
 		db.insert(MediasDb.TABLE_NAME, null, values);
-	}
-
-	private int countEntries()
-	{
-		Cursor cursorCount = db.rawQuery(LISTMEDIA_COUNT_TABLE, null);
-		cursorCount.moveToFirst();
-		int nbEntries = cursorCount.getInt(0);
-		cursorCount.close();
-
-		return nbEntries;
 	}
 
 	@Override

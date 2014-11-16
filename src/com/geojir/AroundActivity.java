@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -212,6 +213,15 @@ public class AroundActivity extends ParentMenuActivity implements
 		// Custom Markers' Window's layout
 		map.setInfoWindowAdapter(new MediaWindowAdapterMarker(
 				getApplicationContext(), cursorAdapter));
+		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener()
+		{
+		    public void onInfoWindowClick(Marker marker)
+		    {
+		    	MediaMarkerManager manager = MediaMarkerManager.getManagerFromMarker(marker);
+		    	if (manager != null)
+		    		manager.windowsClick();
+		    }
+		}); 
 		
 		// Zoom on position if it's possible
 		zoomIfNotYet();
@@ -279,6 +289,7 @@ public class AroundActivity extends ParentMenuActivity implements
 	{
 		String columns[] = new String[]
 			{
+				MediasDb._ID,
 				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
 				MediasDb.FILTER_COLUMN, MediasDb.LATITUDE_COLUMN,
 				MediasDb.LONGITUDE_COLUMN

@@ -1,6 +1,5 @@
 package com.geojir;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,33 +32,20 @@ public class ListMediaActivity extends ParentMenuActivity
 		setContentView(R.layout.activity_list_media);
 		ButterKnife.inject(this);
 
-		/*
-		 * ancienne version pour afficher les medias sans le content provider //
-		 * database instantiate ListMediaDb listeMedia = new
-		 * ListMediaDb(getApplicationContext());
-		 * 
-		 * // Create observation of sql request
-		 * Observable.create(listeMedia).observeOn
-		 * (AndroidSchedulers.mainThread()) .subscribe(new Action1<Cursor>() {
-		 * 
-		 * @Override public void call(Cursor cursor) { // display results
-		 * createAdapter(cursor); displayList(); } });
-		 * 
-		 * listeMedia.getCursorMedias();
-		 */
-
 		displayContentProvider();
 	}
 
 	@OnItemClick(R.id.listViewMedias)
 	void onItemClick(int position)
 	{
-		View rowView = listView.getChildAt(position);
+		// DON'T USE listView.getAtChild(position)
+		// listView have only a part of child at a time
+		View rowView = listView.getAdapter().getView(position, null, null);
 		CustomImageView iconView = (CustomImageView) rowView
 				.findViewById(R.id.imageIcon);
 		iconView.playMedia();
 	}
-
+	
 	// Create custom adapter
 	protected void createAdapter(Cursor cursor)
 	{

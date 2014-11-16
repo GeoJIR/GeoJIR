@@ -39,7 +39,6 @@ public class ParentMenuActivity extends Activity
 	FrameLayout drawerContent;
 	
 	@Override
-	// @SuppressLint("NewApi")
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);

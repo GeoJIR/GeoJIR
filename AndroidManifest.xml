@@ -77,7 +77,14 @@
             android:label="@string/title_activity_account" >
         </activity>
         
-		<provider android:name="com.geojir.db.MediaContentProvider"
+        <activity
+            android:name=".PopupImageViewActivity"
+			android:windowSoftInputMode="stateHidden"
+			android:theme="@style/TransparentBackground"
+            android:label="@string/image" >
+        </activity>
+        
+        <provider android:name="com.geojir.db.MediaContentProvider"
 			android:authorities="com.geojir.db.mediacontentprovider" />
 		
         <!-- NEED TO BE AT END OF APPLICATION -->

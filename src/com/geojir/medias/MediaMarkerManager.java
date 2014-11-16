@@ -1,6 +1,7 @@
 package com.geojir.medias;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -12,6 +13,7 @@ import com.geojir.Constants;
 import com.geojir.R;
 import com.geojir.view.CustomImageView;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -47,6 +49,14 @@ public class MediaMarkerManager
 
 		// Setting latitude, longitude and title for the marker
 		markerOptions.position(latlng).title(comment);
+		
+		// Marker color depend on media
+		float markerColor = BitmapDescriptorFactory.HUE_RED;
+		
+		if (filePath.endsWith(Constants.EXT_AUDIO))
+			markerColor = BitmapDescriptorFactory.HUE_VIOLET;
+		
+		markerOptions.icon(BitmapDescriptorFactory.defaultMarker(markerColor));
 		
 		// Create marker
 		marker = map.addMarker(markerOptions);
@@ -137,5 +147,11 @@ public class MediaMarkerManager
 				.into(popUpImage, callback);
 		
 		return popUp;
+	}
+	
+	public void windowsClick()
+	{
+		if (filePath != "")
+			Media.launch(filePath);
 	}
 }

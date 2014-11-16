@@ -2,11 +2,14 @@ package com.geojir.medias;
 
 import java.io.IOException;
 
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.media.MediaPlayer.OnCompletionListener;
 import rx.Observable;
 import rx.Subscriber;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.net.Uri;
+
+import com.geojir.ParentMenuActivity;
 
 // Class Media with play, stop and record action
 public abstract class RecordableMedia extends Media implements Observable.OnSubscribe<String>
@@ -112,6 +115,7 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Play media
 	public void play() throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
+		/*
 		player = new MediaPlayer();
 		player.setDataSource(getPath());
 		player.prepare();
@@ -129,6 +133,15 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 				stop();
 			}
 		});
-
+		*/
+		
+		if (file == null)
+			return;
+		
+		Intent intent = new Intent();  
+		intent.setAction(android.content.Intent.ACTION_VIEW);  
+		intent.setDataAndType(Uri.fromFile(file), "audio/*");  
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_NO_HISTORY);
+		ParentMenuActivity.CONTEXT.startActivity(intent);
 	}
 }

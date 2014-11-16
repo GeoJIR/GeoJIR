@@ -3,6 +3,9 @@
 
     <string name="app_name">GeoJIR</string>
     
+    <string name="image">Image</string>
+    <string name="media_unknown">Media not found</string>
+    
     <string name="ic_photo_description">Picture Camera</string>
     <string name="ic_camera_description">Video Camera</string>
     <string name="ic_micro_description">Magnetophone</string>

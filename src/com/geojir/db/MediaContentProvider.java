@@ -15,12 +15,11 @@ public class MediaContentProvider extends ContentProvider
 	// database
 	private ListMediaDb database;
 
-	// URI de notre content provider, elle sera utilisé pour accéder au
-	// ContentProvider
+	// URI of content provider, 
 	public static final Uri CONTENT_URI = Uri
 			.parse("content://com.geojir.db.mediacontentprovider");
-	// Le Mime de notre content provider, la premiére partie est toujours
-	// identique
+	
+	// Mime of content provider, start is always the same
 	public static final String CONTENT_PROVIDER_MIME = "vnd.android.cursor.item/vnd.com.geojir.db.MediasDb";
 
 	@Override
