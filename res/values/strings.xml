@@ -3,6 +3,12 @@
 
     <string name="app_name">GeoJIR</string>
     
+    <!-- Dialog box -->
+    <string name="dialog_error">Error</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_no_media">No media to save</string>
+    
+    <string name="save">Save</string>
     <string name="image">Image</string>
     <string name="media_unknown">Media not found</string>
     

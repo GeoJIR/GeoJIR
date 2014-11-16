@@ -1,11 +1,12 @@
 package com.geojir.medias;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import rx.Observable;
 import rx.Subscriber;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 
@@ -21,41 +22,38 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	public final static String PLAY_STATE = "play";
 	
 	protected MediaRecorder recorder;
-	protected MediaPlayer player;	
 	
 	// Subscribe of state of media
 	protected Subscriber<? super String> subscriber;
 	protected String state = EMPTY_STATE;
 	
-	public String getState()
-	{
-		return state;
-	}
-
 	public RecordableMedia()
 	{
 		super();
-		createRecorder();
 	}
 	
-	// Recorder's creation depends on path of media
-	protected void createRecorder()
+	public RecordableMedia(String path)
 	{
-		recorder = new MediaRecorder();
-		configureRecorder();
-		recorder.setOutputFile(getPath());
-		
-		// Initialize state depending on file existence
-		if (file != null)
-			// Not use changeState for not calling subscriber
-			// for not toasting
-			state = STOP_STATE;
-		else
-			changeState(EMPTY_STATE);
+		super(path);
+	}
+	
+	public RecordableMedia(URI uri)
+	{
+		super(uri);
+	}
+	
+	public RecordableMedia (File mediaFile)
+	{
+		super(mediaFile);
 	}
 	
 	// Configuration depend on media, see child class
 	protected void configureRecorder() {}
+	
+	public String getState()
+	{
+		return state;
+	}
 	
 	// State change and call subscribe
 	protected void changeState(String newState)
@@ -89,10 +87,26 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	
 	@Override
 	// restore RecordableMedia implies recreate recorder
-	public void restore(String restoreURI)
+	protected void restore(File mediaFile)
 	{
-		super.restore(restoreURI);
+		super.restore(mediaFile);
 		createRecorder();
+	}
+	
+	// Recorder's creation depends on path of media
+	protected void createRecorder()
+	{
+		recorder = new MediaRecorder();
+		configureRecorder();
+		recorder.setOutputFile(getPath());
+		
+		// Initialize state depending on file existence
+		if (file != null)
+			// Not use changeState for not calling subscriber
+			// for not toasting
+			state = STOP_STATE;
+		else
+			changeState(EMPTY_STATE);
 	}
 	
 	// Stop play or record
@@ -106,8 +120,6 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		}
 		else if (state == PLAY_STATE)
 		{
-			player.release();
-			player = null;
 			changeState(STOP_STATE);
 		}
 	}
@@ -115,26 +127,6 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Play media
 	public void play() throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
-		/*
-		player = new MediaPlayer();
-		player.setDataSource(getPath());
-		player.prepare();
-		player.start();
-		
-		changeState(PLAY_STATE);
-		
-		// Create listener when media complete
-		player.setOnCompletionListener(new OnCompletionListener()
-		{
-			@Override
-			public void onCompletion(MediaPlayer mediaPlayer)
-			{
-				// stop media when player stop
-				stop();
-			}
-		});
-		*/
-		
 		if (file == null)
 			return;
 		

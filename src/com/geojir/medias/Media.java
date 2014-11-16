@@ -28,13 +28,24 @@ public abstract class Media implements IFiles
 	
 	protected File file;
 	
-	protected float lati;
-	protected float longi;
-	
 	public Media()
 	{
-		// create master folder if not exist
-		Constants.initConstants(ParentMenuActivity.CONTEXT);
+		restore(new File(getTempPath()));
+	}
+	
+	public Media(String path)
+	{
+		this(new File(path));
+	}
+	
+	public Media(URI uri)
+	{
+		this(new File(uri));
+	}
+	
+	public Media (File mediaFile)
+	{
+		restore(file);
 	}
 	
 	// Create File with unique path
@@ -133,12 +144,13 @@ public abstract class Media implements IFiles
 	}
 	
 	// Restore media if needed (screen rotate)
-	public void restore(String restoreURI)
+	protected void restore(File mediaFile)
 	{
 		// create master folder if not exist
 		Constants.initConstants(ParentMenuActivity.CONTEXT);
-		if (restoreURI != getTempPath())
-			file = new File(restoreURI);
+		if (mediaFile != null)
+		if (!mediaFile.getPath().isEmpty() && mediaFile.getPath() != getTempPath())
+			file = mediaFile;
 	}
 	
 	// Delete temp file of each media
@@ -201,8 +213,7 @@ public abstract class Media implements IFiles
 		
 		if (filePath.endsWith(Constants.EXT_AUDIO))
 		{
-			Sound sound = new Sound();
-			sound.restore(filePath);
+			Sound sound = new Sound(filePath);
 			try
 			{
 				sound.play();
@@ -215,8 +226,7 @@ public abstract class Media implements IFiles
 		}
 		if (filePath.endsWith(Constants.EXT_IMAGE))
 		{
-			Photo image = new Photo();
-			image.restore(filePath);
+			Photo image = new Photo(filePath);
 			image.display(filterMonochrome);
 		}
 	}
