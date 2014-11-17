@@ -53,24 +53,8 @@ public class PopupImageViewActivity extends Activity
 			filePath = savedInstanceState.getString("imagePath");
 	}
 	
-	// Check path format like *://*
-	protected void checkFilePath()
-	{
-		// mathces need to be complete
-		if (!filePath.matches("(.+?)(://)(.+?)"))
-		{
-			if (filePath.startsWith("//"))
-				filePath = "file:"+filePath;
-			else if (filePath.startsWith("/"))
-				filePath = "file:/"+filePath;
-			else
-				filePath = "file://"+filePath;
-		}
-	}
-	
 	protected void load()
 	{
-		checkFilePath();
 		// Get screen size
 		Point size = new Point();
 		getWindowManager().getDefaultDisplay().getSize(size);
@@ -83,8 +67,20 @@ public class PopupImageViewActivity extends Activity
 		if (getResources().getConfiguration().orientation % 2 == 0)
 			size = new Point(size.y, size.x);
 		
+		String pathPicasso = filePath;
+		// Check path format like *://*
+		// mathces need to be complete
+		if (!pathPicasso.matches("(.+?)(://)(.+?)"))
+		{
+			if (pathPicasso.startsWith("//"))
+				pathPicasso = "file:"+pathPicasso;
+			else if (pathPicasso.startsWith("/"))
+				pathPicasso = "file:/"+pathPicasso;
+			else
+				pathPicasso = "file://"+pathPicasso;
+		}
 		// Load image with Picasso
-		Picasso.with(this).load(filePath)
+		Picasso.with(this).load(pathPicasso)
 			// Resize on screen size with margin
 			.resize(size.x - 60, size.y - 60)
 			.centerInside()

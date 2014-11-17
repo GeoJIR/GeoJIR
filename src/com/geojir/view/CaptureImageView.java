@@ -37,6 +37,11 @@ public class CaptureImageView extends CustomImageView
 		super(context, attrs, defStyleAttr);
 		onClickEvent();
 	}
+	
+	protected Boolean useCache()
+	{
+		return false;
+	}
 
 	// Constructor available until android-21 
 	@TargetApi(Build.VERSION_CODES.L)

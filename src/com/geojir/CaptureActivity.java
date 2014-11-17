@@ -130,28 +130,29 @@ public class CaptureActivity extends ParentMenuActivity implements
 		locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
 		// Set the fastest update interval in ms
 		locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
+		locationRequest.setSmallestDisplacement(10);
 
+		Constants.GM_LATITUDE = 43.600 + ((0.2 * Math.random()) - 0.1);
+		Constants.GM_LONGITUDE = 3.883 + ((0.2 * Math.random()) - 0.1);
+		
 		locationListener = new LocationListener()
 		{
 
 			@Override
 			public void onLocationChanged(Location location)
 			{
-				// Real using
-				/*
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-				/*/
-				// Debug mode
-				LatLng myLocation = new LatLng
-				(
-					location.getLatitude() + ((0.2 * Math.random()) - 0.1),
-					location.getLongitude() + ((0.2 * Math.random()) - 0.1)
-				);
-				//*/
 				
-				Constants.GM_LATITUDE = (float) myLocation.latitude;
-				Constants.GM_LONGITUDE = (float) myLocation.longitude;
+				/*
+				// Normal use
+				Constants.GM_LATITUDE = myLocation.latitude;
+				Constants.GM_LONGITUDE = myLocation.longitude;
+				/*/
+				// Debug use
+				Constants.GM_LATITUDE = myLocation.latitude + ((0.2 * Math.random()) - 0.1);
+				Constants.GM_LONGITUDE = myLocation.longitude + ((0.2 * Math.random()) - 0.1);
+				//*/
 			}
 		};
 		mLocationClient = new LocationClient(this, this, this);
@@ -409,6 +410,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 			} catch (IllegalArgumentException | SecurityException
 					| IllegalStateException | IOException e)
 			{
+				e.printStackTrace();
 			}
 		}
 		else

@@ -47,10 +47,11 @@ public class Constants {
 	public static final String DATABASE_NAME = "GeoJIR.db";
 	
 	//Google Map
-	public static final float GM_MPL_LATITUDE = 43.600f;
-	public static final float GM_MPL_LONGITUDE = 3.883f;
-	public static float GM_LATITUDE = GM_MPL_LATITUDE;
-	public static float GM_LONGITUDE = GM_MPL_LONGITUDE;
+	public static final double GM_MPL_LATITUDE = 43.600;
+	public static final double GM_MPL_LONGITUDE = 3.883;
+	
+	public static double GM_LATITUDE = GM_MPL_LATITUDE;
+	public static double GM_LONGITUDE = GM_MPL_LONGITUDE;
 	public static final int GM_DEFAULT_ZOOM = 12;
 	public static final float GM_DEFAULT_DISTANCE = 10.0f;
 	public static final int GM_UPDATE_INTERVAL = 20000;	//in ms

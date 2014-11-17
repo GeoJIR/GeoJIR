@@ -18,6 +18,7 @@ import com.geojir.ParentMenuActivity;
 import com.geojir.R;
 import com.geojir.medias.Media;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 public class CustomImageView extends ImageView
 {
@@ -81,23 +82,11 @@ public class CustomImageView extends ImageView
 	public void setImagePath(String path, Boolean monochrome)
 	{
 		fileMediaPath = path;
+		File file = new File(fileMediaPath);
 		
-		// Check path format like *://*
-		// mathces need to be complete
-		if (!fileMediaPath.matches("(.+?)(://)(.+?)"))
-		{
-			if (fileMediaPath.startsWith("//"))
-				fileMediaPath = "file:"+fileMediaPath;
-			else if (fileMediaPath.startsWith("/"))
-				fileMediaPath = "file:/"+fileMediaPath;
-			else
-				fileMediaPath = "file://"+fileMediaPath;
-		}
-		
-		File file = new File(path);
 		// display image if exist
 		if (path.endsWith(Constants.EXT_IMAGE) && file.exists())
-			this.loadFile();
+			this.loadImageFile();
 		else if (path.endsWith(Constants.EXT_AUDIO) && file.exists())
 			// else display default
 			this.setImageResource(R.drawable.ic_music);
@@ -109,7 +98,7 @@ public class CustomImageView extends ImageView
 	}
 	
 	// Display image file on this
-	protected void loadFile()
+	protected void loadImageFile()
 	{
 		// get icon's dimension
 		final int thumbnailSize = getResources().getDimensionPixelOffset(R.dimen.thumbnailSize);
@@ -122,30 +111,32 @@ public class CustomImageView extends ImageView
 		if (targetH < 1)
 			targetH = thumbnailSize;
 		
-		/*
-		// Get the dimensions of the bitmap
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(fileMediaPath, bmOptions);
-		int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-
-		// Determine how much to scale down the image
-		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-		// Decode the image file into a Bitmap sized to fill the View
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
+		String pathPicasso = fileMediaPath;
+		// Check path format like *://*
+		// mathces need to be complete
+		if (!pathPicasso.matches("(.+?)(://)(.+?)"))
+		{
+			if (pathPicasso.startsWith("//"))
+				pathPicasso = "file:"+pathPicasso;
+			else if (pathPicasso.startsWith("/"))
+				pathPicasso = "file:/"+pathPicasso;
+			else
+				pathPicasso = "file://"+pathPicasso;
+		}
 		
-		// Load resized image
-		Bitmap bitmap = BitmapFactory.decodeFile(fileMediaPath, bmOptions);
-		this.setImageBitmap(bitmap);
-		*/
-		Picasso.with(ParentMenuActivity.CONTEXT).load(fileMediaPath)
-			.resize(targetW, targetH)
+		RequestCreator request = Picasso.with(ParentMenuActivity.CONTEXT).load(pathPicasso);
+		if (!useCache())
+			request.skipMemoryCache();
+		
+		request.resize(targetW, targetH)
 			.centerInside()
 			.placeholder(R.drawable.loading)
 			.into(this);
+	}
+	
+	protected Boolean useCache()
+	{
+		return true;
 	}
 		
 	// Enable/disable black and white filter

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -150,7 +149,7 @@ public abstract class Media implements IFiles
 		// create master folder if not exist
 		Constants.initConstants(ParentMenuActivity.CONTEXT);
 		if (mediaFile != null)
-		if (!mediaFile.getPath().isEmpty() && mediaFile.getPath() != getTempPath())
+		if (!mediaFile.getPath().isEmpty() && !mediaFile.getPath().equals(getTempPath()))
 			file = mediaFile;
 	}
 	
@@ -203,13 +202,8 @@ public abstract class Media implements IFiles
 
 	public static void launch(String filePath, Boolean filterMonochrome)
 	{
-		// file exists need string without file:/
-		if (filePath.startsWith("file:/"))
-			filePath = filePath.substring(6);
-		
 		// Skip launch if media don't exist
 		File file = new File(filePath);
-		
 		if (!file.exists())
 		{
 			Toast.makeText(ParentMenuActivity.CONTEXT,

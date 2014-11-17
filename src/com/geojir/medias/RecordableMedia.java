@@ -9,6 +9,7 @@ import rx.Subscriber;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.util.Log;
 
 import com.geojir.ParentMenuActivity;
 
@@ -45,6 +46,14 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	public RecordableMedia (File mediaFile)
 	{
 		super(mediaFile);
+		
+		// Initialize state depending on file existence
+		if (file != null)
+			// Not use changeState for not calling subscriber
+			// for not toasting
+			state = STOP_STATE;
+		else
+			changeState(EMPTY_STATE);
 	}
 	
 	// Configuration depend on media, see child class
@@ -73,6 +82,7 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Save media flux
 	public void record()
 	{
+		createRecorder();
 		try
 		{
 			recorder.prepare();
@@ -81,7 +91,7 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		}
 		catch (IllegalStateException | IOException e)
 		{
-			e.printStackTrace();
+			Log.e("RecordableMedia", "record", e);
 		}
 	}
 	
@@ -99,14 +109,6 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		recorder = new MediaRecorder();
 		configureRecorder();
 		recorder.setOutputFile(getPath());
-		
-		// Initialize state depending on file existence
-		if (file != null)
-			// Not use changeState for not calling subscriber
-			// for not toasting
-			state = STOP_STATE;
-		else
-			changeState(EMPTY_STATE);
 	}
 	
 	// Stop play or record
@@ -117,7 +119,6 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 			recorder.stop();
 			recorder.release();
 			// Generate file
-			file = new File(getPath());
 			changeState(STOP_STATE);
 		}
 		else if (state == PLAY_STATE)
@@ -129,13 +130,16 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Play media
 	public void play() throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
-		
+		File playFile = file;
 		if (file == null)
+			playFile = new File(getTempPath());
+		
+		if (!playFile.exists())
 			return;
 		
 		Intent intent = new Intent();  
 		intent.setAction(android.content.Intent.ACTION_VIEW);  
-		intent.setDataAndType(Uri.fromFile(file), "audio/*");  
+		intent.setDataAndType(Uri.fromFile(playFile), "audio/*");  
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_NO_HISTORY);
 		ParentMenuActivity.CONTEXT.startActivity(intent);
 	}
