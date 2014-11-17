@@ -132,23 +132,4 @@ public class FollowerDb extends SQLiteOpenHelper
 		return list;
 	}
 	
-	
-	/**
-	 * @param db
-	 */
-	public void test(SQLiteDatabase db)
-	{
-		// puis on en rajoute X pour les test
-		for (int i = 0; i < 10; i++)
-		{
-			// on ajoute un entrée dans la BDD
-			addEntry(i, db);
-		}
-		
-		// on récupère le nombre d'entrées dans la base
-		//int nbEntries = countEntries(db);
-		
-
-	}
-
 }

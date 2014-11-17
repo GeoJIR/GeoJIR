@@ -133,6 +133,7 @@ public abstract class Media implements IFiles
 		
 		comment = commentary;
 		deleteTempFile();
+		
 		callToDataBase(monochrome);
 	}
 	

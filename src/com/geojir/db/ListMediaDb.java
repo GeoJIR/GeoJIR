@@ -7,6 +7,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.widget.SimpleCursorAdapter;
 
 import com.geojir.Constants;
 import com.geojir.db.ListMediaContract.MediasDb;
@@ -35,6 +37,9 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 
 	private static final String LISTMEDIA_DROP_TABLE = "DROP TABLE "
 			+ MediasDb.TABLE_NAME;
+	
+	protected SimpleCursorAdapter cursorAdapter;
+	
 
 	public ListMediaDb(Context context)
 	{
@@ -78,21 +83,13 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		DBMemory.closeDb(CURSOR_MEMORY);
 		db = DBMemory.setDb(CURSOR_MEMORY, this);
 
-		/*
-		 * ON NE SUPPRIME PAS LA PREMIERE ENTREE CAR POUR LA LISTE DES DERNIERES
-		 * ON FERA UNE REQUETE DE TYPE LIMIT // return datebase's count entries
-		 * int nbEntries = countEntries();
-		 * 
-		 * if (nbEntries == NB_LIST_LAST_MEDIA || nbEntries <
-		 * NB_LIST_LAST_MEDIA) { if (nbEntries == NB_LIST_LAST_MEDIA) {
-		 * deleteFirstEntry(); } } else { // Error : more than
-		 * NB_LIST_LAST_MEDIA entries // deleting all entries
-		 * db.execSQL(LISTMEDIA_DELETE_ENTRIES); }
-		 */
 		// add a new entry then delete the first entry of the database
 		addEntry(pathFileName, remark, filter);
 
 		DBMemory.closeDb(CURSOR_MEMORY);
+		
+		
+		
 	}
 
 	private void addEntry(String pathFileName, String remark, Boolean filter)

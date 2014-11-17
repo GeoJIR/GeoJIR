@@ -1,27 +1,19 @@
 package com.geojir;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.geojir.adapter.MediaWindowAdapterMarker;
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.db.MediaContentProvider;
-
 import com.geojir.medias.MediaMarkerManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -31,7 +23,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
@@ -49,7 +40,7 @@ public class AroundActivity extends ParentMenuActivity implements
 	LocationRequest locationRequest;
 	LocationListener locationListener;
 	LocationClient mLocationClient;
-	
+
 	// Map
 	protected GoogleMap map;
 	protected Location mylastlocation = null;
@@ -61,7 +52,7 @@ public class AroundActivity extends ParentMenuActivity implements
 
 	protected ArrayList<MediaMarkerManager> markerList = new ArrayList<MediaMarkerManager>();
 	protected SimpleCursorAdapter cursorAdapter;
-	
+
 	TextView progressbar_popup;
 
 	protected final static String ZOOM_ON_RESTORE = "zoomOnRestore";
@@ -87,7 +78,7 @@ public class AroundActivity extends ParentMenuActivity implements
 
 		// create content provider
 		displayContentProvider();
-		
+
 		restoreState(savedInstanceState);
 
 		// initialize the location manager
@@ -107,21 +98,20 @@ public class AroundActivity extends ParentMenuActivity implements
 			{
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-				
+
 				if (map != null)
 				{
 					if (map.getCameraPosition().zoom != currentZoom)
 						// get zoom level
 						currentZoom = map.getCameraPosition().zoom;
-					
+
 					// Create marker of user position
 					createMarkerPosition(myLocation);
 					// Center on position
 					zoomIfNotYet();
-				}
-				else
+				} else
 					toast(R.string.GM_NotReached);
-				
+
 				// save (new) location in mylastlocation variable
 				mylastlocation = location;
 			}
@@ -131,28 +121,26 @@ public class AroundActivity extends ParentMenuActivity implements
 		initMap();
 
 	}
-	
+
 	protected void createMarkerPosition(LatLng position)
 	{
 		if (markerLocation != null)
 			markerLocation.remove();
-		
-		markerLocation = map
-				.addMarker(new MarkerOptions()
-						.position(position)
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+		markerLocation = map.addMarker(new MarkerOptions().position(position)
+				.icon(BitmapDescriptorFactory
+						.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
 	}
-	
+
 	protected void zoomIfNotYet()
-	{		
+	{
 		if (markerLocation != null && firstZoom == false)
 		{
 			map.animateCamera(CameraUpdateFactory.newLatLngZoom(
 					markerLocation.getPosition(), currentZoom));
 			firstZoom = true;
-		}		
+		}
 	}
 
 	protected void onResume()
@@ -162,13 +150,13 @@ public class AroundActivity extends ParentMenuActivity implements
 		if (map == null)
 			initMap();
 	}
-	
+
 	protected void clearMarker()
 	{
 		// Remove all marker
-		for (int i=0; i<markerList.size(); i++)
+		for (int i = 0; i < markerList.size(); i++)
 			markerList.get(i).remove();
-		
+
 		// Clear list
 		markerList = new ArrayList<MediaMarkerManager>();
 	}
@@ -180,10 +168,10 @@ public class AroundActivity extends ParentMenuActivity implements
 	{
 		if (map == null)
 			return;
-		
+
 		if (!markerList.isEmpty())
 			clearMarker();
-		
+
 		Cursor cur = cursorAdapter.getCursor();
 		if (cur.getCount() != 0)
 		{
@@ -191,22 +179,27 @@ public class AroundActivity extends ParentMenuActivity implements
 			do
 			{
 				// Get path file
-				String path = cur.getString(cur.getColumnIndex(MediasDb.FILE_NAME_COLUMN));
+				String path = cur.getString(cur
+						.getColumnIndex(MediasDb.FILE_NAME_COLUMN));
 				// Get position
-				float lat = cur.getFloat(cur.getColumnIndex(MediasDb.LATITUDE_COLUMN));
-				float lng = cur.getFloat(cur.getColumnIndex(MediasDb.LONGITUDE_COLUMN));
+				float lat = cur.getFloat(cur
+						.getColumnIndex(MediasDb.LATITUDE_COLUMN));
+				float lng = cur.getFloat(cur
+						.getColumnIndex(MediasDb.LONGITUDE_COLUMN));
 				LatLng position = new LatLng(lat, lng);
 
 				// Get comment
-				String remark = cur.getString(cur.getColumnIndex(MediasDb.REMARK_COLUMN));
+				String remark = cur.getString(cur
+						.getColumnIndex(MediasDb.REMARK_COLUMN));
 				// Get monochrome filter
-				Boolean filter = cur.getInt(cur.getColumnIndex(MediasDb.FILTER_COLUMN)) == 1;
-				
-				MediaMarkerManager mediaMarker = new MediaMarkerManager(path, position, remark, filter);
+				Boolean filter = cur.getInt(cur
+						.getColumnIndex(MediasDb.FILTER_COLUMN)) == 1;
+
+				MediaMarkerManager mediaMarker = new MediaMarkerManager(path,
+						position, remark, filter);
 				mediaMarker.addToMap(map);
 				markerList.add(mediaMarker);
-			}
-			while (cur.moveToNext() != false);
+			} while (cur.moveToNext() != false);
 
 		}
 
@@ -223,14 +216,15 @@ public class AroundActivity extends ParentMenuActivity implements
 				getApplicationContext(), cursorAdapter));
 		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener()
 		{
-		    public void onInfoWindowClick(Marker marker)
-		    {
-		    	MediaMarkerManager manager = MediaMarkerManager.getManagerFromMarker(marker);
-		    	if (manager != null)
-		    		manager.windowsClick();
-		    }
-		}); 
-		
+			public void onInfoWindowClick(Marker marker)
+			{
+				MediaMarkerManager manager = MediaMarkerManager
+						.getManagerFromMarker(marker);
+				if (manager != null)
+					manager.windowsClick();
+			}
+		});
+
 		// Zoom on position if it's possible
 		zoomIfNotYet();
 		// Create media marker
@@ -255,11 +249,11 @@ public class AroundActivity extends ParentMenuActivity implements
 			LatLng myLocation = new LatLng(latitudeRestore, longitudeRestore);
 			CameraPosition myCameraPosition = new CameraPosition(myLocation,
 					currentZoom, currentTilt, currentBearing);
-			map = ((MapFragment) getFragmentManager().findFragmentById(
-					R.id.map)).getMap();
+			map = ((MapFragment) getFragmentManager()
+					.findFragmentById(R.id.map)).getMap();
 			map.moveCamera(CameraUpdateFactory
 					.newCameraPosition(myCameraPosition));
-			
+
 			// Restore markers
 			createMarkerMedia();
 		}
@@ -295,21 +289,19 @@ public class AroundActivity extends ParentMenuActivity implements
 	// CONTENT PROVIDER
 	private void displayContentProvider()
 	{
-		String columns[] = new String[]
-			{
-				MediasDb._ID,
+		String columns[] = new String[] { MediasDb._ID,
 				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
 				MediasDb.FILTER_COLUMN, MediasDb.LATITUDE_COLUMN,
-				MediasDb.LONGITUDE_COLUMN
-			};
-		
+				MediasDb.LONGITUDE_COLUMN };
+
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
-		Cursor cur = getContentResolver().query(mContacts, columns, null, null, null);
+		Cursor cur = getContentResolver().query(mContacts, columns, null, null,
+				null);
 
 		createAdapter(cur);
 
 	}
-	
+
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0)
 	{

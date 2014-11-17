@@ -17,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ServletActivity extends ParentMenuActivity
 {
@@ -57,7 +56,7 @@ public class ServletActivity extends ParentMenuActivity
 						{
 							String observable = serviceGet.getHello();
 							return observable;
-						}catch(Exception e)
+						} catch (Exception e)
 						{
 							return getString(R.string.no_network_toast);
 						}
@@ -68,7 +67,7 @@ public class ServletActivity extends ParentMenuActivity
 					@Override
 					public void call(String message)
 					{
-						if(message == getString(R.string.no_network_toast))
+						if (message == getString(R.string.no_network_toast))
 							toast(R.string.no_network_toast);
 						else
 							affichage.setText(message);
@@ -88,7 +87,7 @@ public class ServletActivity extends ParentMenuActivity
 						{
 							String observable = servicePost.postHello();
 							return observable;
-						}catch(Exception e)
+						} catch (Exception e)
 						{
 							return getString(R.string.no_network_toast);
 						}
@@ -99,7 +98,7 @@ public class ServletActivity extends ParentMenuActivity
 					@Override
 					public void call(String message)
 					{
-						if(message == getString(R.string.no_network_toast))
+						if (message == getString(R.string.no_network_toast))
 							toast(R.string.no_network_toast);
 						else
 							affichage.setText(message);
