@@ -78,7 +78,9 @@
         </activity>
         
 		<provider android:name="com.geojir.db.MediaContentProvider"
-			android:authorities="com.geojir.db.mediacontentprovider" />
+			android:authorities="com.geojir.db.mediacontentprovider"
+			 android:exported="false"
+			 />
 		
         <!-- NEED TO BE AT END OF APPLICATION -->
 		<meta-data
