@@ -65,5 +65,6 @@
     <string name="GM_WaitLocation">Recherche de votre position</string>
     
     <string name="load_image_map">Chargement du média...</string>
+    <string name="no_network_toast">Aucun réseau de détecté</string>
     
 </resources>
