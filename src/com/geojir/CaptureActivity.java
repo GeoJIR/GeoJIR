@@ -136,15 +136,19 @@ public class CaptureActivity extends ParentMenuActivity implements
 			@Override
 			public void onLocationChanged(Location location)
 			{
+				// Real using
+				/*
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-
-				// Used in debug to verify geolocalization values
-				// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f",
-				// myLocation.latitude,myLocation.longitude);
-				// Toast.makeText(CaptureActivity.this, "Location update: " +
-				// mLatAndLongStr, Toast.LENGTH_LONG).show();
-
+				/*/
+				// Debug mode
+				LatLng myLocation = new LatLng
+				(
+					location.getLatitude() + ((0.2 * Math.random()) - 0.1),
+					location.getLongitude() + ((0.2 * Math.random()) - 0.1)
+				);
+				//*/
+				
 				Constants.GM_LATITUDE = (float) myLocation.latitude;
 				Constants.GM_LONGITUDE = (float) myLocation.longitude;
 			}
