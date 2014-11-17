@@ -56,12 +56,18 @@ public class Constants {
 	public static final int GM_UPDATE_INTERVAL = 20000;	//in ms
 	public static final int GM_FASTEST_INTERVAL = 10000;	//in ms
 	
+	//Retrofit
+	public static final String RETRO_PROJECT = "geojir_wbs";
+	public static final String RETRO_URL_TEST = "http://localhost:8888";
+	public static final String GOOGLE_PROJETC_ID = "tribal-mapper-763";
+	public static final String RETRO_URL_GOOGLE = "http://" + GOOGLE_PROJETC_ID + ".appspot.com";
+	
+//	public static final String RETRO_URL_SERVLET = RETRO_URL_TEST;
+	public static final String RETRO_URL_SERVLET = RETRO_URL_GOOGLE;
 
 	/************************ METHODS ******************/
 	/*
 	 */
-
-
 	// Checks if external storage is available for read and write
 	private static boolean isExternalStorageWritable()
 	{

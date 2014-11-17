@@ -134,6 +134,9 @@ public class ParentMenuActivity extends Activity
 			case R.id.drawable_account:
 				endActivity = AccountActivity.class;
 				break;
+			case R.id.drawable_servlet:
+				endActivity = ServletActivity.class;
+				break;
 		}
 		
 		// Change activity only if different or recall if exists
@@ -206,6 +209,7 @@ public class ParentMenuActivity extends Activity
 	}
 	
 	public void toast(String message)
+
 	{
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT)
 				.show();

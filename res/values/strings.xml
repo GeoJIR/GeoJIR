@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">GeoJIR</string>
-    
     <!-- Dialog box -->
     <string name="dialog_error">Error</string>
     <string name="dialog_ok">OK</string>
@@ -11,7 +10,7 @@
     <string name="save">Save</string>
     <string name="image">Image</string>
     <string name="media_unknown">Media not found</string>
-    
+
     <string name="ic_photo_description">Picture Camera</string>
     <string name="ic_camera_description">Video Camera</string>
     <string name="ic_micro_description">Magnetophone</string>
@@ -25,7 +24,6 @@
     <string name="stop_save_media_toast">Media saved</string>
     <string name="black_and_white">Black and White</string>
     <string name="comment">Comment</string>
-    
     <string name="stop_audio_record_button_text">Stop recording</string>
     <string name="start_audio_record_button_text">Start recording</string>
     <string name="start_audio_record_toast">Start recording</string>
@@ -34,16 +32,15 @@
     <string name="start_audio_play_button_text">Play recorded sound</string>
     <string name="start_audio_play_toast">Play sound</string>
     <string name="stop_audio_play_toast">Stop sound</string>
-    
     <string name="drawable_capture">Catch a media</string>
     <string name="drawable_around">Medias closed to me</string>
     <string name="drawable_follow">Medias of my followers</string>
     <string name="drawable_account">My account</string>
     <string name="drawable_historic">Lasts Medias</string>
+    <string name="drawable_servlet">Servlet</string>
     <string name="title_activity_around">Medias close to me</string>
     <string name="title_activity_follow">FollowActivity</string>
     <string name="title_activity_account">My account</string>
-
     <string name="username">"User name"</string>
     <string name="yourname">"Your name"</string>
     <string name="email">Email address</string>
@@ -53,17 +50,17 @@
     <string name="infoAccount">Save info</string>
     <string name="infoSaved">Infos updated</string>
     <string name="oneFieldIsEmpty">One field at least is empty</string>
-    
     <string name="title_activity_list_media">List of the last medias</string>
-    
     <string name="geojir_here">GeoJIR is here</string>
     <string name="media_icon">Media icon</string>
     <string name="empty_list">List is empty</string>
-    
     <string name="GM_NotReached">Google Map not reached</string>
     <string name="GM_NoLocation">Unable to fetch the current location</string>
     <string name="GM_WaitLocation">Searching your location</string>
     
     <string name="load_image_map">Load media...</string>
     
+    <string name="title_activity_servlet">ServletActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
