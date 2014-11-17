@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -45,7 +46,7 @@ public abstract class Media implements IFiles
 	
 	public Media (File mediaFile)
 	{
-		restore(file);
+		restore(mediaFile);
 	}
 	
 	// Create File with unique path
@@ -202,8 +203,13 @@ public abstract class Media implements IFiles
 
 	public static void launch(String filePath, Boolean filterMonochrome)
 	{
+		// file exists need string without file:/
+		if (filePath.startsWith("file:/"))
+			filePath = filePath.substring(6);
+		
 		// Skip launch if media don't exist
 		File file = new File(filePath);
+		
 		if (!file.exists())
 		{
 			Toast.makeText(ParentMenuActivity.CONTEXT,

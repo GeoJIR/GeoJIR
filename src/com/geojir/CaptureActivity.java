@@ -410,7 +410,8 @@ public class CaptureActivity extends ParentMenuActivity implements
 					| IllegalStateException | IOException e)
 			{
 			}
-		} else
+		}
+		else
 			sound.stop();
 	}
 

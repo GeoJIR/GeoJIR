@@ -116,6 +116,8 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		{
 			recorder.stop();
 			recorder.release();
+			// Generate file
+			file = new File(getPath());
 			changeState(STOP_STATE);
 		}
 		else if (state == PLAY_STATE)
@@ -127,6 +129,7 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Play media
 	public void play() throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
+		
 		if (file == null)
 			return;
 		
