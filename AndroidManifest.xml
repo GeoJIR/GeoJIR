@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.geojir"
     android:versionCode="1"
@@ -6,42 +7,43 @@
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="21" />
-	
+
     <!-- Hardware permission -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+
     <!-- Map permission -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    
+
     <!-- Geoloc permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    
+
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
-    
+        android:required="true" />
+
     <!-- Camera access -->
-    <uses-feature android:name="android.hardware.camera"  
+    <uses-feature
+        android:name="android.hardware.camera"
         android:installLocation="preferExternal" />
-    
+
     <!-- Map texture access -->
-    <uses-feature android:glEsVersion="0x00020000"
-        android:required="true"/>
-    
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
- 	    
+
         <!-- NEED TO BE AT START OF APPLICATION -->
-       	<meta-data
-		    android:name="com.google.android.gms.version"
-		    android:value="@integer/google_play_services_version" />
-        
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".CaptureActivity"
             android:windowSoftInputMode="stateHidden"
@@ -52,30 +54,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-            
         <activity
             android:name=".ListMediaActivity"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_list_media" >
         </activity>
-        
         <activity
             android:name=".AroundActivity"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_around" >
         </activity>
-        
         <activity
             android:name=".FollowActivity"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_follow" >
         </activity>
-
         <activity
             android:name=".AccountActivity"
 			android:windowSoftInputMode="stateHidden"
             android:label="@string/title_activity_account" >
         </activity>
+        <activity
+            android:name=".ServletActivity"
+			android:windowSoftInputMode="stateHidden"
+            android:label="@string/title_activity_servlet" >
+       </activity>
         
         <activity
             android:name=".PopupImageViewActivity"
@@ -84,14 +87,15 @@
             android:label="@string/image" >
         </activity>
         
-        <provider android:name="com.geojir.db.MediaContentProvider"
+        <provider android:name=".db.MediaContentProvider"
 			android:authorities="com.geojir.db.mediacontentprovider" />
 		
+
         <!-- NEED TO BE AT END OF APPLICATION -->
-		<meta-data
-		    android:name="com.google.android.maps.v2.API_KEY"
-		    android:value="AIzaSyCx4HS62vm3bcT7ul-gRh8w6J4dCrzIGGs"/>
-        
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCx4HS62vm3bcT7ul-gRh8w6J4dCrzIGGs" />
+
     </application>
 
 </manifest>

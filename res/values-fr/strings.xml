@@ -39,6 +39,7 @@
     <string name="drawable_follow">Les médias de ceux que je suis</string>
     <string name="drawable_account">Mon compte</string>
     <string name="drawable_historic">Derniers Médias</string>
+    <string name="drawable_servlet">Servlet</string>
     <string name="title_activity_around">Les médias autour de moi</string>
     <string name="title_activity_follow">FollowActivity</string>
     <string name="title_activity_account">Mon compte</string>
