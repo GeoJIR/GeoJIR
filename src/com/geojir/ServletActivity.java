@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ServletActivity extends ParentMenuActivity
 {
@@ -34,73 +35,100 @@ public class ServletActivity extends ParentMenuActivity
 		affichage = (TextView) findViewById(R.id.get_servlet_response);
 		getButton = (Button) findViewById(R.id.getServlet);
 		postButton = (Button) findViewById(R.id.postServlet);
-		
+
 		Builder builder = new RestAdapter.Builder();
-		builder.setEndpoint(Constants.RETRO_URL_SERVLET); // Root URL of the server
+		builder.setEndpoint(Constants.RETRO_URL_SERVLET); // Root URL of the
+															// server
 		RestAdapter build = builder.build();
 		final HelloGetService serviceGet = build.create(HelloGetService.class);
-		final HelloPostService servicePost = build.create(HelloPostService.class);
+		final HelloPostService servicePost = build
+				.create(HelloPostService.class);
 
 		ViewObservable.clicks(getButton)
-		.observeOn(Schedulers.io())	//pour gérer le résultat du click (accès réseau) dans un thread autre que le mainThread
-		.map(new Func1<OnClickEvent, String>()
-		{
-			@Override
-			public String call(OnClickEvent arg0)
-			{
-				String observable = serviceGet.getHello();
-				return observable;
-			}
-		})
-		.observeOn(AndroidSchedulers.mainThread())
-		.subscribe(new Action1<String>()
-		{
-			@Override
-			public void call(String message)
-			{
-				affichage.setText(message);
-			}
-		});
+				.observeOn(Schedulers.io())
+				// pour gérer le résultat du click (accès réseau) dans un thread
+				// autre que le mainThread
+				.map(new Func1<OnClickEvent, String>()
+				{
+					@Override
+					public String call(OnClickEvent arg0)
+					{
+						try
+						{
+							String observable = serviceGet.getHello();
+							return observable;
+						}catch(Exception e)
+						{
+							return getString(R.string.no_network_toast);
+						}
+					}
+				}).observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Action1<String>()
+				{
+					@Override
+					public void call(String message)
+					{
+						if(message == getString(R.string.no_network_toast))
+							toast(R.string.no_network_toast);
+						else
+							affichage.setText(message);
+					}
+				});
 
 		ViewObservable.clicks(postButton)
-		.observeOn(Schedulers.io())	//pour gérer le résultat du click (accès réseau) dans un thread autre que le mainThread
-		.map(new Func1<OnClickEvent, String>()
-		{
-			@Override
-			public String call(OnClickEvent arg0)
-			{
-				String observable = servicePost.postHello();
-				return observable;
-			}
-		})
-		.observeOn(AndroidSchedulers.mainThread())
-		.subscribe(new Action1<String>()
-		{
-			@Override
-			public void call(String message)
-			{
-				affichage.setText(message);
-			}
-		});
+				.observeOn(Schedulers.io())
+				// pour gérer le résultat du click (accès réseau) dans un thread
+				// autre que le mainThread
+				.map(new Func1<OnClickEvent, String>()
+				{
+					@Override
+					public String call(OnClickEvent arg0)
+					{
+						try
+						{
+							String observable = servicePost.postHello();
+							return observable;
+						}catch(Exception e)
+						{
+							return getString(R.string.no_network_toast);
+						}
+					}
+				}).observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Action1<String>()
+				{
+					@Override
+					public void call(String message)
+					{
+						if(message == getString(R.string.no_network_toast))
+							toast(R.string.no_network_toast);
+						else
+							affichage.setText(message);
+					}
+				});
 
-		//POST
-/*
-				@POST(Constants.RETRO_URL_SERVLET) String postHello(@Path("testing") String postString);
-*/
+		// toast(R.string.no_network_toast);
+
+		// POST
+		/*
+		 * @POST(Constants.RETRO_URL_SERVLET) String postHello(@Path("testing")
+		 * String postString);
+		 */
 	}
 
-	public interface HelloPostService 
+	public interface HelloPostService
 	{
-		@POST("/"+Constants.RETRO_PROJECT) // only the “relative” part of the URL
+		@POST("/" + Constants.RETRO_PROJECT)
+		// only the “relative” part of the URL
 		String postHello();
 	}
-	
-	public interface HelloGetService 
+
+	public interface HelloGetService
 	{
-		@GET("/"+Constants.RETRO_PROJECT) // only the “relative” part of the URL
+		@GET("/" + Constants.RETRO_PROJECT)
+		// only the “relative” part of the URL
 		String getHello();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
