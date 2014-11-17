@@ -8,6 +8,7 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -269,6 +270,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 		}
 		
 		// Display loading
+		loadingCapture.setImageDrawable(getResources().getDrawable(R.drawable.loading));
 		loadingCapture.setVisibility(View.VISIBLE);
 		// Mask everything else
 		rootLayout.setVisibility(View.GONE);
@@ -448,7 +450,8 @@ public class CaptureActivity extends ParentMenuActivity implements
 			else
 			{
 				// If no media to save, create alert user
-				Builder builder = new Builder(CaptureActivity.this);
+				Builder builder = new Builder(CaptureActivity.this,
+						AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
 				builder.setMessage(R.string.dialog_no_media)
 					.setTitle(R.string.dialog_error)
 					.setNeutralButton(R.string.dialog_ok, new OnClickListener()

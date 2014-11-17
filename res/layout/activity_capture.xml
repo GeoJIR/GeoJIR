@@ -17,10 +17,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/loading"
             android:contentDescription=""
-            android:minWidth="64dp"
-            android:minHeight="64dp"
+            android:minWidth="128dp"
+            android:minHeight="128dp"
             android:maxHeight="256dp"
             android:maxWidth="256dp" />
 
