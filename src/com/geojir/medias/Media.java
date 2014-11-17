@@ -6,14 +6,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import android.os.Environment;
+import android.widget.Toast;
 
 import com.geojir.Constants;
 import com.geojir.ParentMenuActivity;
+import com.geojir.R;
 import com.geojir.db.ListMediaDb;
 import com.geojir.interfaces.IFiles;
 import com.geojir.override.OneLineArrayList;
@@ -25,13 +28,24 @@ public abstract class Media implements IFiles
 	
 	protected File file;
 	
-	protected float lati;
-	protected float longi;
-	
 	public Media()
 	{
-		// create master folder if not exist
-		Constants.initConstants(ParentMenuActivity.CONTEXT);
+		restore(new File(getTempPath()));
+	}
+	
+	public Media(String path)
+	{
+		this(new File(path));
+	}
+	
+	public Media(URI uri)
+	{
+		this(new File(uri));
+	}
+	
+	public Media (File mediaFile)
+	{
+		restore(mediaFile);
 	}
 	
 	// Create File with unique path
@@ -130,12 +144,13 @@ public abstract class Media implements IFiles
 	}
 	
 	// Restore media if needed (screen rotate)
-	public void restore(String restoreURI)
+	protected void restore(File mediaFile)
 	{
 		// create master folder if not exist
 		Constants.initConstants(ParentMenuActivity.CONTEXT);
-		if (restoreURI != getTempPath())
-			file = new File(restoreURI);
+		if (mediaFile != null)
+		if (!mediaFile.getPath().isEmpty() && !mediaFile.getPath().equals(getTempPath()))
+			file = mediaFile;
 	}
 	
 	// Delete temp file of each media
@@ -154,6 +169,65 @@ public abstract class Media implements IFiles
 			File delFile = new File(mediaTemp.getTempPath());
 			if (delFile.exists())
 				delFile.delete();
+		}
+	}
+	
+	// Functions used to launch a media
+	// 		- Play music if audio
+	// 		- Display image if photo
+	public static void launch(URI uri)
+	{
+		launch(uri.getPath());
+	}
+
+	public static void launch(File file)
+	{
+		launch(file.getPath());
+	}
+
+	public static void launch(String filePath)
+	{
+		launch(filePath, false);
+	}
+
+	public static void launch(URI uri, Boolean filterMonochrome)
+	{
+		launch(uri.getPath(), false);
+	}
+
+	public static void launch(File file, Boolean filterMonochrome)
+	{
+		launch(file.getPath(), false);
+	}
+
+	public static void launch(String filePath, Boolean filterMonochrome)
+	{
+		// Skip launch if media don't exist
+		File file = new File(filePath);
+		if (!file.exists())
+		{
+			Toast.makeText(ParentMenuActivity.CONTEXT,
+					R.string.media_unknown, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		if (filePath.endsWith(Constants.EXT_AUDIO))
+		{
+			Sound sound = new Sound(filePath);
+			try
+			{
+				sound.play();
+			}
+			catch (IllegalArgumentException | SecurityException
+					| IllegalStateException | IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		if (filePath.endsWith(Constants.EXT_IMAGE))
+		{
+			Photo image = new Photo(filePath);
+			image.display(filterMonochrome);
 		}
 	}
 }

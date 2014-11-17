@@ -3,7 +3,6 @@ package com.geojir;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -18,13 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.geojir.adapter.MediaWindowAdapterMarker;
 import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.db.MediaContentProvider;
-import com.geojir.medias.RecordableMedia;
-import com.geojir.view.CustomImageView;
+
+import com.geojir.medias.MediaMarkerManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -33,7 +31,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
@@ -53,7 +51,7 @@ public class AroundActivity extends ParentMenuActivity implements
 	LocationClient mLocationClient;
 	
 	// Map
-	protected GoogleMap mMap;
+	protected GoogleMap map;
 	protected Location mylastlocation = null;
 	protected CameraUpdate cameraUpdate;
 	protected ArrayList<Map<String, String>> values;
@@ -61,7 +59,7 @@ public class AroundActivity extends ParentMenuActivity implements
 	protected boolean setFirstMarker = false;
 	protected MapView mGoogleMapView;
 
-	protected ArrayList<LatLng> pointsList = new ArrayList<LatLng>();
+	protected ArrayList<MediaMarkerManager> markerList = new ArrayList<MediaMarkerManager>();
 	protected SimpleCursorAdapter cursorAdapter;
 	
 	TextView progressbar_popup;
@@ -87,7 +85,7 @@ public class AroundActivity extends ParentMenuActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around);
 
-		// on creer le content provider
+		// create content provider
 		displayContentProvider();
 		
 		restoreState(savedInstanceState);
@@ -109,64 +107,21 @@ public class AroundActivity extends ParentMenuActivity implements
 			{
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-
-				// Pour les tests
-				// String mLatAndLongStr = String.format("Lat:%.2f - Long:%.2f",
-				// myLocation.latitude,myLocation.longitude);
-				// Toast.makeText(AroundActivity.this, "Location update: " +
-				// mLatAndLongStr, Toast.LENGTH_LONG).show();
-
-				// markerLocation not null => marker has been already placed
-				if (markerLocation != null && mMap != null)
+				
+				if (map != null)
 				{
-					if (mMap.getCameraPosition().zoom != currentZoom)
-					{
+					if (map.getCameraPosition().zoom != currentZoom)
 						// get zoom level
-						currentZoom = mMap.getCameraPosition().zoom;
-					}
-
-					// if difference between new location and last location is
-					// less than GM_DEFAULT_DISTANCE meters
-					float distance = mylastlocation.distanceTo(location);
-					if (mylastlocation != null
-							&& distance > Constants.GM_DEFAULT_DISTANCE)
-					{
-						markerLocation.remove();
-						markerLocation = mMap
-								.addMarker(new MarkerOptions()
-										.position(myLocation)
-										.icon(BitmapDescriptorFactory
-												.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-						// we move more than X meters => so we update static
-						// variables
-						Constants.GM_LATITUDE = (float) location.getLatitude();
-						Constants.GM_LONGITUDE = (float) location
-								.getLongitude();
-
-					}
-				} else
-				{
-					markerLocation = mMap
-							.addMarker(new MarkerOptions()
-									.position(myLocation)
-									.icon(BitmapDescriptorFactory
-											.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+						currentZoom = map.getCameraPosition().zoom;
+					
+					// Create marker of user position
+					createMarkerPosition(myLocation);
+					// Center on position
+					zoomIfNotYet();
 				}
-
-				if (mMap != null)
-				{
-					if (firstZoom == false)
-					{
-						mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-								myLocation, currentZoom));
-						markerMedia();
-						firstZoom = true;
-					}
-				} else
-				{
-					Toast.makeText(getApplicationContext(),
-							R.string.GM_NotReached, Toast.LENGTH_SHORT).show();
-				}
+				else
+					toast(R.string.GM_NotReached);
+				
 				// save (new) location in mylastlocation variable
 				mylastlocation = location;
 			}
@@ -175,141 +130,111 @@ public class AroundActivity extends ParentMenuActivity implements
 
 		initMap();
 
-		//listenner lorsque l'on clique sur la popup du marker
-		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {          
-	        public void onInfoWindowClick(Marker marker) {
-	        	
-	        	//alertdialog suplementaire
-	            /*
-	        	String[] items={"onefunction","twofunction"};
-	            AlertDialog.Builder itemDilog = new AlertDialog.Builder(context);
-	            itemDilog.setTitle("");
-	            itemDilog.setCancelable(false);
-	            itemDilog.setItems(items, new DialogInterface.OnClickListener() {
-	                public void onClick(DialogInterface dialog, int which) {
-	                    switch(which){
-	                    case 0:{
-	                            //faire des trucs
-	                            }break;
-	                    case 1:{
-	                            //faire des trucs
-	                            }break; 
-	                    }
+	}
+	
+	protected void createMarkerPosition(LatLng position)
+	{
+		if (markerLocation != null)
+			markerLocation.remove();
+		
+		markerLocation = map
+				.addMarker(new MarkerOptions()
+						.position(position)
+						.icon(BitmapDescriptorFactory
+								.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-	                }
-	            });
-	            itemDilog.show();
-	            */
-	            //fin alert dialog
-	            
-	            //lancer la musique ou mettre l'image en gros plan
-	            if(true) 
-	            {
-	            	//si c'est un son
-	            	// Only if a sound exist
-	            	/*
-	        		if (sound == null)
-	        			return;
-
-	        		if (sound.getState() != RecordableMedia.PLAY_STATE)
-	        		{
-	        			try
-	        			{
-	        				sound.play();
-	        			} catch (IllegalArgumentException | SecurityException
-	        					| IllegalStateException | IOException e)
-	        			{
-	        			}
-	        		} else
-	        			sound.stop();
-	        			*/
-	            }
-
-	        }
-	    });
+	}
+	
+	protected void zoomIfNotYet()
+	{		
+		if (markerLocation != null && firstZoom == false)
+		{
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+					markerLocation.getPosition(), currentZoom));
+			firstZoom = true;
+		}		
 	}
 
 	protected void onResume()
 	{
 		super.onResume();
 
-		if (mMap == null)
+		if (map == null)
 			initMap();
+	}
+	
+	protected void clearMarker()
+	{
+		// Remove all marker
+		for (int i=0; i<markerList.size(); i++)
+			markerList.get(i).remove();
+		
+		// Clear list
+		markerList = new ArrayList<MediaMarkerManager>();
 	}
 
 	/**
 	 * 
 	 */
-	public void markerMedia()
+	public void createMarkerMedia()
 	{
+		if (map == null)
+			return;
+		
+		if (!markerList.isEmpty())
+			clearMarker();
+		
 		Cursor cur = cursorAdapter.getCursor();
 		if (cur.getCount() != 0)
 		{
 			cur.moveToFirst();
 			do
 			{
-				// on recupere les infos du medias pour créer son point
-				// geolocaliser
-				int lati_index = cur.getColumnIndex(MediasDb.LATITUDE_COLUMN);
-				int longi_index = cur.getColumnIndex(MediasDb.LONGITUDE_COLUMN);
-				float lati = cur.getFloat(lati_index);
-				float longi = cur.getFloat(longi_index);
+				// Get path file
+				String path = cur.getString(cur.getColumnIndex(MediasDb.FILE_NAME_COLUMN));
+				// Get position
+				float lat = cur.getFloat(cur.getColumnIndex(MediasDb.LATITUDE_COLUMN));
+				float lng = cur.getFloat(cur.getColumnIndex(MediasDb.LONGITUDE_COLUMN));
+				LatLng position = new LatLng(lat, lng);
 
-				int remark_index = cur.getColumnIndex(MediasDb.REMARK_COLUMN);
-				String remark = cur.getString(remark_index);
-
-				int id_index = cur.getColumnIndex(MediasDb._ID);
-				String id = cur.getString(id_index);
-
-				// on créer le point avec les coordonées
-				LatLng point = new LatLng(lati + ((0.2 * Math.random()) - 0.1), longi
-						+ ((0.2 * Math.random()) - 0.1));
-				// drawMarker(point, remark, path);
-				drawMarker(point, remark, id);
-				// add point in pointsList
-				pointsList.add(point);
-
-			} while (cur.moveToNext() != false);
+				// Get comment
+				String remark = cur.getString(cur.getColumnIndex(MediasDb.REMARK_COLUMN));
+				// Get monochrome filter
+				Boolean filter = cur.getInt(cur.getColumnIndex(MediasDb.FILTER_COLUMN)) == 1;
+				
+				MediaMarkerManager mediaMarker = new MediaMarkerManager(path, position, remark, filter);
+				mediaMarker.addToMap(map);
+				markerList.add(mediaMarker);
+			}
+			while (cur.moveToNext() != false);
 
 		}
-
-	}
-
-	// Draw a marker at the "point"
-	// private void drawMarker(LatLng point, String remark, String path)
-	private void drawMarker(LatLng point, String remark, String id)
-	{
-		// Creating an instance of MarkerOptions
-		MarkerOptions markerOptions = new MarkerOptions();
-
-		// Setting latitude, longitude and title for the marker
-		markerOptions.position(point).title(remark);
-
-		markerOptions.snippet(id);
-
-		// Adding marker on the Google Map
-		mMap.addMarker(markerOptions);
 
 	}
 
 	private void initMap()
 	{
-		if (mMap != null && firstZoom == false)
-		{
-			LatLng myLatLng = new LatLng(Constants.GM_LATITUDE,
-					Constants.GM_LONGITUDE);
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,
-					currentZoom));
-			firstZoom = true;
-		}
-
-		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
-		mMap.setMyLocationEnabled(true);
+		map.setMyLocationEnabled(true);
 
-		// on change le layout du popup
-		mMap.setInfoWindowAdapter(new MediaWindowAdapterMarker(
+		// Custom Markers' Window's layout
+		map.setInfoWindowAdapter(new MediaWindowAdapterMarker(
 				getApplicationContext(), cursorAdapter));
+		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener()
+		{
+		    public void onInfoWindowClick(Marker marker)
+		    {
+		    	MediaMarkerManager manager = MediaMarkerManager.getManagerFromMarker(marker);
+		    	if (manager != null)
+		    		manager.windowsClick();
+		    }
+		}); 
+		
+		// Zoom on position if it's possible
+		zoomIfNotYet();
+		// Create media marker
+		createMarkerMedia();
 	}
 
 	protected void restoreState(Bundle savedInstanceState)
@@ -330,26 +255,13 @@ public class AroundActivity extends ParentMenuActivity implements
 			LatLng myLocation = new LatLng(latitudeRestore, longitudeRestore);
 			CameraPosition myCameraPosition = new CameraPosition(myLocation,
 					currentZoom, currentTilt, currentBearing);
-			mMap = ((MapFragment) getFragmentManager().findFragmentById(
+			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
-			mMap.moveCamera(CameraUpdateFactory
+			map.moveCamera(CameraUpdateFactory
 					.newCameraPosition(myCameraPosition));
+			
 			// Restore markers
-			if (savedInstanceState.containsKey("points"))
-			{
-				pointsList = savedInstanceState
-						.getParcelableArrayList("points");
-				if (pointsList != null)
-				{
-					for (int i = 0; i < pointsList.size(); i++)
-					{
-						// TODO mettre le path en sauvegarde
-						drawMarker(pointsList.get(i), String.valueOf(i),
-								String.valueOf(i));
-					}
-				}
-			}
-
+			createMarkerMedia();
 		}
 	}
 
@@ -357,7 +269,7 @@ public class AroundActivity extends ParentMenuActivity implements
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
 		// save camera position
-		CameraPosition myCameraPosition = mMap.getCameraPosition();
+		CameraPosition myCameraPosition = map.getCameraPosition();
 		savedInstanceState.putString(ZOOM_ON_RESTORE,
 				String.valueOf(myCameraPosition.zoom));
 		savedInstanceState.putString(TILT_ON_RESTORE,
@@ -368,9 +280,6 @@ public class AroundActivity extends ParentMenuActivity implements
 				String.valueOf(myCameraPosition.target.latitude));
 		savedInstanceState.putString(LONGITUDE_ON_RESTORE,
 				String.valueOf(myCameraPosition.target.longitude));
-
-		// save markers list
-		savedInstanceState.putParcelableArrayList("points", pointsList);
 	}
 
 	// Create custom adapter
@@ -386,13 +295,16 @@ public class AroundActivity extends ParentMenuActivity implements
 	// CONTENT PROVIDER
 	private void displayContentProvider()
 	{
-		String columns[] = new String[] { MediasDb._ID,
+		String columns[] = new String[]
+			{
+				MediasDb._ID,
 				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
 				MediasDb.FILTER_COLUMN, MediasDb.LATITUDE_COLUMN,
-				MediasDb.LONGITUDE_COLUMN };
+				MediasDb.LONGITUDE_COLUMN
+			};
+		
 		Uri mContacts = MediaContentProvider.CONTENT_URI;
-		Cursor cur = getContentResolver().query(mContacts, columns, null, null,
-				null);
+		Cursor cur = getContentResolver().query(mContacts, columns, null, null, null);
 
 		createAdapter(cur);
 

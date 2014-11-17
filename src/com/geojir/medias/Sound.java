@@ -1,11 +1,34 @@
 package com.geojir.medias;
 
+import java.io.File;
+import java.net.URI;
+
 import android.media.MediaRecorder;
 
 import com.geojir.Constants;
 
 public class Sound extends RecordableMedia
 {
+	public Sound()
+	{
+		super();
+	}
+	
+	public Sound(String path)
+	{
+		super(path);
+	}
+	
+	public Sound(URI uri)
+	{
+		super(uri);
+	}
+	
+	public Sound(File mediaFile)
+	{
+		super(mediaFile);
+	}	
+	
 	// Configure recorder for Sound media
 	protected void configureRecorder()
 	{

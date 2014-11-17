@@ -1,12 +1,17 @@
 package com.geojir.medias;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.media.MediaPlayer.OnCompletionListener;
 import rx.Observable;
 import rx.Subscriber;
+import android.content.Intent;
+import android.media.MediaRecorder;
+import android.net.Uri;
+import android.util.Log;
+
+import com.geojir.ParentMenuActivity;
 
 // Class Media with play, stop and record action
 public abstract class RecordableMedia extends Media implements Observable.OnSubscribe<String>
@@ -18,29 +23,29 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	public final static String PLAY_STATE = "play";
 	
 	protected MediaRecorder recorder;
-	protected MediaPlayer player;	
 	
 	// Subscribe of state of media
 	protected Subscriber<? super String> subscriber;
 	protected String state = EMPTY_STATE;
 	
-	public String getState()
-	{
-		return state;
-	}
-
 	public RecordableMedia()
 	{
 		super();
-		createRecorder();
 	}
 	
-	// Recorder's creation depends on path of media
-	protected void createRecorder()
+	public RecordableMedia(String path)
 	{
-		recorder = new MediaRecorder();
-		configureRecorder();
-		recorder.setOutputFile(getPath());
+		super(path);
+	}
+	
+	public RecordableMedia(URI uri)
+	{
+		super(uri);
+	}
+	
+	public RecordableMedia (File mediaFile)
+	{
+		super(mediaFile);
 		
 		// Initialize state depending on file existence
 		if (file != null)
@@ -53,6 +58,11 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	
 	// Configuration depend on media, see child class
 	protected void configureRecorder() {}
+	
+	public String getState()
+	{
+		return state;
+	}
 	
 	// State change and call subscribe
 	protected void changeState(String newState)
@@ -72,6 +82,7 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Save media flux
 	public void record()
 	{
+		createRecorder();
 		try
 		{
 			recorder.prepare();
@@ -80,16 +91,24 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		}
 		catch (IllegalStateException | IOException e)
 		{
-			e.printStackTrace();
+			Log.e("RecordableMedia", "record", e);
 		}
 	}
 	
 	@Override
 	// restore RecordableMedia implies recreate recorder
-	public void restore(String restoreURI)
+	protected void restore(File mediaFile)
 	{
-		super.restore(restoreURI);
+		super.restore(mediaFile);
 		createRecorder();
+	}
+	
+	// Recorder's creation depends on path of media
+	protected void createRecorder()
+	{
+		recorder = new MediaRecorder();
+		configureRecorder();
+		recorder.setOutputFile(getPath());
 	}
 	
 	// Stop play or record
@@ -99,12 +118,11 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 		{
 			recorder.stop();
 			recorder.release();
+			// Generate file
 			changeState(STOP_STATE);
 		}
 		else if (state == PLAY_STATE)
 		{
-			player.release();
-			player = null;
 			changeState(STOP_STATE);
 		}
 	}
@@ -112,23 +130,17 @@ public abstract class RecordableMedia extends Media implements Observable.OnSubs
 	// Play media
 	public void play() throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
-		player = new MediaPlayer();
-		player.setDataSource(getPath());
-		player.prepare();
-		player.start();
+		File playFile = file;
+		if (file == null)
+			playFile = new File(getTempPath());
 		
-		changeState(PLAY_STATE);
+		if (!playFile.exists())
+			return;
 		
-		// Create listener when media complete
-		player.setOnCompletionListener(new OnCompletionListener()
-		{
-			@Override
-			public void onCompletion(MediaPlayer mediaPlayer)
-			{
-				// stop media when player stop
-				stop();
-			}
-		});
-
+		Intent intent = new Intent();  
+		intent.setAction(android.content.Intent.ACTION_VIEW);  
+		intent.setDataAndType(Uri.fromFile(playFile), "audio/*");  
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_NO_HISTORY);
+		ParentMenuActivity.CONTEXT.startActivity(intent);
 	}
 }

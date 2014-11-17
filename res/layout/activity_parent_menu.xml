@@ -52,6 +52,11 @@
             android:id="@+id/drawable_account"
             style="@style/DrawerItem"
             android:text="@string/drawable_account" />
+            
+            <TextView
+            android:id="@+id/drawable_servlet"
+            style="@style/DrawerItem"
+            android:text="@string/drawable_servlet" />
 
 	</LinearLayout>
 

@@ -47,21 +47,28 @@ public class Constants {
 	public static final String DATABASE_NAME = "GeoJIR.db";
 	
 	//Google Map
-	public static final float GM_MPL_LATITUDE = 43.600f;
-	public static final float GM_MPL_LONGITUDE = 3.883f;
-	public static float GM_LATITUDE = GM_MPL_LATITUDE;
-	public static float GM_LONGITUDE = GM_MPL_LONGITUDE;
+	public static final double GM_MPL_LATITUDE = 43.600;
+	public static final double GM_MPL_LONGITUDE = 3.883;
+	
+	public static double GM_LATITUDE = GM_MPL_LATITUDE;
+	public static double GM_LONGITUDE = GM_MPL_LONGITUDE;
 	public static final int GM_DEFAULT_ZOOM = 12;
 	public static final float GM_DEFAULT_DISTANCE = 10.0f;
 	public static final int GM_UPDATE_INTERVAL = 20000;	//in ms
 	public static final int GM_FASTEST_INTERVAL = 10000;	//in ms
 	
+	//Retrofit
+	public static final String RETRO_PROJECT = "geojir_wbs";
+	public static final String RETRO_URL_TEST = "http://localhost:8888";
+	public static final String GOOGLE_PROJETC_ID = "tribal-mapper-763";
+	public static final String RETRO_URL_GOOGLE = "http://" + GOOGLE_PROJETC_ID + ".appspot.com";
+	
+//	public static final String RETRO_URL_SERVLET = RETRO_URL_TEST;
+	public static final String RETRO_URL_SERVLET = RETRO_URL_GOOGLE;
 
 	/************************ METHODS ******************/
 	/*
 	 */
-
-
 	// Checks if external storage is available for read and write
 	private static boolean isExternalStorageWritable()
 	{
