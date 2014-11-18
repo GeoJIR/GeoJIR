@@ -15,10 +15,10 @@ public class MediaContentProvider extends ContentProvider
 	// database
 	private ListMediaDb database;
 
-	// URI of content provider, 
+	// URI of content provider,
 	public static final Uri CONTENT_URI = Uri
 			.parse("content://com.geojir.db.mediacontentprovider");
-	
+
 	// Mime of content provider, start is always the same
 	public static final String CONTENT_PROVIDER_MIME = "vnd.android.cursor.item/vnd.com.geojir.db.MediasDb";
 
@@ -34,15 +34,20 @@ public class MediaContentProvider extends ContentProvider
 			String[] selectionArgs, String sortOrder)
 	{
 		long id = getId(uri);
+		Cursor c = null;
 		SQLiteDatabase db = database.getReadableDatabase();
 		if (id < 0)
 		{
-			return db.query(MediasDb.TABLE_NAME, projection, selection,
+			c = db.query(MediasDb.TABLE_NAME, projection, selection,
 					selectionArgs, null, null, sortOrder);
+			return c;
 		} else
 		{
-			return db.query(MediasDb.TABLE_NAME, projection, MediasDb._ID + "="
+			
+			
+			c = db.query(MediasDb.TABLE_NAME, projection, MediasDb._ID + "="
 					+ id, null, null, null, null);
+			return c;
 		}
 
 	}
@@ -54,16 +59,20 @@ public class MediaContentProvider extends ContentProvider
 
 		long id = getId(uri);
 		SQLiteDatabase db = database.getReadableDatabase();
+		Cursor c = null;
 		if (id < 0)
 		{
-			return db.query(MediasDb.TABLE_NAME, columns, selection,
+			c = db.query(MediasDb.TABLE_NAME, columns, selection,
 					selectionArgs, groupBy, having, orderBy, limit);
+			return c;
 
 		} else
 		{
-			return db.query(MediasDb.TABLE_NAME, columns, MediasDb._ID + "="
+			c = db.query(MediasDb.TABLE_NAME, columns, MediasDb._ID + "="
 					+ id, selectionArgs, groupBy, having, orderBy, limit);
+			return c;
 		}
+
 	}
 
 	@Override

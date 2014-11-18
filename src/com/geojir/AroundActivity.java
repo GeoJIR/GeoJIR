@@ -3,6 +3,9 @@ package com.geojir;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -35,7 +38,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class AroundActivity extends ParentMenuActivity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener
+		GooglePlayServicesClient.OnConnectionFailedListener,
+		LoaderCallbacks<Cursor>
 {
 	// Localization
 	LocationRequest locationRequest;
@@ -77,26 +81,33 @@ public class AroundActivity extends ParentMenuActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around);
 
-		//test if Google Play Services is accessible
+		// test if Google Play Services is accessible
 		boolean testPlayServices = testPlayServices();
-		
-		if(testPlayServices == true)
+
+		if (testPlayServices == true)
 		{
-			// create content provider
-			displayContentProvider();
+
+			cursorAdapter = new SimpleCursorAdapter(this, R.layout.list_item,
+					null, new String[] { MediasDb.FILE_NAME_COLUMN,
+							MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
+					new int[] { R.id.imageIcon, R.id.remark }, 0);
 			
+			// create content provider
+			getLoaderManager().initLoader(0, null, this);
+			//displayContentProvider();
+
 			restoreState(savedInstanceState);
-	
+
 			// initialize the location manager
 			locationRequest = LocationRequest.create();
 			// Use highest accuracy
 			locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-	
+
 			// Set the update interval in ms
 			locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
 			// Set the fastest update interval in ms
 			locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
-	
+
 			locationListener = new LocationListener()
 			{
 				@Override
@@ -104,42 +115,46 @@ public class AroundActivity extends ParentMenuActivity implements
 				{
 					LatLng myLocation = new LatLng(location.getLatitude(),
 							location.getLongitude());
-					
+
 					if (map != null)
 					{
 						if (map.getCameraPosition().zoom != currentZoom)
 							// get zoom level
 							currentZoom = map.getCameraPosition().zoom;
-						
+
 						// Create marker of user position
 						createMarkerPosition(myLocation);
 						// Center on position
 						zoomIfNotYet();
-					}
-					else
+					} else
 						toast(R.string.GM_NotReached);
-					
+
 					// save (new) location in mylastlocation variable
 					mylastlocation = location;
 				}
 			};
 			mLocationClient = new LocationClient(this, this, this);
-	
+
 			initMap();
 		}
 	}
-	
-	protected boolean testPlayServices() {
-		int checkGooglePlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-		
-		if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
+
+	protected boolean testPlayServices()
+	{
+		int checkGooglePlayServices = GooglePlayServicesUtil
+				.isGooglePlayServicesAvailable(this);
+
+		if (checkGooglePlayServices != ConnectionResult.SUCCESS)
+		{
 			// google play services is missing!!!!
 			/*
-			* Returns status code indicating whether there was an error.
-			* Can be one of following in ConnectionResult: SUCCESS, SERVICE_MISSING,
-			* SERVICE_VERSION_UPDATE_REQUIRED, SERVICE_DISABLED, SERVICE_INVALID.
-			*/
-			GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices, this, 1122).show();
+			 * Returns status code indicating whether there was an error. Can be
+			 * one of following in ConnectionResult: SUCCESS, SERVICE_MISSING,
+			 * SERVICE_VERSION_UPDATE_REQUIRED, SERVICE_DISABLED,
+			 * SERVICE_INVALID.
+			 */
+			GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices,
+					this, 1122).show();
 
 			toast(R.string.GM_Google_Play_Services_not_installed);
 
@@ -253,8 +268,6 @@ public class AroundActivity extends ParentMenuActivity implements
 
 		// Zoom on position if it's possible
 		zoomIfNotYet();
-		// Create media marker
-		createMarkerMedia();
 	}
 
 	protected void restoreState(Bundle savedInstanceState)
@@ -280,8 +293,6 @@ public class AroundActivity extends ParentMenuActivity implements
 			map.moveCamera(CameraUpdateFactory
 					.newCameraPosition(myCameraPosition));
 
-			// Restore markers
-			createMarkerMedia();
 		}
 	}
 
@@ -300,32 +311,6 @@ public class AroundActivity extends ParentMenuActivity implements
 				String.valueOf(myCameraPosition.target.latitude));
 		savedInstanceState.putString(LONGITUDE_ON_RESTORE,
 				String.valueOf(myCameraPosition.target.longitude));
-	}
-
-	// Create custom adapter
-	protected void createAdapter(Cursor cursor)
-	{
-		// Display image and comment
-		cursorAdapter = new SimpleCursorAdapter(this, R.layout.list_item,
-				cursor, new String[] { MediasDb.FILE_NAME_COLUMN,
-						MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
-				new int[] { R.id.imageIcon, R.id.remark }, 0);
-	}
-
-	// CONTENT PROVIDER
-	private void displayContentProvider()
-	{
-		String columns[] = new String[] { MediasDb._ID,
-				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
-				MediasDb.FILTER_COLUMN, MediasDb.LATITUDE_COLUMN,
-				MediasDb.LONGITUDE_COLUMN };
-
-		Uri mContacts = MediaContentProvider.CONTENT_URI;
-		Cursor cur = getContentResolver().query(mContacts, columns, null, null,
-				null);
-
-		createAdapter(cur);
-
 	}
 
 	@Override
@@ -365,5 +350,36 @@ public class AroundActivity extends ParentMenuActivity implements
 		// Disconnecting the client invalidates it.
 		mLocationClient.disconnect();
 		super.onStop();
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args)
+	{
+		Uri CONTENT_URI = MediaContentProvider.CONTENT_URI;
+
+		String columns[] = new String[] { MediasDb._ID,
+				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
+				MediasDb.FILTER_COLUMN, MediasDb.LATITUDE_COLUMN,
+				MediasDb.LONGITUDE_COLUMN };
+		
+		return new CursorLoader(this, CONTENT_URI, columns, null, null, null);
+
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+	{
+		this.cursorAdapter.swapCursor(data);
+		// Create media marker
+		createMarkerMedia();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader)
+	{
+		// If the Cursor is being placed in a CursorAdapter, you should use the
+		// swapCursor(null) method to remove any references it has to the
+		// Loader's data.
+		this.cursorAdapter.swapCursor(null);
 	}
 }

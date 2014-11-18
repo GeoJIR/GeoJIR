@@ -1,5 +1,8 @@
 package com.geojir;
 
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +20,7 @@ import com.geojir.db.ListMediaDb;
 import com.geojir.db.MediaContentProvider;
 import com.geojir.view.CustomImageView;
 
-public class ListMediaActivity extends ParentMenuActivity
+public class ListMediaActivity extends ParentMenuActivity implements LoaderCallbacks<Cursor>
 {
 	@InjectView(R.id.emptyListTextView)
 	protected TextView emptyListTextView;
@@ -32,29 +35,14 @@ public class ListMediaActivity extends ParentMenuActivity
 		setContentView(R.layout.activity_list_media);
 		ButterKnife.inject(this);
 
-		displayContentProvider();
-	}
-
-	@OnItemClick(R.id.listViewMedias)
-	void onItemClick(int position)
-	{
-		// DON'T USE listView.getAtChild(position)
-		// listView have only a part of child at a time
-		View rowView = listView.getAdapter().getView(position, null, null);
-		CustomImageView iconView = (CustomImageView) rowView
-				.findViewById(R.id.imageIcon);
-		iconView.playMedia();
-	}
-	
-	// Create custom adapter
-	protected void createAdapter(Cursor cursor)
-	{
-		// Display image and comment
 		cursorAdapter = new SimpleCursorAdapter(this, R.layout.list_item,
-				cursor, new String[] { MediasDb.FILE_NAME_COLUMN,
+				null, new String[] { MediasDb.FILE_NAME_COLUMN,
 						MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
 				new int[] { R.id.imageIcon, R.id.remark }, 0);
 
+		// create content provider
+		getLoaderManager().initLoader(0, null, this);
+		
 		updateChildrenVisibility();
 
 		// Convert String to image for ImageView
@@ -83,8 +71,21 @@ public class ListMediaActivity extends ParentMenuActivity
 				return false;
 			}
 		});
+		
+		listView.setAdapter(cursorAdapter);
 	}
 
+	@OnItemClick(R.id.listViewMedias)
+	void onItemClick(int position)
+	{
+		// DON'T USE listView.getAtChild(position)
+		// listView have only a part of child at a time
+		View rowView = listView.getAdapter().getView(position, null, null);
+		CustomImageView iconView = (CustomImageView) rowView
+				.findViewById(R.id.imageIcon);
+		iconView.playMedia();
+	}
+	
 	protected void updateChildrenVisibility()
 	{
 		if (cursorAdapter == null || cursorAdapter.isEmpty())
@@ -98,26 +99,34 @@ public class ListMediaActivity extends ParentMenuActivity
 		}
 	}
 
-	protected void displayList()
+	
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
-		// Clear old items
-		listView.setAdapter(null);
-		// Display new item list
-		listView.setAdapter(cursorAdapter);
-	}
+		Uri CONTENT_URI = MediaContentProvider.CONTENT_URI;
 
-	// CONTENT PROVIDER
-	private void displayContentProvider()
-	{
 		String columns[] = new String[] { MediasDb._ID,
 				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
 				MediasDb.FILTER_COLUMN };
-		Uri mContacts = MediaContentProvider.CONTENT_URI;
-		Cursor cur = getContentResolver().query(mContacts, columns, null, null,
-				MediasDb._ID + " DESC LIMIT " + ListMediaDb.NB_LIST_LAST_MEDIA);
+		
+		return new CursorLoader(this, CONTENT_URI, columns, null, null, null);
 
-		createAdapter(cur);
-		displayList();
 	}
 
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+	{
+		cursorAdapter.swapCursor(data);
+		updateChildrenVisibility();
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader)
+	{
+		// If the Cursor is being placed in a CursorAdapter, you should use the
+		// swapCursor(null) method to remove any references it has to the
+		// Loader's data.
+		cursorAdapter.swapCursor(null);
+		updateChildrenVisibility();
+	}
 }
