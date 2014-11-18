@@ -1,75 +1,80 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="20dp"
-        android:text="@string/username"
-        android:textSize="15sp"
-        android:textColor="#000000" />
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/account_username"
-        android:layout_width="172dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="@string/yourname"
-        android:inputType="textPersonName" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="20dp"
+            android:text="@string/username"
+            android:textColor="#000000"
+            android:textSize="15sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="20dp"
-        android:textSize="15sp"
-        android:text="@string/email"
-        android:textColor="#000000" />
+        <EditText
+            android:id="@+id/account_username"
+            android:layout_width="172dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="@string/yourname"
+            android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/account_email"
-        android:layout_width="244dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="@string/youremail"
-        android:inputType="textEmailAddress" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="20dp"
+            android:text="@string/email"
+            android:textColor="#000000"
+            android:textSize="15sp" />
 
-     <TextView
-         android:id="@+id/textViewFollowers"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_gravity="center"
-         android:paddingTop="20dp"
-         android:text="@string/followersList"
-         android:textColor="#000000"
-         android:textSize="16sp" />
+        <EditText
+            android:id="@+id/account_email"
+            android:layout_width="244dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="@string/youremail"
+            android:inputType="textEmailAddress" />
 
-     <EditText
-         android:id="@+id/editText1"
-         android:layout_width="245dp"
-         android:layout_height="wrap_content"
-         android:layout_gravity="center"
-         android:ems="10"
-         android:text="Mettre une liste" />
+        <TextView
+            android:id="@+id/textViewFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="20dp"
+            android:text="@string/followersList"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
-     <TextView
-         android:id="@+id/remark_popup"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_gravity="center"
-         android:paddingTop="20dp"
-         android:text="@string/followedsList"
-         android:textSize="16sp" />
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="10"
+            android:text="Mettre une liste" />
 
-     <EditText
-         android:id="@+id/editText2"
-         android:layout_width="245dp"
-         android:layout_height="wrap_content"
-         android:layout_gravity="center"
-         android:ems="10"
-         android:text="Mettre une liste" />
+        <TextView
+            android:id="@+id/remark_popup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="20dp"
+            android:text="@string/followedsList"
+            android:textSize="16sp" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="10"
+            android:text="Mettre une liste" />
+    </LinearLayout>
+
+</ScrollView>

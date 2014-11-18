@@ -196,7 +196,10 @@ public class ParentMenuActivity extends Activity
 			if (drawerLayout.isDrawerOpen(GravityCompat.START))
 				drawerLayout.closeDrawer(GravityCompat.START);
 			else
+			{
+				clearFocus();
 				drawerLayout.openDrawer(GravityCompat.START);
+			}
 
 			return true;
 		}
