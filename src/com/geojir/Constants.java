@@ -53,12 +53,11 @@ public class Constants
 	public static double GM_LATITUDE = GM_MPL_LATITUDE;
 	public static double GM_LONGITUDE = GM_MPL_LONGITUDE;
 	public static final int GM_DEFAULT_ZOOM = 12;
-	public static final float GM_DEFAULT_DISTANCE = 10.0f;
-	public static final int GM_UPDATE_INTERVAL = 20000;	//in ms
-	public static final int GM_FASTEST_INTERVAL = 10000;	//in ms
-	public static final int GM_SMALLES_DISPLACEMENT = 20; // in meters
-	
-	//Retrofit
+	public static final long GM_DEFAULT_DISTANCE = 20;
+	public static final int GM_UPDATE_INTERVAL = 20000; // in ms
+	public static final int GM_FASTEST_INTERVAL = 10000; // in ms
+
+	// Retrofit
 	public static final String RETRO_PROJECT = "geojir_wbs";
 	public static final String RETRO_URL_TEST = "http://localhost:8888";
 	public static final String GOOGLE_PROJETC_ID = "tribal-mapper-763";
