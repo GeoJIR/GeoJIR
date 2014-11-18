@@ -1,116 +1,75 @@
 package com.geojir;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 import com.geojir.preferences.accountPreferences;
 
 public class AccountActivity extends ParentMenuActivity
 {
-
-	// champ usernam
-	private EditText username;
-	// champ email
-	private EditText mail;
-	// boutton d'enregistrement
-	private Button saveButton;
+	@InjectView(R.id.account_username)
+	EditText username;
+	@InjectView(R.id.account_email)
+	EditText mail;
 	
 	protected accountPreferences preferences;
-
-	// shared preferences
-	//protected SharedPreferences preferences;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.geojir.ParentMenuActivity#onCreate(android.os.Bundle)
-	 */
-	@Override
+	
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_account);
-
+		ButterKnife.inject(this);
+		
+		// Rescue preferences values
 		preferences = new accountPreferences(getApplicationContext());
-
-		username = (EditText) findViewById(R.id.acountcreation_email);
-		mail = (EditText) findViewById(R.id.acountcreation_password);
-
 		username.setText(preferences.getAccountName());
 		mail.setText(preferences.getAccountEmail());
-
-		// Observable sur le bouton
-		final String message = getString(R.string.infoSaved);
-		final OnClickTest onSubscribe = new OnClickTest(message);
-		final Observable<String> myObservable = Observable.create(onSubscribe);
-		final Action1<String> onNextAction = new Action1<String>()
-		{
-			@Override
-			public void call(String s)
-			{
-				toast(message);
-			}
-		};
-
-		myObservable.subscribe(onNextAction);
-
-		// on ajoute un listener au boutton de la vue
-		saveButton = (Button) findViewById(R.id.acountcreation_connect);
-
-		saveButton.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				// enregistrement dans les préférences des infos de l'utilisateur
-				//verify if one field is empty
-				if( username.getText().toString().trim().isEmpty() ||  mail.getText().toString().trim().isEmpty() )
-				{
-					toast(R.string.oneFieldIsEmpty);
-				}
-				else
-				{
-					preferences.setAccountName(username.getText().toString().trim());
-					preferences.setAccountEmail(mail.getText().toString().trim());
-					
-					// on informe l'observable
-					onSubscribe.onClick();
-				}
-			}
-		});
 	}
-
-	/**
-	 * 
-	 * @author Igor
-	 *
-	 */
-	private final class OnClickTest implements Observable.OnSubscribe<String>
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		private final String message;
-		private Subscriber<? super String> subscriber;
-
-		private OnClickTest(String message)
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.simple_save_menu, menu);
+		
+		return true;
+	}
+	
+	@Override
+	// Save with actionBar button
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		int id = item.getItemId();
+		if (id == R.id.actionBarSave)
 		{
-			this.message = message;
+			savePreference();
+			return true;
 		}
-
-		@Override
-		public void call(Subscriber<? super String> subscriber)
+		
+		return super.onOptionsItemSelected(item);
+	}
+	
+	// Save new preferences
+	public void savePreference()
+	{
+		// Verify empty editText
+		if (username.getText().toString().trim().isEmpty()
+				|| mail.getText().toString().trim().isEmpty())
+			toast(R.string.oneFieldIsEmpty);
+		else
 		{
-			this.subscriber = subscriber;
-
-		}
-
-		public void onClick()
-		{
-			this.subscriber.onNext(message);
+			// Save
+			preferences.setAccountName(username.getText().toString().trim());
+			preferences.setAccountEmail(mail.getText().toString().trim());
+			
+			// User message
+			toast(R.string.infoSaved);
 		}
 	}
+	
 }

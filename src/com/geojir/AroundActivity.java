@@ -107,7 +107,9 @@ public class AroundActivity extends ParentMenuActivity implements
 			locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
 			// Set the fastest update interval in ms
 			locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
-
+			// Set the smallest displacement
+			locationRequest.setSmallestDisplacement(Constants.GM_DEFAULT_DISTANCE);
+	
 			locationListener = new LocationListener()
 			{
 				@Override

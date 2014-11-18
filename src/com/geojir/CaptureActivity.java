@@ -10,17 +10,14 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract.RawContacts;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,8 +32,6 @@ import butterknife.InjectView;
 import butterknife.InjectViews;
 import butterknife.OnClick;
 
-import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.db.MediaContentProvider;
 import com.geojir.medias.Media;
 import com.geojir.medias.Photo;
 import com.geojir.medias.RecordableMedia;
@@ -135,10 +130,11 @@ public class CaptureActivity extends ParentMenuActivity implements
 		locationRequest.setInterval(Constants.GM_UPDATE_INTERVAL);
 		// Set the fastest update interval in ms
 		locationRequest.setFastestInterval(Constants.GM_FASTEST_INTERVAL);
-		locationRequest.setSmallestDisplacement(10);
-
-		Constants.GM_LATITUDE = 43.600 + ((0.2 * Math.random()) - 0.1);
-		Constants.GM_LONGITUDE = 3.883 + ((0.2 * Math.random()) - 0.1);
+		// Set the smallest displacement
+		locationRequest.setSmallestDisplacement(Constants.GM_DEFAULT_DISTANCE);
+		
+		Constants.GM_LATITUDE  = Constants.GM_MPL_LATITUDE  + ((0.2 * Math.random()) - 0.1);
+		Constants.GM_LONGITUDE = Constants.GM_MPL_LONGITUDE + ((0.2 * Math.random()) - 0.1);
 		
 		locationListener = new LocationListener()
 		{
@@ -154,7 +150,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 				Constants.GM_LONGITUDE = myLocation.longitude;
 				/*/
 				// Debug use
-				Constants.GM_LATITUDE = myLocation.latitude + ((0.2 * Math.random()) - 0.1);
+				Constants.GM_LATITUDE  = myLocation.latitude  + ((0.2 * Math.random()) - 0.1);
 				Constants.GM_LONGITUDE = myLocation.longitude + ((0.2 * Math.random()) - 0.1);
 				//*/
 			}
@@ -439,7 +435,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.capture, menu);
+	    inflater.inflate(R.menu.simple_save_menu, menu);
 	    
 	    return true;
 	}
