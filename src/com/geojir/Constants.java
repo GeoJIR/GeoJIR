@@ -56,6 +56,7 @@ public class Constants {
 	public static final float GM_DEFAULT_DISTANCE = 10.0f;
 	public static final int GM_UPDATE_INTERVAL = 20000;	//in ms
 	public static final int GM_FASTEST_INTERVAL = 10000;	//in ms
+	public static final int GM_SMALLES_DISPLACEMENT = 20; // in meters
 	
 	//Retrofit
 	public static final String RETRO_PROJECT = "geojir_wbs";
