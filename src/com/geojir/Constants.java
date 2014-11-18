@@ -53,7 +53,7 @@ public class Constants
 	public static double GM_LATITUDE = GM_MPL_LATITUDE;
 	public static double GM_LONGITUDE = GM_MPL_LONGITUDE;
 	public static final int GM_DEFAULT_ZOOM = 12;
-	public static final float GM_DEFAULT_DISTANCE = 10.0f;
+	public static final long GM_DEFAULT_DISTANCE = 20;
 	public static final int GM_UPDATE_INTERVAL = 20000; // in ms
 	public static final int GM_FASTEST_INTERVAL = 10000; // in ms
 
