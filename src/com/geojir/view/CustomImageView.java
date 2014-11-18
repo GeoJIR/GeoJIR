@@ -12,6 +12,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.geojir.Constants;
 import com.geojir.ParentMenuActivity;
@@ -123,18 +124,18 @@ public class CustomImageView extends ImageView
 		
 		String pathPicasso = fileMediaPath;
 		// Check path format like *://*
-		// mathces need to be complete
-		if (!pathPicasso.matches("(.+?)(://)(.+?)"))
-		{
-			if (pathPicasso.startsWith("//"))
-				pathPicasso = "file:"+pathPicasso;
-			else if (pathPicasso.startsWith("/"))
-				pathPicasso = "file:/"+pathPicasso;
-			else
-				pathPicasso = "file://"+pathPicasso;
-		}
+		// matches need to be complete
+//		if (!pathPicasso.matches("(.+?)(://)(.+?)"))
+//		{
+//			if (pathPicasso.startsWith("//"))
+//				pathPicasso = "file:"+pathPicasso;
+//			else if (pathPicasso.startsWith("/"))
+//				pathPicasso = "file:/"+pathPicasso;
+//			else
+//				pathPicasso = "file://"+pathPicasso;
+//		}
 		
-		RequestCreator request = Picasso.with(ParentMenuActivity.CONTEXT).load(pathPicasso);
+		RequestCreator request = Picasso.with(ParentMenuActivity.CONTEXT).load(new File(pathPicasso));
 		if (!useCache())
 			request.skipMemoryCache();
 		
