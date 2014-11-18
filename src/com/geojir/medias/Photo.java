@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URI;
 
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.geojir.Constants;
 import com.geojir.ParentMenuActivity;

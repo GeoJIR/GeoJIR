@@ -87,9 +87,10 @@
             android:label="@string/image" >
         </activity>
         
-        <provider android:name=".db.MediaContentProvider"
-			android:authorities="com.geojir.db.mediacontentprovider" />
-		
+		<provider android:name="com.geojir.db.MediaContentProvider"
+			android:authorities="com.geojir.db.mediacontentprovider"
+			 android:exported="false"
+			 />
 
         <!-- NEED TO BE AT END OF APPLICATION -->
         <meta-data

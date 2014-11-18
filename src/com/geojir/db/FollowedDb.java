@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.geojir.db.FollowerContract.FollowDb;
 
@@ -57,7 +56,7 @@ public class FollowedDb extends SQLiteOpenHelper
 		values.put(FollowDb.FOLLOWER_IDENTIFIER, ident);
 		db.insert(FollowDb.FOLLOWER_TABLE_NAME, null, values);
 	}
-	
+
 	/**
 	 * @param db
 	 * @return
@@ -67,7 +66,7 @@ public class FollowedDb extends SQLiteOpenHelper
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		// Test nb entries
-		//test(db);
+		// test(db);
 
 		ArrayList<Integer> mediaList = buildData(db);
 
@@ -125,21 +124,5 @@ public class FollowedDb extends SQLiteOpenHelper
 
 		return list;
 	}
-	
-	
-	/**
-	 * @param db
-	 */
-	public void test(SQLiteDatabase db)
-	{
-		// puis on en rajoute X pour les test
-		for (int i = 0; i < 10; i++)
-		{
-			// on ajoute un entrée dans la BDD
-			addEntry(i, db);
-		}
-		
-		// on récupère le nombre d'entrées dans la base
-		//int nbEntries = countEntries(db);
-	}
+
 }

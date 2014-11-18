@@ -82,7 +82,6 @@ public class ListMediaActivity extends ParentMenuActivity
 				}
 				return false;
 			}
-
 		});
 	}
 
@@ -119,7 +118,6 @@ public class ListMediaActivity extends ParentMenuActivity
 
 		createAdapter(cur);
 		displayList();
-
 	}
 
 }

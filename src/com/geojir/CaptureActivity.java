@@ -10,14 +10,17 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract.RawContacts;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,6 +35,8 @@ import butterknife.InjectView;
 import butterknife.InjectViews;
 import butterknife.OnClick;
 
+import com.geojir.db.ListMediaContract.MediasDb;
+import com.geojir.db.MediaContentProvider;
 import com.geojir.medias.Media;
 import com.geojir.medias.Photo;
 import com.geojir.medias.RecordableMedia;
@@ -143,7 +148,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 			{
 				LatLng myLocation = new LatLng(location.getLatitude(),
 						location.getLongitude());
-				
 				/*
 				// Normal use
 				Constants.GM_LATITUDE = myLocation.latitude;
@@ -220,7 +224,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 	{
 		class SaveAsynchrone extends AsyncTask<Object, Object, Object>
 		{
-
 			// Before execute async task
 			@Override
 			protected void onPreExecute()
@@ -258,7 +261,8 @@ public class CaptureActivity extends ParentMenuActivity implements
 					try
 					{
 						mediaTemp.save(editComment.getText().toString(),
-								monochrome);
+								monochrome, getContentResolver());
+						
 					} catch (InstantiationException | IllegalAccessException
 							| IOException e)
 					{
@@ -279,7 +283,6 @@ public class CaptureActivity extends ParentMenuActivity implements
 		// Launch async media save
 		SaveAsynchrone tacheAsynchrone = new SaveAsynchrone();
 		tacheAsynchrone.execute();
-
 	}
 
 	protected Media getCurrentMedia()

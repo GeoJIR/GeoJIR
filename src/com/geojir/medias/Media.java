@@ -11,6 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 
@@ -18,6 +21,8 @@ import com.geojir.Constants;
 import com.geojir.ParentMenuActivity;
 import com.geojir.R;
 import com.geojir.db.ListMediaDb;
+import com.geojir.db.MediaContentProvider;
+import com.geojir.db.ListMediaContract.MediasDb;
 import com.geojir.interfaces.IFiles;
 import com.geojir.override.OneLineArrayList;
 
@@ -49,7 +54,7 @@ public abstract class Media implements IFiles
 	}
 	
 	// Create File with unique path
-	protected void createFile()
+	protected String createFile()
 	{
 		// create master folder if not exist
 		Constants.initConstants(ParentMenuActivity.CONTEXT);
@@ -70,6 +75,10 @@ public abstract class Media implements IFiles
 		{
 			e.printStackTrace();
 		}
+		
+		String retour = file.getPath();
+		
+		return retour;
 	}
 	
 	// Create real file from temp file
@@ -119,28 +128,38 @@ public abstract class Media implements IFiles
 	// Create file from temp file and save comment
 	public void save(String commentary) throws IOException, InstantiationException, IllegalAccessException
 	{
-		save(commentary, false);
+		save(commentary, false, null);
 	}
 	
 	// Create file from temp file and save comment
-	public void save(String commentary, Boolean monochrome) throws IOException, InstantiationException, IllegalAccessException
+	public void save(String commentary, Boolean monochrome, ContentResolver cr) throws IOException, InstantiationException, IllegalAccessException
 	{
+		String path = null;
+		
 		if (file == null)
 		{
-			createFile();
+			path = createFile();
 			copyFile();
 		}
 		
+		ContentValues values = new ContentValues(); 
+        values.put(MediasDb.FILE_NAME_COLUMN, path); 
+        values.put(MediasDb.REMARK_COLUMN, commentary);
+        values.put(MediasDb.FILTER_COLUMN, monochrome);
+        values.put(MediasDb.LATITUDE_COLUMN, Constants.GM_LATITUDE);
+        values.put(MediasDb.LONGITUDE_COLUMN, Constants.GM_LONGITUDE);
+        
+		Uri mediaURI = MediaContentProvider.CONTENT_URI;
+		cr.insert(mediaURI, values);
+		
 		comment = commentary;
 		deleteTempFile();
-		callToDataBase(monochrome);
 	}
 	
 	// Call save to Database
 	protected void callToDataBase(Boolean monochrome)
 	{
 		ListMediaDb listMedia = new ListMediaDb(ParentMenuActivity.CONTEXT);
-		listMedia.addMedia(getPath(), comment, monochrome);
 	}
 	
 	// Restore media if needed (screen rotate)

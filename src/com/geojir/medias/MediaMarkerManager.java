@@ -144,7 +144,6 @@ public class MediaMarkerManager
 			//Load with Picasso
 			Picasso.with(context).load(photo_marker)
 				.resize(200, 100).centerInside()
-				.placeholder(R.drawable.loading)
 				.into(popUpImage, callback);
 		}
 		

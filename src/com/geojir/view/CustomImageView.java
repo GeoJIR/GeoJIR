@@ -100,6 +100,7 @@ public class CustomImageView extends ImageView
 	// Display image file on this
 	protected void loadImageFile()
 	{
+		
 		// get icon's dimension
 		final int thumbnailSize = getResources().getDimensionPixelOffset(R.dimen.thumbnailSize);
 		

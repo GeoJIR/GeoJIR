@@ -84,7 +84,7 @@ public class MediaContentProvider extends ContentProvider
 			{
 				throw new RuntimeException(String.format(
 						"%s : Failed to insert [%s] for unknown reasons.",
-						"TutosAndroidProvider", values, uri));
+						"MediaProvider", values, uri));
 			} else
 			{
 				return ContentUris.withAppendedId(uri, id);

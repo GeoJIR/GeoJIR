@@ -1,20 +1,17 @@
 package com.geojir.db;
 
-import rx.Observable;
 import rx.Subscriber;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.SimpleCursorAdapter;
 
 import com.geojir.Constants;
 import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.memory.DBMemory;
 
 //Database for list media
-public class ListMediaDb extends SQLiteOpenHelper implements
-		Observable.OnSubscribe<Cursor>
+public class ListMediaDb extends SQLiteOpenHelper
 {
 	protected Subscriber<? super Cursor> subscriber;
 	public static final String CURSOR_MEMORY = "ListMediaDbCursorMemory";
@@ -35,6 +32,8 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 
 	private static final String LISTMEDIA_DROP_TABLE = "DROP TABLE "
 			+ MediasDb.TABLE_NAME;
+
+	protected SimpleCursorAdapter cursorAdapter;
 
 	public ListMediaDb(Context context)
 	{
@@ -57,61 +56,4 @@ public class ListMediaDb extends SQLiteOpenHelper implements
 		onCreate(db);
 	}
 
-	public void getCursorMedias()
-	{
-		Cursor cursor = DBMemory.getCursor(CURSOR_MEMORY);
-		if (cursor == null)
-		{
-			db = DBMemory.setDb(CURSOR_MEMORY, this);
-
-			cursor = db.rawQuery(LISTMEDIA_SELECT_ENTRIES, null);
-
-			DBMemory.setCursor(CURSOR_MEMORY, cursor);
-		}
-
-		if (subscriber != null)
-			subscriber.onNext(cursor);
-	}
-
-	public void addMedia(String pathFileName, String remark, Boolean filter)
-	{
-		DBMemory.closeDb(CURSOR_MEMORY);
-		db = DBMemory.setDb(CURSOR_MEMORY, this);
-
-		/*
-		 * ON NE SUPPRIME PAS LA PREMIERE ENTREE CAR POUR LA LISTE DES DERNIERES
-		 * ON FERA UNE REQUETE DE TYPE LIMIT // return datebase's count entries
-		 * int nbEntries = countEntries();
-		 * 
-		 * if (nbEntries == NB_LIST_LAST_MEDIA || nbEntries <
-		 * NB_LIST_LAST_MEDIA) { if (nbEntries == NB_LIST_LAST_MEDIA) {
-		 * deleteFirstEntry(); } } else { // Error : more than
-		 * NB_LIST_LAST_MEDIA entries // deleting all entries
-		 * db.execSQL(LISTMEDIA_DELETE_ENTRIES); }
-		 */
-		// add a new entry then delete the first entry of the database
-		addEntry(pathFileName, remark, filter);
-
-		DBMemory.closeDb(CURSOR_MEMORY);
-	}
-
-	private void addEntry(String pathFileName, String remark, Boolean filter)
-	{
-		ContentValues values = new ContentValues();
-
-		// values.put(MediasDb._ID, id);
-		values.put(MediasDb.FILE_NAME_COLUMN, pathFileName);
-		values.put(MediasDb.REMARK_COLUMN, remark);
-		values.put(MediasDb.FILTER_COLUMN, filter);
-		values.put(MediasDb.LATITUDE_COLUMN, Constants.GM_LATITUDE);
-		values.put(MediasDb.LONGITUDE_COLUMN, Constants.GM_LONGITUDE);
-		db.insert(MediasDb.TABLE_NAME, null, values);
-	}
-
-	@Override
-	public void call(Subscriber<? super Cursor> newSubscriber)
-	{
-		subscriber = newSubscriber;
-		getCursorMedias();
-	}
 }
