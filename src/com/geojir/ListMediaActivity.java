@@ -16,38 +16,37 @@ import butterknife.InjectView;
 import butterknife.OnItemClick;
 
 import com.geojir.db.ListMediaContract.MediasDb;
-import com.geojir.db.ListMediaDb;
 import com.geojir.db.MediaContentProvider;
 import com.geojir.view.CustomImageView;
 
-public class ListMediaActivity extends ParentMenuActivity implements LoaderCallbacks<Cursor>
+public class ListMediaActivity extends ParentMenuActivity implements
+		LoaderCallbacks<Cursor>
 {
 	@InjectView(R.id.emptyListTextView)
 	protected TextView emptyListTextView;
 	@InjectView(R.id.listViewMedias)
 	protected ListView listView;
 	protected SimpleCursorAdapter cursorAdapter;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_media);
 		ButterKnife.inject(this);
-
-		cursorAdapter = new SimpleCursorAdapter(this, R.layout.list_item,
-				null, new String[] { MediasDb.FILE_NAME_COLUMN,
+		
+		cursorAdapter = new SimpleCursorAdapter(this, R.layout.list_item, null,
+				new String[] { MediasDb.FILE_NAME_COLUMN,
 						MediasDb.REMARK_COLUMN, MediasDb.FILTER_COLUMN },
 				new int[] { R.id.imageIcon, R.id.remark }, 0);
-
+		
 		// create content provider
 		getLoaderManager().initLoader(0, null, this);
 		
 		updateChildrenVisibility();
-
+		
 		// Convert String to image for ImageView
-		cursorAdapter.setViewBinder(new ViewBinder()
-		{
+		cursorAdapter.setViewBinder(new ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex)
@@ -55,17 +54,17 @@ public class ListMediaActivity extends ParentMenuActivity implements LoaderCallb
 				if (view instanceof CustomImageView)
 				{
 					CustomImageView imageView = (CustomImageView) view;
-
+					
 					// Path of media
 					String path = cursor.getString(columnIndex);
 					// display image depend on path and file existence
 					imageView.setImagePath(path);
-
+					
 					int filterInt = cursor
 							.getColumnIndex(MediasDb.FILTER_COLUMN);
 					if (cursor.getInt(filterInt) == 1)
 						imageView.blackAndWhiteMode(true);
-
+					
 					return true;
 				}
 				return false;
@@ -74,7 +73,7 @@ public class ListMediaActivity extends ParentMenuActivity implements LoaderCallb
 		
 		listView.setAdapter(cursorAdapter);
 	}
-
+	
 	@OnItemClick(R.id.listViewMedias)
 	void onItemClick(int position)
 	{
@@ -98,28 +97,27 @@ public class ListMediaActivity extends ParentMenuActivity implements LoaderCallb
 			emptyListTextView.setVisibility(View.INVISIBLE);
 		}
 	}
-
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args)
 	{
 		Uri CONTENT_URI = MediaContentProvider.CONTENT_URI;
-
+		
 		String columns[] = new String[] { MediasDb._ID,
 				MediasDb.FILE_NAME_COLUMN, MediasDb.REMARK_COLUMN,
 				MediasDb.FILTER_COLUMN };
 		
 		return new CursorLoader(this, CONTENT_URI, columns, null, null, null);
-
+		
 	}
-
+	
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
 	{
 		cursorAdapter.swapCursor(data);
 		updateChildrenVisibility();
 	}
-
+	
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader)
 	{

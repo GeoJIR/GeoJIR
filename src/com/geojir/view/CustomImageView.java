@@ -20,6 +20,15 @@ import com.geojir.medias.Media;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
+/**
+ * 
+ * Extends of Image view for :
+ * 		- Monochrome filter
+ * 		- auto start Animate Drawable
+ * 		- Load Picasso image depend on media given
+ * 			(load image for image, load defaut icon for other)
+ *
+ */
 public class CustomImageView extends ImageView
 {
 	protected String fileMediaPath;
