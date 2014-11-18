@@ -260,21 +260,9 @@ public class CaptureActivity extends ParentMenuActivity implements
 				{
 					try
 					{
-						//TODO utiliser le content provider pour enregistrer
-						/*String file = null;
-				        String remark = editComment.getText().toString();
-						
-						ContentValues values = new ContentValues(); 
-				        values.put(MediasDb.FILE_NAME_COLUMN, file); 
-				        values.put(MediasDb.REMARK_COLUMN, remark);
-				        values.put(MediasDb.FILTER_COLUMN, monochrome);
-				        
-						Uri mediaURI = MediaContentProvider.CONTENT_URI;
-						getContentResolver().insert(mediaURI, values); 
-						*/
-						
 						mediaTemp.save(editComment.getText().toString(),
-								monochrome);
+								monochrome, getContentResolver());
+						
 					} catch (InstantiationException | IllegalAccessException
 							| IOException e)
 					{
