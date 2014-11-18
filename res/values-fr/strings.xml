@@ -63,6 +63,7 @@
     <string name="GM_NotReached">Google Map non joignable</string>
     <string name="GM_NoLocation">Google Map ne renvoie pas votre position</string>
     <string name="GM_WaitLocation">Recherche de votre position</string>
+    <string name="GM_Google_Play_Services_not_installed">Google Play Services non installé</string>
     
     <string name="load_image_map">Chargement du média...</string>
     <string name="no_network_toast">Aucun réseau de détecté</string>

@@ -57,6 +57,7 @@
     <string name="GM_NotReached">Google Map not reached</string>
     <string name="GM_NoLocation">Unable to fetch the current location</string>
     <string name="GM_WaitLocation">Searching your location</string>
+    <string name="GM_Google_Play_Services_not_installed">Google Play Services not installed</string>
     
     <string name="load_image_map">Load media...</string>
     
