@@ -1,139 +1,131 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_height="wrap_content"
     tools:context="com.geojir.CaptureActivity" >
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    <com.geojir.view.CustomImageView
+        android:id="@+id/loadingCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:contentDescription=""
+        android:maxHeight="256dp"
+        android:maxWidth="256dp"
+        android:minHeight="128dp"
+        android:minWidth="128dp" />
 
-        <com.geojir.view.CustomImageView
-	        android:id="@+id/loadingCapture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription=""
-            android:minWidth="128dp"
-            android:minHeight="128dp"
-            android:maxHeight="256dp"
-            android:maxWidth="256dp" />
+    <LinearLayout
+        android:id="@+id/captureRootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/captureRootLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical" >
+            android:orientation="horizontal" >
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/imagePhotos"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_weight="1"
+                android:contentDescription="@string/ic_photo_description"
+                android:src="@drawable/ic_photo" />
 
-                <ImageView
-                    android:id="@+id/imagePhotos"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/ic_photo_description"
-                    android:src="@drawable/ic_photo" />
-
-                <ImageView
-                    android:id="@+id/imageMicro"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/ic_micro_description"
-                    android:src="@drawable/ic_micro" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <ImageView
+                android:id="@+id/imageMicro"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/textViewPhoto"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/ic_photo_label" />
-
-                <TextView
-                    android:id="@+id/textViewMicro"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="@string/ic_micro_label" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:id="@+id/contentMediaCapture"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <LinearLayout
-                    android:id="@+id/photoFrame"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <com.geojir.view.CaptureImageView
-                        xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/captureImageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="32dp"
-                        android:layout_marginRight="32dp"
-                        android:layout_marginTop="32dp"
-                        android:contentDescription="@string/ic_medias_description"
-                        android:minHeight="200dp"
-                        android:src="@drawable/ic_take_photo" />
-
-                    <CheckBox
-                        android:id="@+id/filterMonochrome"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/black_and_white" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/audioFrame"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <Button
-                        android:id="@+id/recordAudioButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/save_song" />
-
-                    <Button
-                        android:id="@+id/playAudioButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/play_song" />
-                </LinearLayout>
-            </FrameLayout>
-
-            <EditText
-                android:id="@+id/commentText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/comment"
-                android:inputType="textMultiLine" >
-            </EditText>
+                android:layout_weight="1"
+                android:contentDescription="@string/ic_micro_description"
+                android:src="@drawable/ic_micro" />
         </LinearLayout>
-    </FrameLayout>
 
-</ScrollView>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/textViewPhoto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/ic_photo_label" />
+
+            <TextView
+                android:id="@+id/textViewMicro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/ic_micro_label" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/contentMediaCapture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/photoFrame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <com.geojir.view.CaptureImageView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/captureImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:layout_marginTop="32dp"
+                    android:contentDescription="@string/ic_medias_description"
+                    android:minHeight="200dp"
+                    android:src="@drawable/ic_take_photo" />
+
+                <CheckBox
+                    android:id="@+id/filterMonochrome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/black_and_white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/audioFrame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/recordAudioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_audio_record_button_text" />
+
+                <Button
+                    android:id="@+id/playAudioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_audio_play_button_text" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <EditText
+            android:id="@+id/commentText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/comment"
+            android:inputType="textMultiLine" >
+        </EditText>
+    
+    </LinearLayout>
+
+</FrameLayout>

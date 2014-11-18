@@ -17,8 +17,6 @@
     <string name="ic_medias_description">Medias library</string>
     <string name="ic_photo_label">Take a photography</string>
     <string name="ic_micro_label">Record a sound</string>
-    <string name="save_song">Record a sound</string>
-    <string name="play_song">Play the sound recorded</string>
     <string name="save_media">Save media</string>
     <string name="start_save_media_toast">Saving media...</string>
     <string name="stop_save_media_toast">Media saved</string>

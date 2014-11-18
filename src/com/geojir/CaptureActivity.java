@@ -435,7 +435,7 @@ public class CaptureActivity extends ParentMenuActivity implements
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.capture, menu);
+	    inflater.inflate(R.menu.simple_save_menu, menu);
 	    
 	    return true;
 	}
